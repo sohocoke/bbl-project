@@ -16,6 +16,9 @@
 		C089AC7418E8315700A2260F /* UploadToAppC.m in Sources */ = {isa = PBXBuildFile; fileRef = C089AC6E18E8315700A2260F /* UploadToAppC.m */; };
 		C089AC7518E8315700A2260F /* XMLDatasetHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = C089AC7018E8315700A2260F /* XMLDatasetHandler.m */; };
 		C089AC7A18E8AC6B00A2260F /* Configuration.m in Sources */ = {isa = PBXBuildFile; fileRef = C089AC7918E8AC6B00A2260F /* Configuration.m */; };
+		C089AC7E18E8D16200A2260F /* MDXHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = C089AC7D18E8D16200A2260F /* MDXHandler.m */; };
+		C089AC8018E9A86600A2260F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C089AC7F18E9A86600A2260F /* Security.framework */; };
+		C0ABAC7A18EEBEA40098F810 /* AppcHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = C0ABAC7918EEBEA40098F810 /* AppcHandler.m */; };
 		C0BBE87518DDD65300119E2E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C0BBE87418DDD65300119E2E /* main.m */; };
 		C0BBE87718DDD65300119E2E /* mm2PackagingFactory.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C0BBE87618DDD65300119E2E /* mm2PackagingFactory.1 */; };
 		C0BBE88C18DDEC7600119E2E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0BBE88B18DDEC7600119E2E /* Cocoa.framework */; };
@@ -43,6 +46,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A10C3FE2196ED84D0029D214 /* apps.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = apps.xml; sourceTree = "<group>"; };
+		A10C3FE3196ED84D0029D214 /* servers.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = servers.xml; sourceTree = "<group>"; };
+		A10C3FE4196EDE170029D214 /* login.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = login.txt; sourceTree = "<group>"; };
+		A1A710D0198138D9008370BB /* scratchpad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = scratchpad.txt; sourceTree = "<group>"; };
 		C089AC5C18E82F5400A2260F /* XMLHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHandler.h; sourceTree = "<group>"; };
 		C089AC5D18E82F5400A2260F /* XMLHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLHandler.m; sourceTree = "<group>"; };
 		C089AC5F18E830BC00A2260F /* NSData+NSDataAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+NSDataAdditions.h"; sourceTree = "<group>"; };
@@ -63,6 +70,11 @@
 		C089AC7718E8326300A2260F /* MM2AppList.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = MM2AppList.xml; path = mm2PackagingFactory/Reources/MM2AppList.xml; sourceTree = "<group>"; };
 		C089AC7818E8AC6B00A2260F /* Configuration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Configuration.h; path = DataModels/Configuration.h; sourceTree = "<group>"; };
 		C089AC7918E8AC6B00A2260F /* Configuration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Configuration.m; path = DataModels/Configuration.m; sourceTree = "<group>"; };
+		C089AC7C18E8D16200A2260F /* MDXHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDXHandler.h; sourceTree = "<group>"; };
+		C089AC7D18E8D16200A2260F /* MDXHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDXHandler.m; sourceTree = "<group>"; };
+		C089AC7F18E9A86600A2260F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		C0ABAC7818EEBEA40098F810 /* AppcHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppcHandler.h; sourceTree = "<group>"; };
+		C0ABAC7918EEBEA40098F810 /* AppcHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppcHandler.m; sourceTree = "<group>"; };
 		C0BBE86E18DDD65300119E2E /* mm2PackagingFactory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mm2PackagingFactory; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0BBE87418DDD65300119E2E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		C0BBE87618DDD65300119E2E /* mm2PackagingFactory.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = mm2PackagingFactory.1; sourceTree = "<group>"; };
@@ -92,6 +104,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0BBE8BA18DF48B900119E2E /* libz.1.2.5.dylib in Frameworks */,
+				C089AC8018E9A86600A2260F /* Security.framework in Frameworks */,
 				C0BBE88C18DDEC7600119E2E /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -99,6 +112,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A10C3FE1196ED84D0029D214 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				A10C3FE2196ED84D0029D214 /* apps.xml */,
+				A10C3FE3196ED84D0029D214 /* servers.xml */,
+				A10C3FE4196EDE170029D214 /* login.txt */,
+				A1A710D0198138D9008370BB /* scratchpad.txt */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
 		C089AC5B18E82F2A00A2260F /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -129,9 +153,21 @@
 			path = UnitTests;
 			sourceTree = "<group>";
 		};
+		C089AC7B18E8D11A00A2260F /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				C089AC7C18E8D16200A2260F /* MDXHandler.h */,
+				C089AC7D18E8D16200A2260F /* MDXHandler.m */,
+				C0ABAC7818EEBEA40098F810 /* AppcHandler.h */,
+				C0ABAC7918EEBEA40098F810 /* AppcHandler.m */,
+			);
+			path = Handlers;
+			sourceTree = "<group>";
+		};
 		C0BBE86518DDD65300119E2E = {
 			isa = PBXGroup;
 			children = (
+				A10C3FE1196ED84D0029D214 /* data */,
 				C0BBE8A718DF456C00119E2E /* ZipArchive */,
 				C0BBE87318DDD65300119E2E /* mm2PackagingFactory */,
 				C0BBE89D18DE23FB00119E2E /* Resources */,
@@ -152,6 +188,7 @@
 			isa = PBXGroup;
 			children = (
 				C0BBE8B918DF48B900119E2E /* libz.1.2.5.dylib */,
+				C089AC7F18E9A86600A2260F /* Security.framework */,
 				C0BBE88B18DDEC7600119E2E /* Cocoa.framework */,
 			);
 			name = Frameworks;
@@ -163,6 +200,7 @@
 				C0BBE87418DDD65300119E2E /* main.m */,
 				C0BBE87618DDD65300119E2E /* mm2PackagingFactory.1 */,
 				C0BBE89318DE182600119E2E /* DataModels */,
+				C089AC7B18E8D11A00A2260F /* Handlers */,
 				C089AC6618E8315700A2260F /* UnitTests */,
 				C089AC5B18E82F2A00A2260F /* Utilities */,
 			);
@@ -270,6 +308,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0BBE8B618DF456C00119E2E /* unzip.c in Sources */,
+				C0ABAC7A18EEBEA40098F810 /* AppcHandler.m in Sources */,
 				C089AC6318E830BC00A2260F /* NSData+NSDataAdditions.m in Sources */,
 				C0BBE89C18DE1C3B00119E2E /* AppsToProcess.m in Sources */,
 				C089AC7A18E8AC6B00A2260F /* Configuration.m in Sources */,
@@ -282,6 +321,7 @@
 				C0BBE87518DDD65300119E2E /* main.m in Sources */,
 				C0BBE89918DE18DC00119E2E /* MDXApp.m in Sources */,
 				C089AC7418E8315700A2260F /* UploadToAppC.m in Sources */,
+				C089AC7E18E8D16200A2260F /* MDXHandler.m in Sources */,
 				C089AC7218E8315700A2260F /* ExecuteProgram.m in Sources */,
 				C089AC6418E830BC00A2260F /* NSString+NSStringAdditions.m in Sources */,
 				C0BBE8B418DF456C00119E2E /* ioapi.c in Sources */,

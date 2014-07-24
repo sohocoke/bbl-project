@@ -1,0 +1,11 @@
+<AppcList>
+  <Region name="ch">
+    <appc stage="prod">
+      <server id="99">
+	<url>d1csintra.net</url>
+	<port>443</port>
+	<userid>Administrator</userid>
+      </server>
+    </appc>
+  </Region>
+</AppcList>

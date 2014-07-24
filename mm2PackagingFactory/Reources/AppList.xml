@@ -1,0 +1,17 @@
+<AppsToProcess>
+    <MDXApp>
+        <Name>com.citrix.ctxmail</Name>
+        <DisplayName>Worxmail</DisplayName>
+        <Class>x</Class>
+    </MDXApp>
+    <MDXApp>
+        <Name>com.citrix.worxweb</Name>
+        <DisplayName>Worxweb</DisplayName>
+        <Class>y</Class>
+    </MDXApp>
+    <MDXApp>
+        <Name>com.creditsuisse.icp</Name>
+        <DisplayName>ICP</DisplayName>
+        <Class>z</Class>
+    </MDXApp>
+</AppsToProcess>

@@ -1,0 +1,103 @@
+<AppcList>
+    <Region name="ch">
+        <appc stage="prod">
+            <!--In this example, CH has two production AppCs -->
+            <server>
+                <url>https://appcchprod1.csintra.net</url>
+                <port>443</port>
+                <userid>Administrator</userid>
+                <encryptedpassword>someBase64encodedAES256Password</encryptedpassword>
+            <server>
+            </server>
+                <url>https://appcchprod2.csintra.net</url>
+                <port>443</port>
+                <userid>Administrator</userid>
+                <encryptedpassword>someBase64encodedAES256Password</encryptedpassword>
+            </server>
+        </appc>
+        <appc stage="pta">
+            <server>
+                <url>https://appcchpta.csintra.net</url>
+                <port>443</port>
+                <userid>Administrator</userid>
+                <encryptedpassword>someBase64encodedAES256Password</encryptedpassword>
+            </server>
+        </appc>
+        <appc stage="adpta">
+            <server>
+                <url>https://appcchadpta.csintra.net</url>
+                <port>443</port>
+                <userid>Administrator</userid>
+                <encryptedpassword>someBase64encodedAES256Password</encryptedpassword>
+            </server>
+        </appc>
+        <appc stage="etit">
+            <server>
+                <url>https://appcchetit.csintra.net</url>
+                <port>443</port>
+                <userid>Administrator</userid>
+                <encryptedpassword>someBase64encodedAES256Password</encryptedpassword>
+            </server>
+        </appc>
+    </Region>
+    <Region name="us">
+        <appc stage="prod">
+            <server>
+                <url>https://appcusprod1.csintra.net</url>
+                <port>443</port>
+                <userid>Administrator</userid>
+                <encryptedpassword>someBase64encodedAES256Password</encryptedpassword>
+            </server>
+            <server>
+                <url>https://appcusprod2.csintra.net</url>
+                <port>443</port>
+                <userid>Administrator</userid>
+                <encryptedpassword>someBase64encodedAES256Password</encryptedpassword>
+            </server>
+        </appc>
+        <appc stage="pta">
+            <server>
+                <url>https://appcuspta.csintra.net</url>
+                <port>443</port>
+                <userid>Administrator</userid>
+                <encryptedpassword>someBase64encodedAES256Password</encryptedpassword>
+            </server>
+        </appc>
+        <appc stage="etit">
+            <server>
+                <url>https://appcusetit.csintra.net</url>
+                <port>443</port>
+                <userid>Administrator</userid>
+                <encryptedpassword>someBase64encodedAES256Password</encryptedpassword>
+            </server>
+        </appc>
+        <appc stage="poc">
+            <server>
+                <url>https://appcuspoc.csintra.net</url>
+                <port>443</port>
+                <userid>Administrator</userid>
+                <encryptedpassword>someBase64encodedAES256Password</encryptedpassword>
+            </server>
+        </appc>
+    </Region>
+    <Region name="gb">
+        <appc stage="prod">
+            <server>
+                <url>https://appcgbprod.csintra.net</url>
+                <port>443</port>
+                <userid>Administrator</userid>
+                <encryptedpassword>someBase64encodedAES256Password</encryptedpassword>
+            </server>
+        </appc>
+    </Region>
+    <Region name="sg">
+        <appc stage="prod">
+            <server>
+                <url>https://appcsgprod.csintra.net</url>
+                <port>443</port>
+                <userid>Administrator</userid>
+                <encryptedpassword>someBase64encodedAES256Password</encryptedpassword>
+            </server>
+        </appc>
+    </Region>
+</AppcList>
