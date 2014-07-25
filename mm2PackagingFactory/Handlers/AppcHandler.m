@@ -244,15 +244,7 @@
     NSPipe * out = [NSPipe pipe];
     [task setStandardOutput:out]; //direct output to pipe
 
-    NSString* taskDetails = @"curl ";
-    for (NSString* arg in args) {
-        NSString* token = arg;
-        if (! [[arg substringToIndex:1] isEqual:@"-"])
-            token = [[@"\"" stringByAppendingString:arg] stringByAppendingString:@"\""];
-        taskDetails = [taskDetails stringByAppendingString:token];
-        taskDetails = [taskDetails stringByAppendingString:@" "];
-    }
-    NSLog(@"task details: %@", taskDetails);
+    NSLog(@"will run task %@", [task description]);
     
     [task launch];
     [task waitUntilExit];  // wait until command has ended

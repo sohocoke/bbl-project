@@ -75,3 +75,22 @@ static char base64EncodingTable[64] = {
 
 
 @end
+
+
+// TODO move.
+@implementation NSTask (Logging)
+
+-(NSString*) description {
+    NSString* taskDetails = [NSString stringWithFormat:@"(in %@) %@ ", self.currentDirectoryPath, self.launchPath];
+    for (NSString* arg in self.arguments) {
+        NSString* token = arg;
+        if (! [[arg substringToIndex:1] isEqual:@"-"])
+            token = [[@"\"" stringByAppendingString:arg] stringByAppendingString:@"\""];
+        taskDetails = [taskDetails stringByAppendingString:token];
+        taskDetails = [taskDetails stringByAppendingString:@" "];
+    }
+    
+    return taskDetails;
+}
+
+@end
