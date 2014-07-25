@@ -48,8 +48,8 @@
 /* Begin PBXFileReference section */
 		A10C3FE2196ED84D0029D214 /* apps.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = apps.xml; sourceTree = "<group>"; };
 		A10C3FE3196ED84D0029D214 /* servers.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = servers.xml; sourceTree = "<group>"; };
-		A10C3FE4196EDE170029D214 /* login.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = login.txt; sourceTree = "<group>"; };
 		A1A710D0198138D9008370BB /* scratchpad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = scratchpad.txt; sourceTree = "<group>"; };
+		A1C7A2B7198244F6008343C8 /* login.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = login.txt; path = mm2PackagingFactory/Resources/login.txt; sourceTree = "<group>"; };
 		C089AC5C18E82F5400A2260F /* XMLHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHandler.h; sourceTree = "<group>"; };
 		C089AC5D18E82F5400A2260F /* XMLHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLHandler.m; sourceTree = "<group>"; };
 		C089AC5F18E830BC00A2260F /* NSData+NSDataAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+NSDataAdditions.h"; sourceTree = "<group>"; };
@@ -117,7 +117,6 @@
 			children = (
 				A10C3FE2196ED84D0029D214 /* apps.xml */,
 				A10C3FE3196ED84D0029D214 /* servers.xml */,
-				A10C3FE4196EDE170029D214 /* login.txt */,
 				A1A710D0198138D9008370BB /* scratchpad.txt */,
 			);
 			path = data;
@@ -223,6 +222,7 @@
 		C0BBE89D18DE23FB00119E2E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A1C7A2B7198244F6008343C8 /* login.txt */,
 				C089AC7618E8326300A2260F /* AppcList.xml */,
 				C089AC7718E8326300A2260F /* MM2AppList.xml */,
 				C0BBE89E18DE242A00119E2E /* AppList.xml */,

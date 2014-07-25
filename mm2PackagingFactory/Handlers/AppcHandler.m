@@ -69,7 +69,7 @@
     mArgs = [self prepareStandardCURLArguments];
     [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/newlogin",self.baseurl]];
     [mArgs addObject:@"--data"];
-    [mArgs addObject:@"@/Users/andy/Documents/src/mm2PackagingFactory/data/login.txt"];
+    [mArgs addObject:@"@/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/login.txt"];
     [self executeAndAnalyzeOutput: mArgs];
     //possible results
     //{"errorcode":"0","message":"Done","ncglogin":{"sessionid":"3F1F20D03C7861870DA63D2CA5B45A7F"}} //good
