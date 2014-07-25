@@ -69,7 +69,7 @@
     mArgs = [self prepareStandardCURLArguments];
     [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/newlogin",self.baseurl]];
     [mArgs addObject:@"--data"];
-    [mArgs addObject:@"/Users/andy/Documents/src/mm2PackagingFactory/data/login.txt"];
+    [mArgs addObject:@"@/Users/andy/Documents/src/mm2PackagingFactory/data/login.txt"];
     [self executeAndAnalyzeOutput: mArgs];
     //possible results
     //{"errorcode":"0","message":"Done","ncglogin":{"sessionid":"3F1F20D03C7861870DA63D2CA5B45A7F"}} //good
@@ -80,18 +80,18 @@
     NSLog(@"_______________");
     NSLog(@"");
 
-    NSLog(@"_______________UPLOAD APP_______________");
-    //#UPLOAD APP WITHOUT ROLE OR CATEGORY CHANGE
-    //    $command= "$curlFolder\curl.exe --data-binary '`@$MDX' -k -X POST --cookie JSESSIONID=$JSESSION -H "Content-type:application/octet-stream" -v https://$AppCFQDN`:4443/ControlPoint/api/v1/mobileApp";
-    
-    mArgs = [self prepareStandardCURLArguments];
-    [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/api/v1/mobileApp",self.baseurl]];
-    [mArgs addObject:@"--data-binary"];
-    [mArgs addObject:@"@/Users/jeremybrookfield/Work/test/WorxMailEUR_iOS.mdx"];
-    [mArgs addObject:@"-X"];
-    [mArgs addObject:@"POST"];
-    [mArgs addObject:@"-H"];
-    [mArgs addObject:@"Content-type: application/octet-stream"];
+//    NSLog(@"_______________UPLOAD APP_______________");
+//    //#UPLOAD APP WITHOUT ROLE OR CATEGORY CHANGE
+//    //    $command= "$curlFolder\curl.exe --data-binary '`@$MDX' -k -X POST --cookie JSESSIONID=$JSESSION -H "Content-type:application/octet-stream" -v https://$AppCFQDN`:4443/ControlPoint/api/v1/mobileApp";
+//    
+//    mArgs = [self prepareStandardCURLArguments];
+//    [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/api/v1/mobileApp",self.baseurl]];
+//    [mArgs addObject:@"--data-binary"];
+//    [mArgs addObject:@"@/Users/jeremybrookfield/Work/test/WorxMailEUR_iOS.mdx"];
+//    [mArgs addObject:@"-X"];
+//    [mArgs addObject:@"POST"];
+//    [mArgs addObject:@"-H"];
+//    [mArgs addObject:@"Content-type: application/octet-stream"];
 //    [self executeAndAnalyzeOutput: mArgs];
     /*
      {"errorcode":"0","message":"Done","ncgapplication":{"name":"MobileApp7","description":"WorxMail EUR 94","loginurl":"","connectortype":"SSO","categoryname":"Default","deprovision":"IGNORE","useridcreationrule":"$FN$LN","ssotype":"Mobile","enterpriseattributes":"","passwordrule":{"maxlength":"0","minlength":"0","disallowusername":"false","mustcontaincapitalletter":"false","mustcontainspecialcharacter":"false"},"passwordvalidity":{"autoresetpassword":"false","passwordexpiry":"0","passwordvaliditydays":"0"},"workflowtemplate":"","iconpath":"oca/img/ext/be984054-1fd5-450e-b72b-5b2ce56f4ac3.png","applicationlabel":"WorxMail EUR","totallicenses":"0","maxthreshold":"40","minthreshold":"10","adintegrated":"false","serviceaccountid":"","serviceaccountpassword":"","autoprovision":"false","mobileprofile":{"binarylocation":"","devicetype":"","deviceos":""},"vpn":"false","appType":"mobile_ios","auto":"false","requiredKW":"false","disabled":"false","paid":"false","uuid":"be984054-1fd5-450e-b72b-5b2ce56f4ac3"}}
@@ -105,7 +105,7 @@
     //#GET SETTINGS DATA FROM APP ON APPC
     //$command="$curlFolder\curl.exe ""https://$AppCFQDN`:4443/ControlPoint/rest/mobileappmgmt/$AppName"" -H ""Cookie: JSESSIONID=$JSESSION; ACNODEID=$ACNODEID"" -H ""Accept-Encoding: gzip,deflate,sdch"" -H ""Accept-Language: en-US,en;q=0.8"" -H ""User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36"" -H ""Accept: application/json, text/javascript, */*; q=0.01"" -H ""Referer: https://$AppCFQDN`:4443/ControlPoint/main.html"" -H ""CG_CSRFTOKEN: $CSRF"" -H ""X-Requested-With: CloudGateway AJAX"" -H ""Connection: keep-alive"" --compressed -k"
     mArgs = [self prepareStandardCURLArguments];
-    [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/mobileappmgmt/MobileApp43",self.baseurl]];
+    [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/mobileappmgmt/MobileApp47",self.baseurl]];
     [self executeAndAnalyzeOutput: mArgs];
     //{"errorcode":"-1","message":"Mobile App data cannot be retrieved"}
     //null
@@ -116,17 +116,17 @@
     
     
     
-    NSLog(@"_______________UPDATE APP_______________");
-    //#GET SETTINGS DATA FROM APP ON APPC
-    //$command="$curlFolder\curl.exe ""https://$AppCFQDN`:4443/ControlPoint/rest/mobileappmgmt/$AppName"" -H ""Cookie: JSESSIONID=$JSESSION; ACNODEID=$ACNODEID"" -H ""Accept-Encoding: gzip,deflate,sdch"" -H ""Accept-Language: en-US,en;q=0.8"" -H ""User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36"" -H ""Accept: application/json, text/javascript, */*; q=0.01"" -H ""Referer: https://$AppCFQDN`:4443/ControlPoint/main.html"" -H ""CG_CSRFTOKEN: $CSRF"" -H ""X-Requested-With: CloudGateway AJAX"" -H ""Connection: keep-alive"" --compressed -k"
-    mArgs = [self prepareStandardCURLArguments];
-    [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/mobileappmgmt/MobileApp3",self.baseurl]];
-    [self executeAndAnalyzeOutput: mArgs];
-    //{"errorcode":"-1","message":"Mobile App data cannot be retrieved"}
-    //null
-    NSLog(@"_______________");
-    NSLog(@"\n");
-    
+//    NSLog(@"_______________UPDATE APP_______________");
+//    //#GET SETTINGS DATA FROM APP ON APPC
+//    //$command="$curlFolder\curl.exe ""https://$AppCFQDN`:4443/ControlPoint/rest/mobileappmgmt/$AppName"" -H ""Cookie: JSESSIONID=$JSESSION; ACNODEID=$ACNODEID"" -H ""Accept-Encoding: gzip,deflate,sdch"" -H ""Accept-Language: en-US,en;q=0.8"" -H ""User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36"" -H ""Accept: application/json, text/javascript, */*; q=0.01"" -H ""Referer: https://$AppCFQDN`:4443/ControlPoint/main.html"" -H ""CG_CSRFTOKEN: $CSRF"" -H ""X-Requested-With: CloudGateway AJAX"" -H ""Connection: keep-alive"" --compressed -k"
+//    mArgs = [self prepareStandardCURLArguments];
+//    [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/mobileappmgmt/MobileApp3",self.baseurl]];
+//    [self executeAndAnalyzeOutput: mArgs];
+//    //{"errorcode":"-1","message":"Mobile App data cannot be retrieved"}
+//    //null
+//    NSLog(@"_______________");
+//    NSLog(@"\n");
+//    
     
     
 //    NSLog(@"_______________GET OCAJSESSIONID_______________");
@@ -179,6 +179,7 @@
     
     [argArray addObject:@"-H"];
     [argArray addObject:[NSString stringWithFormat:@"Cookie: %@%@; %@%@; %@%@",@"JSESSIONID=",self.jsessionid,@"ACNODEID=",self.acnodeid,@"OCAJSESSIONID=",self.ocajsessionid]];
+//    [argArray addObject:[NSString stringWithFormat:@"Cookie: %@%@; %@%@",@"JSESSIONID=",self.jsessionid,@"ACNODEID=",self.acnodeid]];
     
     [argArray addObject:@"-H"];
     [argArray addObject:[NSString stringWithFormat:@"CG_CSRFTOKEN: %@",self.csrf]];
@@ -221,6 +222,7 @@
     
     [argArray addObject:@"-H"];
     [argArray addObject:[NSString stringWithFormat:@"Cookie: %@%@; %@%@; %@%@",@"JSESSIONID=",self.jsessionid,@"ACNODEID=",self.acnodeid,@"OCAJSESSIONID=",self.ocajsessionid]];
+//    [argArray addObject:[NSString stringWithFormat:@"Cookie: %@%@; %@%@",@"JSESSIONID=",self.jsessionid,@"ACNODEID=",self.acnodeid]];
     
     [argArray addObject:@"-H"];
     [argArray addObject:[NSString stringWithFormat:@"CG_CSRFTOKEN: %@",self.csrf]];

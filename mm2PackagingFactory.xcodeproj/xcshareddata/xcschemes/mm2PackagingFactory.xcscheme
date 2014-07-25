@@ -59,15 +59,15 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "data/servers..xml"
+            argument = "Resources/AppcList.xml"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "data/apps.xml"
+            argument = "Resources/AppList.xml"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "data/control.xml"
+            argument = "Resources/MM2AppList.xml"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

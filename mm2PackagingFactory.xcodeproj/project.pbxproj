@@ -66,8 +66,8 @@
 		C089AC6E18E8315700A2260F /* UploadToAppC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadToAppC.m; sourceTree = "<group>"; };
 		C089AC6F18E8315700A2260F /* XMLDatasetHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDatasetHandler.h; sourceTree = "<group>"; };
 		C089AC7018E8315700A2260F /* XMLDatasetHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLDatasetHandler.m; sourceTree = "<group>"; };
-		C089AC7618E8326300A2260F /* AppcList.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = AppcList.xml; path = mm2PackagingFactory/Reources/AppcList.xml; sourceTree = "<group>"; };
-		C089AC7718E8326300A2260F /* MM2AppList.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = MM2AppList.xml; path = mm2PackagingFactory/Reources/MM2AppList.xml; sourceTree = "<group>"; };
+		C089AC7618E8326300A2260F /* AppcList.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = AppcList.xml; path = mm2PackagingFactory/Resources/AppcList.xml; sourceTree = "<group>"; };
+		C089AC7718E8326300A2260F /* MM2AppList.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = MM2AppList.xml; path = mm2PackagingFactory/Resources/MM2AppList.xml; sourceTree = "<group>"; };
 		C089AC7818E8AC6B00A2260F /* Configuration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Configuration.h; path = DataModels/Configuration.h; sourceTree = "<group>"; };
 		C089AC7918E8AC6B00A2260F /* Configuration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Configuration.m; path = DataModels/Configuration.m; sourceTree = "<group>"; };
 		C089AC7C18E8D16200A2260F /* MDXHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDXHandler.h; sourceTree = "<group>"; };
@@ -83,7 +83,7 @@
 		C0BBE89818DE18DC00119E2E /* MDXApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MDXApp.m; path = DataModels/MDXApp.m; sourceTree = "<group>"; };
 		C0BBE89A18DE1C3B00119E2E /* AppsToProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppsToProcess.h; path = DataModels/AppsToProcess.h; sourceTree = "<group>"; };
 		C0BBE89B18DE1C3B00119E2E /* AppsToProcess.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppsToProcess.m; path = DataModels/AppsToProcess.m; sourceTree = "<group>"; };
-		C0BBE89E18DE242A00119E2E /* AppList.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = AppList.xml; path = mm2PackagingFactory/Reources/AppList.xml; sourceTree = "<group>"; };
+		C0BBE89E18DE242A00119E2E /* AppList.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = AppList.xml; path = mm2PackagingFactory/Resources/AppList.xml; sourceTree = "<group>"; };
 		C0BBE8A918DF456C00119E2E /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
 		C0BBE8AA18DF456C00119E2E /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
 		C0BBE8AB18DF456C00119E2E /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
