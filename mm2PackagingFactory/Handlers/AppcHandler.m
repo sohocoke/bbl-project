@@ -133,26 +133,15 @@
 //    [mArgs addObject:@"-I"];
 //    [self executeAndAnalyzeOutput: mArgs];
 
-//    // get roles.
+    
+//    //    NSLog(@"_______________GET ROLES");
 //    mArgs = [self prepareStandardCURLArguments2];
 //    [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/role",self.baseurl]];
 //    [self executeAndAnalyzeOutput: mArgs];
 //    NSLog(@"_______________");
 //    NSLog(@"");
 //
-//    mArgs = [self prepareStandardCURLArguments];
-//    [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/mobileappmgmt/upgrade/%@", self.baseurl, appId]];
-//    [mArgs addObject:@"--data-binary"];
-//    [mArgs addObject:[NSString stringWithFormat:@"@%@", @"/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717.mdx"]];
-//    [mArgs addObject:@"-H"];
-//    [mArgs addObject:@"Content-type: multipart/form-data; boundary=----WebKitFormBoundaryXch6u1VhESPiDsAf"];
-//
-//    [mArgs addObject:@"-H"];
-//    [mArgs addObject:@"Content-Disposition: form-data; name=\"mobileAppUploadZip\"; filename=\"BCMCreditSuisse201404300717.mdx\""];
-//
-//    [self executeAndAnalyzeOutput: mArgs];
 
-//    
     mArgs = [self prepareStandardCURLArguments];
     [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/upload?CG_CSRFTOKEN=%@",self.baseurl, self.csrf]];
     
@@ -170,12 +159,23 @@
     [mArgs addObject:@"data=@/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717.mdx;type=application/octet-stream"];
 
     [self executeAndAnalyzeOutput: mArgs];
-//
-//    //{"errorcode":"-1","message":"Mobile App data cannot be retrieved"}
-//    //null
-//    NSLog(@"_______________");
-//    NSLog(@"\n");
+
+    //{"errorcode":"-1","message":"Mobile App data cannot be retrieved"}
+    //null
+    NSLog(@"_______________");
+    NSLog(@"\n");
+
     
+    NSLog(@"_______________UPDATE POLICY _______________");
+    mArgs = [self prepareStandardCURLArguments];
+    [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/mobileappmgmt/upgrade/%@", self.baseurl, appId]];
+    
+    [mArgs addObject:@"--form"];
+    [mArgs addObject:@"data=@/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717-policy.xml"];
+
+
+    [self executeAndAnalyzeOutput: mArgs];
+
     
     return TRUE;
 }

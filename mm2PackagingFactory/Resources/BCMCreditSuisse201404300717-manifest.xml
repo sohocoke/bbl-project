@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<MobileAppPackage>
+  <PackageInfo>
+    <Description>Wrapped Enterprise Application</Description>
+    <Date>2014-07-01 16:15:23 +0000</Date>
+    <CertExpires>2015-01-13 10:39:46 +0000</CertExpires>
+    <Packager>
+      <User>g933183</User>
+      <Machine>macmini1.corpny.csfb.com</Machine>
+      <ToolsVersion>9.0</ToolsVersion>
+    </Packager>
+  </PackageInfo>
+  <MobileApp>
+    <ToolVersion CRKW="MamToolsVersion">9.0</ToolVersion>
+    <ToolsProductVersion>9.0</ToolsProductVersion>
+    <ToolsBuildNumber>472</ToolsBuildNumber>
+    <AppType CRKW="MamAppType">application/ios</AppType>
+    <AppID CRKW="MamAppID">WW98567843.com.cts.cspune.BCMCreditSuisse</AppID>
+    <BundleID>com.cts.cspune.BCMCreditSuisse</BundleID>
+    <AppVersion>2.0</AppVersion>
+    <FriendlyName>BCM Global</FriendlyName>
+    <BundleChecksum>C2B6B23A54605A090BE76196C41C9E1E</BundleChecksum>
+    <MinPlatform CRKW="MamMinPlatform"/>
+    <ExcludeDeviceTypes CRKW="MamExcludeDeviceTypes"/>
+    <UrlScheme>com.citrix.sso.CFEBCFE0-2F1C-4381-81C9-41D0D4E84806-11487-0032B16039F1206A</UrlScheme>
+    <BundleFile>BCMCreditSuisse201404300717.ipa</BundleFile>
+    <PackageID CRKW="MamPackageID">CFEBCFE0-2F1C-4381-81C9-41D0D4E84806-11487-0032B16039F1206A</PackageID>
+    <Icons>
+      <Icon>
+        <xRes>40</xRes>
+        <yRes>40</yRes>
+        <IconFile>Icon-40.png</IconFile>
+      </Icon>
+      <Icon>
+        <xRes>80</xRes>
+        <yRes>80</yRes>
+        <IconFile>Icon-40@2x.png</IconFile>
+      </Icon>
+      <Icon>
+        <xRes>29</xRes>
+        <yRes>29</yRes>
+        <IconFile>Icon-Small.png</IconFile>
+      </Icon>
+      <Icon>
+        <xRes>58</xRes>
+        <yRes>58</yRes>
+        <IconFile>Icon-Small@2x.png</IconFile>
+      </Icon>
+      <Icon>
+        <xRes>60</xRes>
+        <yRes>60</yRes>
+        <IconFile>Icon-60.png</IconFile>
+      </Icon>
+      <Icon>
+        <xRes>120</xRes>
+        <yRes>120</yRes>
+        <IconFile>Icon-60@2x.png</IconFile>
+      </Icon>
+      <Icon>
+        <xRes>57</xRes>
+        <yRes>57</yRes>
+        <IconFile>Icon.png</IconFile>
+      </Icon>
+      <Icon>
+        <xRes>114</xRes>
+        <yRes>114</yRes>
+        <IconFile>Icon@2x.png</IconFile>
+      </Icon>
+    </Icons>
+    <PackageSize CRKW="MamPackageSize">14265652</PackageSize>
+    <PublicKey CRKW="MamPublicKey">9E6F9EC9EB53E84607C75951E49D9349</PublicKey>
+    <MDXApplicationType>MDXOnly</MDXApplicationType>
+    <AppUniqueID CRKW="MamAppUniqueID">F7FFE769D681ACB48BD4743692C381E7</AppUniqueID>
+    <WrappingTimestamp CRKW="MamWrappingTimestamp">2014-07-01 16:15:23 +0000</WrappingTimestamp>
+    <MaxPlatform CRKW="MamMaxPlatform"/>
+  </MobileApp>
+  <Policies>
+    <PolicyMetadata>policy_metadata.xml</PolicyMetadata>
+  </Policies>
+</MobileAppPackage>
