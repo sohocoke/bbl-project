@@ -26,6 +26,7 @@
 -(BOOL ) createInternal: (MDXApp*) mdxApx
 {
     NSString* path = @"/Users/andy/Documents/src/mm2PackagingFactory";
+    
     NSLog(@"AppcHandler : invoke");
     NSTask *task = [[NSTask alloc] init];
     [task setLaunchPath:@"/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"];
