@@ -122,7 +122,6 @@
     //#GET SETTINGS DATA FROM APP ON APPC
     //$command="$curlFolder\curl.exe ""https://$AppCFQDN`:4443/ControlPoint/rest/mobileappmgmt/$AppName"" -H ""Cookie: JSESSIONID=$JSESSION; ACNODEID=$ACNODEID"" -H ""Accept-Encoding: gzip,deflate,sdch"" -H ""Accept-Language: en-US,en;q=0.8"" -H ""User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36"" -H ""Accept: application/json, text/javascript, */*; q=0.01"" -H ""Referer: https://$AppCFQDN`:4443/ControlPoint/main.html"" -H ""CG_CSRFTOKEN: $CSRF"" -H ""X-Requested-With: CloudGateway AJAX"" -H ""Connection: keep-alive"" --compressed -k"
     
-    NSString* appId = @"MobileApp89";
     
 //    //    NSLog(@"_______________GET OCAJSESSIONID_______________");
 //    //#GET OCAJSESSIONID
@@ -142,22 +141,18 @@
 //    NSLog(@"");
 //
 
+    NSLog(@"## Upload mdx.");
     mArgs = [self prepareStandardCURLArguments];
     [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/upload?CG_CSRFTOKEN=%@",self.baseurl, self.csrf]];
     
-//    [mArgs addObject:@"-X"];
-//    [mArgs addObject:@"POST"];
-//    [mArgs addObject:@"-H"];
-//    [mArgs addObject:@"Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryXch6u1VhESPiDsAf"];
-    
+    [mArgs addObject:@"--form"];
+    [mArgs addObject:@"data=@/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717.mdx;type=application/octet-stream"];
+
     // HACK remove clobbering content-type header.
     NSInteger indexOfContentTypeArg = [mArgs indexOfObject:@"Content-Type: application/json;charset=UTF-8"];
     [mArgs removeObjectAtIndex:indexOfContentTypeArg];
     [mArgs removeObjectAtIndex:indexOfContentTypeArg-1];
     
-    [mArgs addObject:@"--form"];
-    [mArgs addObject:@"data=@/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717.mdx;type=application/octet-stream"];
-
     [self executeAndAnalyzeOutput: mArgs];
 
     //{"errorcode":"-1","message":"Mobile App data cannot be retrieved"}
@@ -166,14 +161,17 @@
     NSLog(@"\n");
 
     
-    NSLog(@"_______________UPDATE POLICY _______________");
+    
+    NSLog(@"## Update app manifest.");
+//    NOTE request body needs to be JSON.
+    NSString* appId = @"MobileApp95";
     mArgs = [self prepareStandardCURLArguments];
     [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/mobileappmgmt/upgrade/%@", self.baseurl, appId]];
     
-    [mArgs addObject:@"--form"];
-    [mArgs addObject:@"data=@/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717-policy.xml"];
-
-
+    [mArgs addObject:@"--data"];
+//    [mArgs addObject:@"data=@/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717-manifest.xml"];
+    [mArgs addObject:@"@/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717.json"];
+    
     [self executeAndAnalyzeOutput: mArgs];
 
     
