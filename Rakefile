@@ -3,7 +3,7 @@ require 'rake/packagetask'
 ## run-specific params
 app = "MVCNetworking"
 desc = "MDX-packaged sample app."
-ipa = "mm2PackagingFactory/Resources/#{app}.ipa"
+ipa = "data/#{app}.ipa"
 
 
 ## env
@@ -17,7 +17,7 @@ prep_tool_bin = "/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"
 cert = "iPhone Distribution: Credit Suisse AG"
 
 # pre-requisite: enterprise provisioning profile.
-profile = "mm2PackagingFactory/Resources/citrix_2014.mobileprovision"
+profile = "data/citrix_2014.mobileprovision"
 
 
 
