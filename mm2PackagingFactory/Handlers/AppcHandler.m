@@ -97,7 +97,7 @@
 //    [mArgs addObject:@"Content-type: application/octet-stream"];
 //    [self executeAndAnalyzeOutput: mArgs];
 //    /*
-//     {"errorcode":"0","message":"Done","ncgapplication":{"name":"MobileApp7","description":"WorxMail EUR 94","loginurl":"","connectortype":"SSO","categoryname":"Default","deprovision":"IGNORE","useridcreationrule":"$FN$LN","ssotype":"Mobile","enterpriseattributes":"","passwordrule":{"maxlength":"0","minlength":"0","disallowusername":"false","mustcontaincapitalletter":"false","mustcontainspecialcharacter":"false"},"passwordvalidity":{"autoresetpassword":"false","passwordexpiry":"0","passwordvaliditydays":"0"},"workflowtemplate":"","iconpath":"oca/img/ext/be984054-1fd5-450e-b72b-5b2ce56f4ac3.png","applicationlabel":"WorxMail EUR","totallicenses":"0","maxthreshold":"40","minthreshold":"10","adintegrated":"false","serviceaccountid":"","serviceaccountpassword":"","autoprovision":"false","mobileprofile":{"binarylocation":"","devicetype":"","deviceos":""},"vpn":"false","appType":"mobile_ios","auto":"false","requiredKW":"false","disabled":"false","paid":"false","uuid":"be984054-1fd5-450e-b72b-5b2ce56f4ac3"}}
+//     {"errorcode":"0","message":"Done","ncgapplication":{"name":"MobileApp7","description":"WorxMail EUR cccc94","loginurl":"","connectortype":"SSO","categoryname":"Default","deprovision":"IGNORE","useridcreationrule":"$FN$LN","ssotype":"Mobile","enterpriseattributes":"","passwordrule":{"maxlength":"0","minlength":"0","disallowusername":"false","mustcontaincapitalletter":"false","mustcontainspecialcharacter":"false"},"passwordvalidity":{"autoresetpassword":"false","passwordexpiry":"0","passwordvaliditydays":"0"},"workflowtemplate":"","iconpath":"oca/img/ext/be984054-1fd5-450e-b72b-5b2ce56f4ac3.png","applicationlabel":"WorxMail EUR","totallicenses":"0","maxthreshold":"40","minthreshold":"10","adintegrated":"false","serviceaccountid":"","serviceaccountpassword":"","autoprovision":"false","mobileprofile":{"binarylocation":"","devicetype":"","deviceos":""},"vpn":"false","appType":"mobile_ios","auto":"false","requiredKW":"false","disabled":"false","paid":"false","uuid":"be984054-1fd5-450e-b72b-5b2ce56f4ac3"}}
 //     {"errorcode":"-1","message":"A configuration error occurred." //if app already exists
 //    */
 //    NSLog(@"_______________");
@@ -141,10 +141,10 @@
 //    NSLog(@"");
 //
 
-    NSString* appId = @"MobileApp95";
-    NSString* mdxPath = @"/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717.mdx";
-    NSString* mdxFilename = @"BCMCreditSuisse201404300717.mdx";
-    NSString* mdxManifestPath = @"/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717.json";
+    NSString* appId = @"MobileApp92";
+    NSString* mdxPath = @"/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/MVCNetworking.mdx";
+    NSString* mdxFilename = @"MVCNetworking.mdx";
+    NSString* mdxManifestPath = @"/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/MVCNetworking.json";
     
     NSLog(@"## Upload mdx.");
     mArgs = [self prepareStandardCURLArguments];
