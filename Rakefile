@@ -1,9 +1,27 @@
 require 'rake/packagetask'
 
+## run-specific params
+app = "MVCNetworking"
+desc = "MDX-packaged sample app."
+ipa = "mm2PackagingFactory/Resources/#{app}.ipa"
 
-ipa = "mm2PackagingFactory/Resources/MVCNetworking.ipa"
-mdx = "mm2PackagingFactory/Resources/MVCNetworking.mdx"
 
+## env
+log_path = "log/"
+mdx = "dist/#{app}.mdx"
+
+# pre-requisite: MDX Toolkit installed.
+prep_tool_bin = "/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"
+
+# pre-requisite: enterprise cert installed.
+cert = "iPhone Distribution: Credit Suisse AG"
+
+# pre-requisite: enterprise provisioning profile.
+profile = "mm2PackagingFactory/Resources/citrix_2014.mobileprovision"
+
+
+
+## user-interfacing tasks
 
 # cloning: unzip ipa, rewrite info.plist with new bundle id, rezip ipa.
 task :clone => [ :'ipa:unzip', :'ipa:rewrite_bid', :'ipa:zip' ]
@@ -11,6 +29,7 @@ task :clone => [ :'ipa:unzip', :'ipa:rewrite_bid', :'ipa:zip' ]
 
 # packaging: wrap with mdx, unzip mdx, rewrite policy, rezip mdx.
 task :package => [ :'mdx:create', :'mdx:unzip', :'rewrite_policy', :'mdx:zip' ]
+
 
 
 
@@ -36,7 +55,12 @@ end
 namespace :mdx do
 
 	task :create do
-		# TODO migrate PoC in PackagingFactory and integrate in workflow.
+		# 2014-07-29 10:51:20.343 mm2PackagingFactory[4770:303] will run task: (in /Users/andy/Library/Developer/Xcode/DerivedData/mm2PackagingFactory-ewivmycboqcyggcxxxfbodztwxcz/Build/Products/Debug) /Applications/Citrix/MDXToolkit/CGAppCLPrepTool "Wrap" -Cert "iPhone Distribution: Credit Suisse AG" -Profile "/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/citrix_2014.mobileprovision" -in "/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/MVCNetworking.ipa" -out "/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/MVCNetworking.mdx" -logFile "wrap-MVCNetworking.log" -logWriteLevel "4" -appName "MVCNetworking" -appDesc "test wrapping MVCNetworking" -maxPlatform "7.1" 
+
+		sh %(
+			#{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}" -logFile "#{log_path}/#{app}-mdx.log" -logWriteLevel "4" -appName "#{app}" -appDesc "#{desc}"
+		)
+
 	end
 
 	task :unzip do
