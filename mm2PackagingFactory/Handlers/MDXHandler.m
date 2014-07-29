@@ -38,13 +38,13 @@
     [argArray addObject:@"-Cert"];
     [argArray addObject:@"iPhone Distribution: Credit Suisse AG"]; //certificate and private key as named in Keychain
     [argArray addObject:@"-Profile"];
-    [argArray addObject:[NSString stringWithFormat:@"%@/mm2PackagingFactory/Resources/citrix_2014.mobileprovision", path]]; //Mobile Provision profile
+    [argArray addObject:[NSString stringWithFormat:@"%@/data/citrix_2014.mobileprovision", path]]; //Mobile Provision profile
     
     [argArray addObject:@"-in"];
-    [argArray addObject:[NSString stringWithFormat:@"%@/mm2PackagingFactory/Resources/MVCNetworking.ipa", path]]; //input .ipa
+    [argArray addObject:[NSString stringWithFormat:@"%@/data/MVCNetworking.ipa", path]]; //input .ipa
     
     [argArray addObject:@"-out"];
-    [argArray addObject:[NSString stringWithFormat:@"%@/mm2PackagingFactory/Resources/MVCNetworking.mdx", path]]; //output .mdx
+    [argArray addObject:[NSString stringWithFormat:@"%@/data/MVCNetworking.mdx", path]]; //output .mdx
     
     [argArray addObject:@"-logFile"];
     [argArray addObject:@"wrap-MVCNetworking.log"];

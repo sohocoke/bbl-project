@@ -143,9 +143,9 @@
 //
 
     NSString* appId = @"MobileApp92";
-    NSString* mdxPath = @"/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/MVCNetworking.mdx";
+    NSString* mdxPath = @"/Users/andy/Documents/src/mm2PackagingFactory/data/MVCNetworking.mdx";
     NSString* mdxFilename = @"MVCNetworking.mdx";
-    NSString* mdxManifestPath = @"/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/MVCNetworking.json";
+    NSString* mdxManifestPath = @"/Users/andy/Documents/src/mm2PackagingFactory/data/MVCNetworking.json";
     
     NSLog(@"## Upload mdx.");
     mArgs = [self prepareStandardCURLArguments];
