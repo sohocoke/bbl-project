@@ -160,11 +160,20 @@
     NSLog(@"_______________");
     NSLog(@"\n");
 
+    NSLog(@"## Prep app manifest update.");
+    //    NOTE request body needs to be JSON.
+    NSString* appId = @"MobileApp95";
+    mArgs = [self prepareStandardCURLArguments];
+    [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/mobileappmgmt/upgradepkg/%@", self.baseurl, appId]];
+    
+    [mArgs addObject:@"--data"];
+    [mArgs addObject:@"BCMCreditSuisse201404300717.mdx"];
+    
+    [self executeAndAnalyzeOutput: mArgs];
     
     
     NSLog(@"## Update app manifest.");
 //    NOTE request body needs to be JSON.
-    NSString* appId = @"MobileApp95";
     mArgs = [self prepareStandardCURLArguments];
     [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/mobileappmgmt/upgrade/%@", self.baseurl, appId]];
     
