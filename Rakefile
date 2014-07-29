@@ -10,6 +10,8 @@ ipa = "data/#{app}.ipa"
 log_path = "log/"
 mdx = "dist/#{app}.mdx"
 
+appc_base_url = "https://161.202.193.123:4443/ControlPoint"
+
 # pre-requisite: MDX Toolkit installed.
 prep_tool_bin = "/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"
 
@@ -69,6 +71,7 @@ namespace :mdx do
 		)
 	end
 
+	# NOTE re-written policy does not apply unless submitted using the 'mobileappmgmt/upgrade' endpoint in the 'update-appc-entry' sequence.
 	task :rewrite_policy do
 		sh %(
 			# TODO add XenMobile policies since they won't be detected due to bundle id change.
@@ -100,6 +103,9 @@ end
 
 namespace :app_controller do
 	task :login do
+		sh %(
+			/usr/bin/curl #{appc_base_url} -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept: application/json,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.8" -H "Connection: keep-alive" -H "X-Requested-With: CloudGateway AJAX" -H "Referer: https://161.202.193.123:4443/ControlPoint/" -H "Origin: #{appc_base_url}" -H "Content-Type: application/json;charset=UTF-8" -H "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36" -H "CG_CSRFTOKEN: (null)" --compressed -k -I --cookie-jar data/cookies.txt
+		)
 	end
 
 	task :create => :login do
