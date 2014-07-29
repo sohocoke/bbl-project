@@ -141,12 +141,17 @@
 //    NSLog(@"");
 //
 
+    NSString* appId = @"MobileApp95";
+    NSString* mdxPath = @"/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717.mdx";
+    NSString* mdxFilename = @"BCMCreditSuisse201404300717.mdx";
+    NSString* mdxManifestPath = @"/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717.json";
+    
     NSLog(@"## Upload mdx.");
     mArgs = [self prepareStandardCURLArguments];
     [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/upload?CG_CSRFTOKEN=%@",self.baseurl, self.csrf]];
     
     [mArgs addObject:@"--form"];
-    [mArgs addObject:@"data=@/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717.mdx;type=application/octet-stream"];
+    [mArgs addObject:[NSString stringWithFormat:@"data=@%@;type=application/octet-stream", mdxPath]];
 
     // HACK remove clobbering content-type header.
     NSInteger indexOfContentTypeArg = [mArgs indexOfObject:@"Content-Type: application/json;charset=UTF-8"];
@@ -162,12 +167,11 @@
 
     NSLog(@"## Prep app manifest update.");
     //    NOTE request body needs to be JSON.
-    NSString* appId = @"MobileApp95";
     mArgs = [self prepareStandardCURLArguments];
     [mArgs addObject:[NSString stringWithFormat:@"%@/ControlPoint/rest/mobileappmgmt/upgradepkg/%@", self.baseurl, appId]];
     
     [mArgs addObject:@"--data"];
-    [mArgs addObject:@"BCMCreditSuisse201404300717.mdx"];
+    [mArgs addObject:mdxFilename];
     
     [self executeAndAnalyzeOutput: mArgs];
     
@@ -179,7 +183,7 @@
     
     [mArgs addObject:@"--data"];
 //    [mArgs addObject:@"data=@/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717-manifest.xml"];
-    [mArgs addObject:@"@/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/BCMCreditSuisse201404300717.json"];
+    [mArgs addObject:[NSString stringWithFormat:@"@%@", mdxManifestPath]];
     
     [self executeAndAnalyzeOutput: mArgs];
 
