@@ -31,12 +31,11 @@ int main(int argc, const char * argv[])
     [configuration setPathToControlList:[NSString stringWithUTF8String:argv[3]]];
     
     
-//    //create MDX
-//    MDXHandler * mdxHandler = [[MDXHandler alloc] init];
-//    MDXApp* mdxApp = [[MDXApp alloc] initWithName:@"worxmail" displayName:@"WorxMail HKG"];
-//    if ([mdxHandler createInternal:mdxApp]) {
-//        
-//    }
+    //create MDX
+    MDXHandler * mdxHandler = [[MDXHandler alloc] init];
+    if ([mdxHandler createInternal:nil]) {
+        
+    }
     
 
 
@@ -52,7 +51,7 @@ int main(int argc, const char * argv[])
     //Connect to AppController using CURL
     AppcHandler * appcHandler = [[AppcHandler alloc] init];
     MDXApp* mdxApp = [[MDXApp alloc] initWithName:@"worxmail" displayName:@"WorxMail HKG"];
-    [appcHandler createInternal:mdxApp];
+//    [appcHandler createInternal:mdxApp];
 
 //    //open and then compress an archive
 //    ArchiveHandler * archiveHandler = [[ArchiveHandler alloc] init];

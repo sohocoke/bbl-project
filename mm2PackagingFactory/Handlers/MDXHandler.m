@@ -25,34 +25,36 @@
 
 -(BOOL ) createInternal: (MDXApp*) mdxApx
 {
-    
+    NSString* path = @"/Users/andy/Documents/src/mm2PackagingFactory";
     NSLog(@"AppcHandler : invoke");
     NSTask *task = [[NSTask alloc] init];
     [task setLaunchPath:@"/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"];
     
     
     NSMutableArray* argArray  = [[NSMutableArray alloc]init];
-    [argArray addObject:@"-C"];
+    [argArray addObject:@"Wrap"];
+
+    [argArray addObject:@"-Cert"];
     [argArray addObject:@"iPhone Distribution: Credit Suisse AG"]; //certificate and private key as named in Keychain
-    [argArray addObject:@"-P"];
-    [argArray addObject:@"/Users/jeremybrookfield/Work/CS Enterprise/citrix_2014.mobileprovision"]; //Mobile Provision profile
+    [argArray addObject:@"-Profile"];
+    [argArray addObject:[NSString stringWithFormat:@"%@/mm2PackagingFactory/Resources/citrix_2014.mobileprovision", path]]; //Mobile Provision profile
     
     [argArray addObject:@"-in"];
-    [argArray addObject:@"/Users/jeremybrookfield/Work/mm_apps/ios/WorxMail-Release-1.5-94.ipa"]; //input .ipa
+    [argArray addObject:[NSString stringWithFormat:@"%@/mm2PackagingFactory/Resources/MVCNetworking.ipa", path]]; //input .ipa
     
     [argArray addObject:@"-out"];
-    [argArray addObject:@"/Users/jeremybrookfield/Work/mm_apps/ios/WorxMail-Release-1.5-94.mdx"]; //output .mdx
+    [argArray addObject:[NSString stringWithFormat:@"%@/mm2PackagingFactory/Resources/MVCNetworking.mdx", path]]; //output .mdx
     
     [argArray addObject:@"-logFile"];
-    [argArray addObject:@"/Users/jeremybrookfield/Work/mm_apps/ios/WorxMail-Release-1.5-94.log"];
+    [argArray addObject:@"wrap-MVCNetworking.log"];
     [argArray addObject:@"-logWriteLevel"];
     [argArray addObject:@"4"];
     
-    [argArray addObject:@"-desc"];
-    [argArray addObject:@"WorxMail 94"];
+    [argArray addObject:@"-appName"];
+    [argArray addObject:@"MVCNetworking"];
     
-    [argArray addObject:@"-app"];
-    [argArray addObject:@"WorxMail HKG"];
+    [argArray addObject:@"-appDesc"];
+    [argArray addObject:@"test wrapping MVCNetworking"];
     
     [argArray addObject:@"-maxPlatform"];
     [argArray addObject:@"7.1"];
@@ -67,6 +69,8 @@
     
     NSPipe * out = [NSPipe pipe];
     [task setStandardOutput:out]; //direct output to pipe
+    
+    NSLog(@"will run task: %@", [task description]);
     
     [task launch];
     [task waitUntilExit];  // wait until command has ended
