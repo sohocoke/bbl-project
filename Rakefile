@@ -1,5 +1,9 @@
 require 'rake/packagetask'
 
+
+# TODO: capture all shell execution output, do some sanity checks for errors. (grep 'HTTP/1.1')
+
+
 ## run-specific params
 app = "MVCNetworking"
 desc = "MDX-packaged sample app."
@@ -10,7 +14,7 @@ ipa = "data/#{app}.ipa"
 log_path = "log/"
 mdx = "dist/#{app}.mdx"
 
-appc_base_url = "https://161.202.193.123:4443/ControlPoint"
+appc_base_url = "https://161.202.193.123:4443"
 
 # pre-requisite: MDX Toolkit installed.
 prep_tool_bin = "/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"
@@ -57,8 +61,6 @@ end
 namespace :mdx do
 
 	task :create do
-		# 2014-07-29 10:51:20.343 mm2PackagingFactory[4770:303] will run task: (in /Users/andy/Library/Developer/Xcode/DerivedData/mm2PackagingFactory-ewivmycboqcyggcxxxfbodztwxcz/Build/Products/Debug) /Applications/Citrix/MDXToolkit/CGAppCLPrepTool "Wrap" -Cert "iPhone Distribution: Credit Suisse AG" -Profile "/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/citrix_2014.mobileprovision" -in "/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/MVCNetworking.ipa" -out "/Users/andy/Documents/src/mm2PackagingFactory/mm2PackagingFactory/Resources/MVCNetworking.mdx" -logFile "wrap-MVCNetworking.log" -logWriteLevel "4" -appName "MVCNetworking" -appDesc "test wrapping MVCNetworking" -maxPlatform "7.1" 
-
 		sh %(
 			#{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}" -logFile "#{log_path}/#{app}-mdx.log" -logWriteLevel "4" -appName "#{app}" -appDesc "#{desc}"
 		)
@@ -102,9 +104,25 @@ end
 
 
 namespace :app_controller do
+	headers = %(
+		-H "Accept-Encoding: gzip,deflate,sdch" -H "Accept: application/json,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.8" -H "Connection: keep-alive" -H "X-Requested-With: CloudGateway AJAX" -H "Referer: #{appc_base_url}/ControlPoint/" -H "Origin: #{appc_base_url}" -H "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36"
+	).strip
+
 	task :login do
 		sh %(
-			/usr/bin/curl #{appc_base_url} -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept: application/json,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.8" -H "Connection: keep-alive" -H "X-Requested-With: CloudGateway AJAX" -H "Referer: https://161.202.193.123:4443/ControlPoint/" -H "Origin: #{appc_base_url}" -H "Content-Type: application/json;charset=UTF-8" -H "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36" -H "CG_CSRFTOKEN: (null)" --compressed -k -I --cookie-jar data/cookies.txt
+			/usr/bin/curl #{appc_base_url}/ControlPoint/ #{headers} --compressed -k -I --cookie-jar data/cookies.txt -v
+		)
+		
+		cookies_a = `cat data/cookies.txt`.each_line.map{|e| e.split("\t")}.map{|e| e[5..6]}.compact
+		cookies_a << ['OCAJSESSIONID', '(null)']
+		$cookies_as_headers = "Cookie: " + cookies_a.map{|k,v| "#{k}=#{v.strip}"}.join("; ")
+
+		$csrf_token_header=`/usr/bin/curl #{appc_base_url}/ControlPoint/JavaScriptServlet -X POST #{headers} --compressed -k --cookie data/cookies.txt -H "FETCH-CSRF-TOKEN: 1"`.gsub(":", ": ")
+
+		sh %(	
+			/usr/bin/curl #{appc_base_url}/ControlPoint/rest/newlogin #{headers} --compressed -k --cookie data/cookies.txt -H "#{$csrf_token_header}" -H "Content-Type: application/json" --data "@mm2PackagingFactory/Resources/login.txt" -v
+			
+			echo "### login complete."
 		)
 	end
 
@@ -112,6 +130,24 @@ namespace :app_controller do
 	end
 
 	task :update => :login do
+		# /usr/bin/curl -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept: application/json,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.8" -H "Connection: keep-alive" -H "X-Requested-With: CloudGateway AJAX" -H "Referer: https://161.202.193.123:4443/ControlPoint/" -H "Origin: https://161.202.193.123:4443" -H "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36" -H "Cookie: JSESSIONID=E989363500CAA9BAF9F06706DE810DBA; ACNODEID=8226125278091195649; OCAJSESSIONID=(null)" -H "CG_CSRFTOKEN: VXLZ-27RA-293X-HEE4-WNU9-5YTF-AD4G-BUY9" --compressed -k "https://161.202.193.123:4443/ControlPoint/upload?CG_CSRFTOKEN=VXLZ-27RA-293X-HEE4-WNU9-5YTF-AD4G-BUY9" --form "data=@/Users/andy/Documents/src/mm2PackagingFactory/data/MVCNetworking.mdx;type=application/octet-stream" 
+
+		# /usr/bin/curl -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept: application/json,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.8" -H "Connection: keep-alive" -H "X-Requested-With: CloudGateway AJAX" -H "Referer: https://161.202.193.123:4443/ControlPoint/" -H "Origin: https://161.202.193.123:4443" -H "Content-Type: application/json;charset=UTF-8" -H "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36" -H "Cookie: JSESSIONID=E989363500CAA9BAF9F06706DE810DBA; ACNODEID=8226125278091195649; OCAJSESSIONID=(null)" -H "CG_CSRFTOKEN: VXLZ-27RA-293X-HEE4-WNU9-5YTF-AD4G-BUY9" --compressed -k "https://161.202.193.123:4443/ControlPoint/rest/mobileappmgmt/upgradepkg/MobileApp92" --data "MVCNetworking.mdx" 
+
+		# /usr/bin/curl -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept: application/json,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.8" -H "Connection: keep-alive" -H "X-Requested-With: CloudGateway AJAX" -H "Referer: https://161.202.193.123:4443/ControlPoint/" -H "Origin: https://161.202.193.123:4443" -H "Content-Type: application/json;charset=UTF-8" -H "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36" -H "Cookie: JSESSIONID=E989363500CAA9BAF9F06706DE810DBA; ACNODEID=8226125278091195649; OCAJSESSIONID=(null)" -H "CG_CSRFTOKEN: VXLZ-27RA-293X-HEE4-WNU9-5YTF-AD4G-BUY9" --compressed -k "https://161.202.193.123:4443/ControlPoint/rest/mobileappmgmt/upgrade/MobileApp92" --data "@/Users/andy/Documents/src/mm2PackagingFactory/data/MVCNetworking.json" 
+
+		# TODO get app id
+		app_id = "MobileApp92"
+	
+		sh %(
+			/usr/bin/curl #{appc_base_url}/ControlPoint/upload?CG_CSRFTOKEN=#{$csrf_token_header.gsub('CG_CSRFTOKEN: ', '')} #{headers} --compressed -k --cookie data/cookies.txt -H "#{$csrf_token_header}" --form "data=@#{mdx};type=application/octet-stream" -vvv
+
+			/usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers} --compressed -k --cookie data/cookies.txt  -H "#{$csrf_token_header}" --data "#{app}.mdx"
+
+			/usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers} --compressed -k --cookie data/cookies.txt -H "Content-Type: application/json" --data "data/#{app}.json"
+
+		)
+
 	end
 end
 
