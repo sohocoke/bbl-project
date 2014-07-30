@@ -122,7 +122,7 @@ namespace :app_controller do
 		$csrf_token_header=`/usr/bin/curl #{appc_base_url}/ControlPoint/JavaScriptServlet -X POST #{headers} --compressed -k --cookie data/cookies.txt -H "FETCH-CSRF-TOKEN: 1"`.gsub(":", ": ")
 
 		sh %(	
-			/usr/bin/curl #{appc_base_url}/ControlPoint/rest/newlogin #{headers} --compressed -k --cookie data/cookies.txt -H "#{$csrf_token_header}" -H "Content-Type: application/json" --data "@mm2PackagingFactory/Resources/login.txt" -v
+			/usr/bin/curl #{appc_base_url}/ControlPoint/rest/newlogin #{headers} --compressed -k --cookie data/cookies.txt -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8" --data "@mm2PackagingFactory/Resources/login.txt" -v
 			
 			echo "### login complete."
 		)
@@ -142,10 +142,13 @@ namespace :app_controller do
 	
 		sh %(
 			/usr/bin/curl #{appc_base_url}/ControlPoint/upload?CG_CSRFTOKEN=#{$csrf_token_header.gsub('CG_CSRFTOKEN: ', '')} #{headers} --compressed -k --cookie data/cookies.txt -H "#{$csrf_token_header}" --form "data=@#{mdx};type=application/octet-stream" -v
+		)
+		sh %(
+			/usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers} --compressed -k --cookie data/cookies.txt -H "#{$csrf_token_header}" --data "#{app}.mdx" -v  > /dev/null  # don't need the output.
+		)
+		sh %(
 
-			/usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers} --compressed -k --cookie data/cookies.txt -H "#{$csrf_token_header}" --data "#{app}.mdx" -v
-
-			/usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers} --compressed -k --cookie data/cookies.txt -H "Content-Type: application/json" --data "data/#{app}.json" -v > /dev/null  # don't need the output.
+			/usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers} --compressed -k -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@data/#{app}.json" -v
 		)
 	end
 
