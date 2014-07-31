@@ -112,6 +112,13 @@ namespace :app_controller do
   task :create => :login do
   end
 
+  desc "get manifest for app entry"
+  task :get_manifest, [:app_name] => :login do |t, args|
+    app_id = id_for_app args[:app_name], JSON.parse(`cat log/app_controller_entries.log`)
+    
+    metadata = metadata_for_app_id app_id, appc_base_url, headers, cookies_file
+    puts metadata
+  end
 
   task :login do
     sh %(
@@ -141,6 +148,12 @@ namespace :app_controller do
     end
 
     app_id = matching_entries.keys.first
+  end
+
+  def metadata_for_app_id(app_id, appc_base_url, headers, cookies_file)
+    metadata = `
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/#{app_id}?_=1406733010550 #{headers} --compressed -k --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8" -v
+    `
   end
 end
 
