@@ -1,0 +1,36 @@
+targets:
+  -
+    id: etit
+    description: test XenMobile instance
+    servers:
+    -
+      base_url: https://161.202.193.123:4443
+      credentials_path: data/login.json
+  -
+    id: prod
+    description: production XenMobile instance
+    servers:
+    - 
+      base_url: xxx
+      credentials_path: xyz
+
+
+
+
+templates:
+  -
+    id: firmwide
+    manifest_values:
+      ncgapplication:
+        description: stub firm-wide description for app.
+      # more firm-wide configuration to go here.
+  -
+    id: region_x
+    manifest_values:
+      some_server_address_field: xxx
+
+  # more server definitions here...
+
+
+  # ?? need a separate 'regions' TLE?
+
