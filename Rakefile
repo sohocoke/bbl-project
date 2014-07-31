@@ -10,11 +10,12 @@ require 'rake/packagetask'
 ## run-specific params
 app = "MVCNetworking"
 ipa = "data/#{app}.ipa"
-manifest_json = "data/#{app}_manifest.json"
 
 ## env
 log_path = "log/"
 mdx = "dist/#{app}.mdx"
+manifest_json = "log/#{app}_manifest.json"
+cookies_file = "data/cookies.txt"
 
 appc_base_url = "https://161.202.193.123:4443"
 login_json = "data/login.json"
@@ -87,17 +88,17 @@ namespace :app_controller do
   task :update => :login do
     # get app id
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers} --compressed -k --cookie data/cookies.txt -H "#{$csrf_token_header}" -v > data/app_controller_entries.log
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers} --compressed -k --cookie #{cookies_file} -H "#{$csrf_token_header}" -v > log/app_controller_entries.log
     )
-    entries_json = JSON.parse(`cat data/app_controller_entries.log`)
+    entries_json = JSON.parse(`cat log/app_controller_entries.log`)
     app_id = id_for_app app, entries_json
 
 
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/upload?CG_CSRFTOKEN=#{$csrf_token_header.gsub('CG_CSRFTOKEN: ', '')} #{headers} --compressed -k --cookie data/cookies.txt -H "#{$csrf_token_header}" --form "data=@#{mdx};type=application/octet-stream" -v
+      /usr/bin/curl #{appc_base_url}/ControlPoint/upload?CG_CSRFTOKEN=#{$csrf_token_header.gsub('CG_CSRFTOKEN: ', '')} #{headers} --compressed -k --cookie #{cookies_file} -H "#{$csrf_token_header}" --form "data=@#{mdx};type=application/octet-stream" -v
     )
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers} --compressed -k --cookie data/cookies.txt -H "#{$csrf_token_header}" --data "#{app}.mdx" -v  > #{manifest_json}  # save for the next request.
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers} --compressed -k --cookie #{cookies_file} -H "#{$csrf_token_header}" --data "#{app}.mdx" -v  > #{manifest_json}  # save for the next request.
     )
 
     # TODO apply all diffs in original package, or something.
@@ -114,17 +115,17 @@ namespace :app_controller do
 
   task :login do
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/ #{headers} --compressed -k -I --cookie-jar data/cookies.txt -v
+      /usr/bin/curl #{appc_base_url}/ControlPoint/ #{headers} --compressed -k -I --cookie-jar #{cookies_file} -v
     )
 
-    cookies_a = `cat data/cookies.txt`.each_line.map{|e| e.split("\t")}.map{|e| e[5..6]}.compact
+    cookies_a = `cat #{cookies_file}`.each_line.map{|e| e.split("\t")}.map{|e| e[5..6]}.compact
     cookies_a << ['OCAJSESSIONID', '(null)']
     $cookies_as_headers = "Cookie: " + cookies_a.map{|k,v| "#{k}=#{v.strip}"}.join("; ")
 
-    $csrf_token_header=`/usr/bin/curl #{appc_base_url}/ControlPoint/JavaScriptServlet -X POST #{headers} --compressed -k --cookie data/cookies.txt -H "FETCH-CSRF-TOKEN: 1"`.gsub(":", ": ")
+    $csrf_token_header=`/usr/bin/curl #{appc_base_url}/ControlPoint/JavaScriptServlet -X POST #{headers} --compressed -k --cookie #{cookies_file} -H "FETCH-CSRF-TOKEN: 1"`.gsub(":", ": ")
 
     sh %( 
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/newlogin #{headers} --compressed -k --cookie data/cookies.txt -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8" --data "@#{login_json}" -v
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/newlogin #{headers} --compressed -k --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8" --data "@#{login_json}" -v
     )
     puts "### login complete."
   end
