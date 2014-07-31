@@ -1,3 +1,7 @@
+# TODO basic encryption of login.json
+# ?? need a separate 'regions' TLE?
+
+
 targets:
   -
     id: etit
@@ -31,6 +35,4 @@ templates:
 
   # more server definitions here...
 
-
-  # ?? need a separate 'regions' TLE?
 

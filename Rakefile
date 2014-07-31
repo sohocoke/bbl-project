@@ -7,14 +7,8 @@ require_relative 'lib/configs'
 # TODO: extract params.
 
 
-## run-specific params
-app = "MVCNetworking"
-ipa = "data/#{app}.ipa"
-
 ## env
 log_path = "log/"
-mdx = "dist/#{app}.mdx"
-manifest_json = "log/#{app}_manifest.json"
 cookies_file = "data/cookies.txt"
 
 appc_base_url = "https://161.202.193.123:4443"
@@ -42,7 +36,14 @@ namespace :app do
 
   desc "TODO wrap with mdx, unzip mdx, rewrite policy, rezip mdx, update app controller entry."
   # task :deploy, [ :app_name ] => [ :'config:merge', :'mdx:create', :'mdx:unzip', :'mdx:rewrite_policy', :'mdx:zip' ]
-  task :deploy, [ :app_name ] => [ :'config:merge', :'mdx:create', :'config:deploy' ]
+  task :deploy, [ :app_name ] do |t, args|
+    [ :'config:merge', 
+      :'mdx:create', 
+      :'config:deploy' 
+    ].each do |task_name|
+      Rake::Task[task_name].invoke args[:app_name]
+    end
+  end
 end
 
 namespace :config do
@@ -50,6 +51,9 @@ namespace :config do
   task :merge, [ :app_name ] do |t, args|
     raise "task needs arguments: see 'rake -T'" if args.nil?
     puts cascaded_configs args[:app_name]
+
+    # TODO how to peacefully hand over this result?
+
   end
 
   # loop through all targets and deploy.
@@ -61,7 +65,7 @@ namespace :config do
         login_json = server['credentials_path']
         
         # invoke app_controller:update
-        Rake::Task['app_controller:update'].invoke appc_base_url, login_json
+        Rake::Task['app_controller:update'].invoke appc_base_url, login_json, args[:app_name]
       end
     end  
   end
@@ -69,12 +73,16 @@ end
 
 namespace :mdx do
   desc "create an .mdx from an .ipa"
-  task :create do
+  task :create, [:app_name] do |t, args|
+    app_name = args[:app_name]
 
+    ipa = "data/apps/#{app_name}/#{app_name}.ipa"  # REFACTOR
     prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first
 
     description = "XenMobile-treated app (date=#{Time.new}, version=#{prep_tool_version})"
+    mdx = "dist/#{app_name}.mdx"
 
+    ## preptool information.
     # Usage: CGAppCLPrepTool [ Wrap |Sign |SetInfo |GetInfo ] -Cert CERTIFICATE -Profile PROFILE -in INPUTFILE -out OUTPUTFILE -appDesc DESCRIPTION -logFile LOGFILE -logWriteLevel LEVEL -logDisplayLevel LEVEL
 
     #  -Cert CERTIFICATE          ==>  (Required)Name of the certificate to sign the app with
@@ -94,9 +102,10 @@ namespace :mdx do
     #  -storeURL url              ==>  (Optional)http://appstoreaddress/adHoc/ThriftClientTest.plist 
     #  -update yes/no             ==>  (Optional)yes/no 
     #  -policyXML FILE PATH       ==>  (Optional)app specific policy file.
+    ##
 
     sh %(
-      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}" -logFile "#{log_path}/#{app}-mdx.log" -logWriteLevel "4" -appName "#{app}" -appDesc "#{description}"
+      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}" -logFile "#{log_path}/#{app_name}-mdx.log" -logWriteLevel "4" -appName "#{app_name}" -appDesc "#{description}"
     )
   end
 
@@ -134,7 +143,10 @@ namespace :app_controller do
     ).strip
 
   desc "update app entry in app controller"
-  task :update, [:appc_base_url, :login_json] => :login do
+  task :update, [:appc_base_url, :login_json, :app] => :login do |t, args|
+    app = args[:app]
+    mdx = "dist/#{app}.mdx"
+    manifest_json = "log/#{app}_manifest.json"
     # get app id
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers} #{curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/app_controller_entries.log

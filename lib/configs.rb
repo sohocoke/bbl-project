@@ -1,10 +1,12 @@
+# REFACTOR: data/config
+
 require 'yaml'
 
 require_relative 'hash_ext'
 
 def cascaded_configs( app )
 	templates = read_configs['templates']
-	worxweb_config = YAML.load File.read("data/config/#{app}.yaml")
+	worxweb_config = YAML.load File.read("data/apps/#{app}/#{app}.yaml")
 
 	# validate existence of ids
 	(templates + [ worxweb_config]).each do |c|
