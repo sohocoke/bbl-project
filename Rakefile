@@ -13,8 +13,8 @@ cookies_file = "data/cookies.txt"
 
 appc_base_url = "https://161.202.193.123:4443"
 
-# curl_opts = "--compressed -k -v"  ## DEBUG
-curl_opts = "--compressed -k"
+# $curl_opts = "--compressed -k -v"  ## DEBUG
+$curl_opts = "--compressed -k"
 
 # pre-requisite: MDX Toolkit installed.
 prep_tool_bin = "/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"
@@ -109,9 +109,11 @@ namespace :mdx do
     )
   end
 
-  task :unzip do
+  task :unzip, [:app_name] do |t, args|
+    mdx = "dist/#{args[:app_name]}.mdx"
     sh %(
-      unzip #{mdx} -d "mdx-unzipped"
+      rm -r dist/mdx-unzipped
+      unzip #{mdx} -d "dist/mdx-unzipped"
     )
   end
 
@@ -149,26 +151,25 @@ namespace :app_controller do
     manifest_json = "log/#{app}_manifest.json"
     # get app id
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers} #{curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/app_controller_entries.log
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/app_controller_entries.log
     )
     entries_json = JSON.parse(`cat log/app_controller_entries.log`)
     app_id = id_for_app app, entries_json
 
 
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/upload?CG_CSRFTOKEN=#{$csrf_token_header.gsub('CG_CSRFTOKEN: ', '')} #{headers} #{curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --form "data=@#{mdx};type=application/octet-stream"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/upload?CG_CSRFTOKEN=#{$csrf_token_header.gsub('CG_CSRFTOKEN: ', '')} #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --form "data=@#{mdx};type=application/octet-stream"
     )
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers} #{curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data "#{app}.mdx"  > #{manifest_json}  # save for the next request.
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data "#{app}.mdx"  > #{manifest_json}  # save for the next request.
     )
 
     # TODO some fields, including ones specified during prep tool invocation, do not apply -- select and replace values for the right object paths.
     # e.g. description
-    
 
 
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers} #{curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{manifest_json}"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{manifest_json}"
     )
   end
 
@@ -176,12 +177,17 @@ namespace :app_controller do
   task :create => :login do
   end
 
-  desc "get manifest for app entry"
-  task :get_manifest, [:app_name] => :login do |t, args|
+  desc "get metadata for app entry"
+  task :get_metadata, [:app_name, :appc_base_url] => :login do |t, args|
+    metadata_path = "dist/#{args[:app_name]}-metadata.json"
+    appc_base_url = args[:appc_base_url]
+
     app_id = id_for_app args[:app_name], JSON.parse(`cat log/app_controller_entries.log`)
     
     metadata = metadata_for_app_id app_id, appc_base_url, headers, cookies_file
-    puts metadata
+    File.write metadata_path, metadata
+
+    puts "metadata saved to #{metadata_path}"
   end
 
 
@@ -191,17 +197,17 @@ namespace :app_controller do
     raise "nil parameter(s) to task :login; args: #{args}" if ! args.select(&:nil?).empty?
 
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/ #{headers} #{curl_opts} -I --cookie-jar #{cookies_file}
+      /usr/bin/curl #{appc_base_url}/ControlPoint/ #{headers} #{$curl_opts} -I --cookie-jar #{cookies_file}
     )
 
     cookies_a = `cat #{cookies_file}`.each_line.map{|e| e.split("\t")}.map{|e| e[5..6]}.compact
     cookies_a << ['OCAJSESSIONID', '(null)']
     $cookies_as_headers = "Cookie: " + cookies_a.map{|k,v| "#{k}=#{v.strip}"}.join("; ")
 
-    $csrf_token_header=`/usr/bin/curl #{appc_base_url}/ControlPoint/JavaScriptServlet -X POST #{headers} #{curl_opts} --cookie #{cookies_file} -H "FETCH-CSRF-TOKEN: 1"`.gsub(":", ": ")
+    $csrf_token_header=`/usr/bin/curl #{appc_base_url}/ControlPoint/JavaScriptServlet -X POST #{headers} #{$curl_opts} --cookie #{cookies_file} -H "FETCH-CSRF-TOKEN: 1"`.gsub(":", ": ")
 
     sh %( 
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/newlogin #{headers} #{curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8" --data "@#{login_json}"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/newlogin #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8" --data "@#{login_json}"
     )
     puts "### login complete."
   end
@@ -222,7 +228,7 @@ namespace :app_controller do
 
   def metadata_for_app_id(app_id, appc_base_url, headers, cookies_file)
     metadata = `
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/#{app_id}?_=1406733010550 #{headers} #{curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/#{app_id}?_=1406733010550 #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8"
     `
   end
 end
