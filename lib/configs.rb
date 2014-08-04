@@ -53,7 +53,7 @@ def delta_applied( config, config_delta )
 			# no predicate in key
 			# recur with val if hash.
 			if v.is_a? Hash
-				puts "recursively handling #{v} for key #{k} with config #{config}"
+				debug "recursively handling #{v} for key #{k} with config #{config}"
 				new_config[k] = delta_applied config[k], v
 			else
 				# val in delta is a non-hash: just set.
@@ -65,36 +65,39 @@ def delta_applied( config, config_delta )
 	new_config
 end
 
-def decompose(key)
-	if key =~ (/(.+?)\[(.+?)='(.+?)'\]/)
-		[ $1, $2, $3 ]
-	else
-		raise "can't decompose key #{key_with_predicate}"
+private 
+	def decompose(key)
+		if key =~ (/(.+?)\[(.+?)='(.+?)'\]/)
+			[ $1, $2, $3 ]
+		else
+			raise "can't decompose key #{key_with_predicate}"
+		end
 	end
-end
 
-def has_predicate?(key)
-	key =~ (/(.+?)\[(.+?)='(.+?)'\]/)
-end
+	def has_predicate?(key)
+		key =~ (/(.+?)\[(.+?)='(.+?)'\]/)
+	end
 
-def read_templates(app)
-	templates + [ YAML.load(File.read("data/apps/#{app}/#{app}.yaml")) ]
-end
+	def read_templates(app)
+		templates + [ YAML.load(File.read("data/apps/#{app}/#{app}.yaml")) ]
+	end
 
-def read_configs
-	YAML.load File.read('data/config/configs.yaml')
-end
-
-
-def targets
-	read_configs['targets']
-end
-
-def templates
-	read_configs['templates']
-end
+	def read_configs
+		YAML.load File.read('data/config/configs.yaml')
+	end
 
 
-def debug(msg)
-	# puts msg
-end
+
+	def targets
+		read_configs['targets']
+	end
+
+	def templates
+		read_configs['templates']
+	end
+
+
+
+	def debug(msg)
+		puts msg
+	end

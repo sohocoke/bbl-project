@@ -150,6 +150,7 @@ namespace :app_controller do
     app = args[:app]
     mdx = "dist/#{app}.mdx"
     manifest_json = "log/#{app}_manifest.json"
+    modified_manifest_json = "log/#{app}_manifest_modified.json"
 
     # get app id
     sh %(
@@ -168,12 +169,12 @@ namespace :app_controller do
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data "#{app}.mdx"  > #{manifest_json}
     )
 
-    # TODO some fields, including ones specified during prep tool invocation, do not apply -- select and replace values for the right object paths.
-    # e.g. description
-
+    # apply delta to the manifest, save.
+    delta_applied = delta_applied JSON.parse(File.read(manifest_json)), cascaded_configs(app)['manifest_values']
+    File.write modified_manifest_json, delta_applied.to_json
 
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{manifest_json}"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{modified_manifest_json}"
     )
   end
 
