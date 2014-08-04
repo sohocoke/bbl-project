@@ -24,42 +24,58 @@ def delta_applied( config, config_delta )
 	# predicated keys
 	# variables
 
+	# new_config = Hash[config.to_a]
+	new_config = config
+
 	config_delta.each do |k,v|
 		# TODO dereference variables.
 
-		if v.is_a? Hash
-			# look for predicate.
-			v.each do |inner_k, inner_v|
-				if inner_k =~ (/(.+?)\[(.+?)='(.+?)'\]/)
-					# key has predicate: find matches in v, set or insert val.
-					target_k, predicate_name, val = [ $1, $2, $3 ]
+		if has_predicate? k
+			# TODO assert  original config is an array.
+			vals = new_config
 
-					matching_elems = config[k].select do |elem|
-						elem[predicate_name] == val
-					end
+			target_k, predicate_name, predicate_val = decompose k
 
-					case matching_elems.size
-					when 0
-						puts "no elems under #{k} where #{predicate_name} == #{val}"
-					when 2
-						raise "multiple elems under #{k} where #{predicate_name} == #{val}"
-					else
-						matching_elems[0][target_k] = inner_v
-					end
-				else
-					# no predicate in key. anything to do?
-				end
+			matching_vals = vals.select do |val|
+				val[predicate_name] == predicate_val
+			end
+
+			case matching_vals.size
+			when 0
+				raise "no match in #{vals} for #{predicate_name}=#{predicate_val}"
+			when 2
+				raise "multiple matches in #{vals} for #{predicate_name}=#{predicate_val}"
+			else
+				debug "set #{target_k} on #{matching_vals[0]}"
+				matching_vals[0][target_k] = v
 			end
 		else
-			# recur.
-			inner_v = delta_applied inner_v
-
+			# no predicate in key
+			# recur with val if hash.
+			if v.is_a? Hash
+				puts "recursively handling #{v} for key #{k} with config #{config}"
+				new_config[k] = delta_applied config[k], v
+			else
+				# val in delta is a non-hash: just set.
+				new_config[k] = v
+			end
 		end
 	end
 
-	config
+	new_config
 end
 
+def decompose(key)
+	if key =~ (/(.+?)\[(.+?)='(.+?)'\]/)
+		[ $1, $2, $3 ]
+	else
+		raise "can't decompose key #{key_with_predicate}"
+	end
+end
+
+def has_predicate?(key)
+	key =~ (/(.+?)\[(.+?)='(.+?)'\]/)
+end
 
 def read_templates(app)
 	templates + [ YAML.load(File.read("data/apps/#{app}/#{app}.yaml")) ]
@@ -79,3 +95,6 @@ def templates
 end
 
 
+def debug(msg)
+	# puts msg
+end

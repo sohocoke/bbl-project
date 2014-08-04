@@ -8,7 +8,7 @@ manifest_values:
     # TODO need to specify a policy driven by a predicate, and corresponding application mechanism.
 
     # it1. 
-    policyValue\[policyName='BackgroundServicesGateway'\]: '{var:netscaler_gateway}'
+    policyValue[policyName='BackgroundServicesGateway']: '{var:netscaler_gateway}'
 
     # it2.
     # - 
