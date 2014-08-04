@@ -47,16 +47,17 @@ namespace :app do
 end
 
 namespace :config do
+
   desc "generate merged configuration using config definitions"
   task :merge, [ :app_name ] do |t, args|
     raise "task needs arguments: see 'rake -T'" if args.nil?
     puts cascaded_configs args[:app_name]
 
-    # TODO how to peacefully hand over this result?
+    # TODO how to gracefully hand over this result?
 
   end
 
-  # loop through all targets and deploy.
+   desc "loop through all targets and deploy."
   task :deploy, [:app_name] => :merge do |t, args|
     targets.each do |target|
       puts "### deploy to target '#{target['id']}'"
@@ -149,6 +150,7 @@ namespace :app_controller do
     app = args[:app]
     mdx = "dist/#{app}.mdx"
     manifest_json = "log/#{app}_manifest.json"
+
     # get app id
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/app_controller_entries.log
@@ -156,12 +158,14 @@ namespace :app_controller do
     entries_json = JSON.parse(`cat log/app_controller_entries.log`)
     app_id = id_for_app app, entries_json
 
-
+    # upload binary
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/upload?CG_CSRFTOKEN=#{$csrf_token_header.gsub('CG_CSRFTOKEN: ', '')} #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --form "data=@#{mdx};type=application/octet-stream"
     )
+
+    # fetch manifest and save for the next request.
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data "#{app}.mdx"  > #{manifest_json}  # save for the next request.
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data "#{app}.mdx"  > #{manifest_json}
     )
 
     # TODO some fields, including ones specified during prep tool invocation, do not apply -- select and replace values for the right object paths.

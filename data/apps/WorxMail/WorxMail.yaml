@@ -1,0 +1,20 @@
+id: WorxMail
+
+manifest_values:
+  ncgapplication:
+    description: stub description in deployment descriptor
+    a: b
+  policies:
+    # TODO need to specify a policy driven by a predicate, and corresponding application mechanism.
+
+    # it1. 
+    policyValue\[policyName='BackgroundServicesGateway'\]: '{var:netscaler_gateway}'
+
+    # it2.
+    # - 
+    #   predicate: policyName='BackgroundServicesGateway'
+    #   values:
+    #   - policyValue: '{var:netscaler_gateway}'
+
+variants:
+  # list variants here.

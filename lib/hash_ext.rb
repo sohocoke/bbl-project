@@ -7,7 +7,7 @@ class Hash
       hash.each do |k, v|
         if v.is_a? Hash
           # recur.
-          val_to_insert = (cascaded[k] || {}).combine(v)
+          val_to_insert = (cascaded[k] || {}).cascaded(v)
         else
           # insert value from hash in result.
           val_to_insert = v

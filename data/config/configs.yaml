@@ -4,20 +4,39 @@
 
 targets:
   -
-    id: etit
-    description: test XenMobile instance
+    id: ch-etit
+    description: test XenMobile app controller
     servers:
     -
       base_url: https://161.202.193.123:4443
       credentials_path: data/login.json
+    -
+      base_url: https://161.202.193.124:4443
+      credentials_path: data/login.json
   -
-    id: prod
-    description: production XenMobile instance
+    id: ch-pta
+    # TODO
+  - 
+    id: ch-poc
+
+  -
+    id: ch-prod
+    description: production XenMobile app controller
     servers:
     - 
-      base_url: xxx
-      credentials_path: xyz
+      base_url: https://appcusprod1.csintra.net:443
+      credentials_path: data/login.json
+    - 
+      base_url: https://appcusprod2.csintra.net:443
+      credentials_path: data/login.json
 
+
+  -
+    id: uk-prod
+    # TODO
+  -
+    id: sg-prod
+    # TODO
 
 
 
@@ -28,11 +47,15 @@ templates:
       ncgapplication:
         description: stub firm-wide description for app.
       # more firm-wide configuration to go here.
+
   -
     id: region_x
     manifest_values:
       some_server_address_field: xxx
+    variables:  # variables are used by other configuration blocks with the syntax '{var:var_name}'
+      netscaler_gateway: netscaler_address.
 
-  # more server definitions here...
+
+  # more template definitions here...
 
 
