@@ -176,11 +176,17 @@ namespace :app_controller do
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data "#{app}.mdx"  > #{manifest_json}
     )
+    # prettify.
+    File.write manifest_json, JSON.pretty_generate(JSON.parse(File.read(manifest_json)))
+
 
     # apply delta to the manifest, save.
-    delta_applied = delta_applied JSON.parse(File.read(manifest_json)), cascaded_configs(app)['manifest_values']
-    File.write modified_manifest_json, delta_applied.to_json
+    config_delta = cascaded_configs(app)
+    puts "applying config delta '#{config_delta['id']}' for #{app}"
+    delta_applied = delta_applied JSON.parse(File.read(manifest_json)), config_delta['manifest_values']
+    File.write modified_manifest_json, JSON.pretty_generate(delta_applied)
 
+    puts "updating config for #{app}"
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{modified_manifest_json}"
     )
