@@ -24,17 +24,19 @@ def delta_applied( config, config_delta )
 	# predicated keys
 	# variables
 
-	# new_config = Hash[config.to_a]
-	new_config = config
+	new_config = config.dup
 
 	config_delta.each do |k,v|
 		# TODO dereference variables.
 
 		if has_predicate? k
-			# TODO assert  original config is an array.
+
 			vals = new_config
 
 			target_k, predicate_name, predicate_val = decompose k
+
+			# predicated keys only make sense when we're dealing with arrays.
+			raise "element in '#{k}' should be an array" unless config.is_a? Array
 
 			matching_vals = vals.select do |val|
 				val[predicate_name] == predicate_val
