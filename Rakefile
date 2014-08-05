@@ -155,6 +155,7 @@ namespace :app_controller do
     -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept: application/json,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.8" -H "Connection: keep-alive" -H "X-Requested-With: CloudGateway AJAX" -H "Referer: #{appc_base_url}/ControlPoint/" -H "Origin: #{appc_base_url}" -H "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36"
     ).strip
 
+
   desc "update app entry in app controller"
   task :update, [:appc_base_url, :login_json, :app] => :login do |t, args|
     app = args[:app]
@@ -163,6 +164,7 @@ namespace :app_controller do
     modified_manifest_json = "log/#{app}_manifest_modified.json"
 
     raise "no mdx at #{mdx}" unless File.exist? mdx
+
     # get app id
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/app_controller_entries.log
@@ -187,13 +189,15 @@ namespace :app_controller do
     config_delta = cascaded_configs(app)
     puts "applying config delta '#{config_delta['id']}' for #{app}"
     delta_applied = delta_applied JSON.parse(File.read(manifest_json)), config_delta['manifest_values']
-    File.write modified_manifest_json, JSON.pretty_generate(delta_applied)
+    modified_json_str = dereferenced JSON.pretty_generate(delta_applied), config_delta['variables']
+    File.write modified_manifest_json, modified_json_str
 
     puts "updating config for #{app}"
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{modified_manifest_json}"
     )
   end
+
 
   desc "TODO create app entry in app controller"
   task :create, [:app_name, :appc_base_url, :login_json] do |t, args|

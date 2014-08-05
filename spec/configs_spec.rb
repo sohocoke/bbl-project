@@ -1,6 +1,6 @@
 require 'configs'
 
-describe "delta_applied" do
+describe "#delta_applied" do
   it "replaces predicated entries" do
     config = {
       'a' => 1,
@@ -80,5 +80,38 @@ describe "delta_applied" do
             ]      
           }
         })
+  end
+end
+
+describe "#dereferenced" do
+  vars = {
+    'some-var' => 'some-val'
+  }
+
+  str = <<-eos
+    {
+      "json-root": {
+        "some-elem": "{var:some-var}"
+      }
+    }
+  eos
+
+  it "dereferences variables" do
+
+    expect( dereferenced str.gsub(' ',''), vars ).to eq <<-eos
+      {
+        "json-root": {
+          "some-elem": "some-val"
+        }
+      }
+    eos
+    .gsub(' ', '')
+  end
+
+  it "raises when variable is undefined" do
+    vars = {}
+
+    expect { dereferenced str, vars }.to raise_error
+
   end
 end

@@ -15,7 +15,7 @@ def cascaded_configs( app )
 
 	ids = templates.map {|e| e['id']}
 
-	templates[0].cascaded *templates[1..-1], { "id" => "configuration combined from #{ids}" }
+	templates[0].cascaded( *templates[1..-1], { "id" => "configuration combined from #{ids}" })
 end
 
 
@@ -66,6 +66,22 @@ def delta_applied( config, config_delta )
 
 	new_config
 end
+
+
+def dereferenced( str, variables )
+	variable_ref_p = /\{var:(.+?)\}/  # e.g. {var:my-variable-name}
+
+	matches = str.each_line.map{|e| variable_ref_p.match(e)}.compact
+	matches.each do |match_d|
+		var = match_d[1]
+		raise "no variable '#{var}' defined" unless variables.has_key? var
+
+		str = str.sub(match_d[0], variables[var])
+	end
+
+	str
+end
+
 
 private 
 	def decompose(key)
