@@ -34,9 +34,10 @@ templates:
   -
     id: firmwide
     manifest_values:
-      ncgapplication:
-        description: stub firm-wide description for app.
       # more firm-wide configuration to go here.
+      # e.g.
+      # ncgapplication:
+      #   description: stub firm-wide description for app.
 
   -
     id: region_x

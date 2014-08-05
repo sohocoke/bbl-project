@@ -90,7 +90,7 @@ namespace :mdx do
 
     prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first
 
-    description = "XenMobile-treated app (date=#{Time.new}, version=#{prep_tool_version})"
+    description = "XenMobile-treated app version:#{prep_tool_version} timestamp:#{Time.new.utc.to_s}"
     mdx = "dist/#{app_name}.mdx"
 
     ## preptool information.

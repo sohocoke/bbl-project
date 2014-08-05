@@ -2,8 +2,8 @@ id: WorxMail
 
 manifest_values:
   ncgapplication:
-    description: stub description in deployment descriptor
-    a: b
+    description: stub description in app deployment manifest
+
   policies:
     # TODO need to specify a policy driven by a predicate, and corresponding application mechanism.
 
