@@ -2,7 +2,7 @@ id: MVCNetworking
 
 manifest_values:
   ncgapplication:
-    description: stub description in deployment descriptor
+    description: stub description in app deployment manifest
 
 
 variants:

@@ -85,7 +85,9 @@ namespace :mdx do
   task :create, [:app_name] do |t, args|
     app_name = args[:app_name]
 
-    ipa = "data/apps/#{app_name}/#{app_name}.ipa"  # REFACTOR
+    ipa = "data/apps/#{app_name}/#{app_name}.ipa"
+    raise "no ipa at #{ipa}" unless File.exist? ipa
+
     prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first
 
     description = "XenMobile-treated app (date=#{Time.new}, version=#{prep_tool_version})"
@@ -160,6 +162,7 @@ namespace :app_controller do
     manifest_json = "log/#{app}_manifest.json"
     modified_manifest_json = "log/#{app}_manifest_modified.json"
 
+    raise "no mdx at #{mdx}" unless File.exist? mdx
     # get app id
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/app_controller_entries.log
@@ -193,11 +196,20 @@ namespace :app_controller do
   end
 
   desc "TODO create app entry in app controller"
-  task :create => :login do
+  task :create, [:app_name, :appc_base_url, :login_json] do |t, args|
+  # task :create, [:app_name, :appc_base_url, :login_json] => :login do |t, args|
+    puts args
+    app_name = args[:app_name]
+    appc_base_url = args[:appc_base_url]
+    mdx = "dist/#{app_name}.mdx"
+
+    sh %(
+      /usr/bin/curl #{appc_base_url}/ControlPoint/api/v1/mobileApp #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data-binary "@#{mdx}" -H "Content-type: application/octet-stream"
+    )  
   end
 
   desc "get metadata for app entry"
-  task :get_metadata, [:app_name, :appc_base_url] => :login do |t, args|
+  task :get_metadata, [:app_name, :appc_base_url, :login_json] => :login do |t, args|
     metadata_path = "dist/#{args[:app_name]}-metadata.json"
     appc_base_url = args[:appc_base_url]
 
@@ -213,7 +225,7 @@ namespace :app_controller do
   task :login, [:appc_base_url, :login_json] do |t, args|
     appc_base_url = args[:appc_base_url]
     login_json = args[:login_json]
-    raise "nil parameter(s) to task :login; args: #{args}" if ! args.select(&:nil?).empty?
+    raise "nil parameter(s) to task :login; args: #{args}" unless appc_base_url && login_json
 
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/ #{headers} #{$curl_opts} -I --cookie-jar #{cookies_file}
