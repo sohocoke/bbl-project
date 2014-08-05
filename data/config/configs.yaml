@@ -18,24 +18,14 @@ targets:
     # TODO
   - 
     id: ch-poc
-
-  -
-    id: ch-prod
-    description: production XenMobile app controller
-    servers:
-    - 
-      base_url: https://appcusprod1.csintra.net:443
-      credentials_path: data/login.json
-    - 
-      base_url: https://appcusprod2.csintra.net:443
-      credentials_path: data/login.json
-
-
-  -
-    id: uk-prod
     # TODO
+
   -
-    id: sg-prod
+    id: uk-etit
+    # TODO
+
+  -
+    id: sg-etit
     # TODO
 
 

@@ -8,13 +8,14 @@ require_relative 'lib/configs'
 
 
 ## env
+
 log_path = "log/"
 cookies_file = "data/cookies.txt"
 
 appc_base_url = "https://161.202.193.123:4443"
 
-# $curl_opts = "--compressed -k -v"  ## DEBUG
 $curl_opts = "--compressed -k"
+# $curl_opts = "--compressed -k -v"  ## DEBUG
 
 # pre-requisite: MDX Toolkit installed.
 prep_tool_bin = "/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"
@@ -61,16 +62,23 @@ namespace :config do
   task :deploy, [:app_name] => :merge do |t, args|
     targets.each do |target|
       puts "### deploy to target '#{target['id']}'"
-      target['servers'].each do |server|
-        appc_base_url = server['base_url']
-        login_json = server['credentials_path']
-        
-        # invoke app_controller:update
-        Rake::Task['app_controller:update'].invoke appc_base_url, login_json, args[:app_name]
+      if servers = target['servers']
+        servers.each do |server|
+          appc_base_url = server['base_url']
+          login_json = server['credentials_path']
+          
+          # invoke app_controller:update
+          Rake::Task['app_controller:update'].invoke appc_base_url, login_json, args[:app_name]
+        end
+      else
+        puts "no servers defined for target '#{target['id']}'."
       end
     end  
   end
 end
+
+
+## building-block tasks
 
 namespace :mdx do
   desc "create an .mdx from an .ipa"
@@ -218,6 +226,7 @@ namespace :app_controller do
   end
 
 
+  ## util
 
   def id_for_app(app, entries_json)
     apps_by_id = Hash[ entries_json['ncgapplication'].map{|e| [ e['name'], e['applicationlabel'] ]} ]
@@ -236,6 +245,7 @@ namespace :app_controller do
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/#{app_id}?_=1406733010550 #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8"
     `
   end
+
 end
 
 
