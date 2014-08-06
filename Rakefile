@@ -31,6 +31,7 @@ profile = "data/citrix_2014.mobileprovision"
 ## user-interfacing tasks
 
 namespace :app do
+  # pre-requisite: prototype mdx has been packaged.
   desc "unzip ipa, rewrite info.plist with new bundle id, rezip ipa."
   # task :clone => [ :'ipa:unzip', :'ipa:rewrite_bid', :'ipa:zip' ]
   task :clone, [:app_name] => [ 
@@ -38,29 +39,30 @@ namespace :app do
   ] do |t, args|
     app = args[:app_name]
     ipa = "data/apps/#{app}/#{app}.ipa"
-
+  
     configs = YAML.load File.read("#{build_path}/#{app}-config.yaml")
     configs['variants'].each do |variant_spec|
       variant_name = variant_spec['id']
       variant_path = "#{build_path}"
-      # variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
+      variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
       variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
+      variant_bundle_id = variant_spec['bundle_id']
 
-      # # copy the ipa.
-      # mkdir_p variant_path
-      # copy ipa, variant_ipa_path
+      # TODO copy original.
 
-      # puts "cloned variant '#{variant_name}' to #{variant_path}"
-      
-      ## end it1: ipa was a red herring.
-
-      
-      ## it2: just create a bunch of variant mdx's to see if it works.
-      Rake::Task['mdx:create'].invoke app, variant_name
-
-      # # write the config.
+      # write the variant config.
       File.write variant_config_path, variant_spec.to_yaml
       
+      # create variant ipa.
+      Rake::Task['ipa:rewrite_bid'].invoke ipa, variant_bundle_id
+
+      # create variant mdx.
+      Rake::Task['mdx:create'].reenable
+      Rake::Task['mdx:create'].invoke app, variant_name
+
+      # replace policy_metadata.xml in variant mdx with the one in original mdx. TODO
+      # unzip, copy xml, zip
+
       puts "packaged variant '#{variant_name}'"
     end
   end
@@ -154,6 +156,8 @@ namespace :mdx do
     sh %(
       #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}" -logFile "#{log_path}/#{variant_name}-mdx.log" -logWriteLevel "4" -appName "#{variant_name}" -appDesc "#{description}"
     )
+
+    puts "packaged #{mdx} from #{ipa}"
   end
 
   task :unzip, [:app_name] do |t, args|
@@ -188,9 +192,9 @@ end
 
 namespace :app_controller do
   desc "update app entry in app controller"
-  task :update, [:appc_base_url, :login_json, :app] => [ :'config:merge', :login] do |t, args|
+  task :update, [:appc_base_url, :login_json, :app_name] => [ :'config:merge', :login] do |t, args|
     appc_base_url = args[:appc_base_url]
-    app = args[:app]
+    app = args[:app_name]
     mdx = "#{build_path}/#{app}.mdx"
     manifest_json = "log/#{app}-manifest.json"
     modified_manifest_json = "log/#{app}-manifest-modified.json"
@@ -309,22 +313,51 @@ namespace :app_controller do
 end
 
 
+
 namespace :ipa do
-  task :rewrite_bid do
-    # TODO rewrite original bundle id with suffixed bundle id.
+
+  desc "rewrite original bundle id with suffixed bundle id"
+
+  task :rewrite_bid, [:ipa, :bundle_id] => [:unzip] do |t, args|
+    app = File.basename(args[:ipa]).sub(/\.ipa$/, '')
+    bundle_id = args[:bundle_id]
+    info_plist_path = "#{build_path}/#{app}//Payload/#{app}.app/Info.plist"
+
+    # convert and sub string
+    sh %(
+      plutil -convert json "#{info_plist_path}"      
+    )
+    plist_str = File.read info_plist_path
+    plist_str.gsub!(/"CFBundleIdentifier":".*?"/, %("CFBundleIdentifier":"#{bundle_id}"))
+    File.write info_plist_path, plist_str 
+
+    # convert back and re-zip
+    sh %(
+      plutil -convert binary1 "#{info_plist_path}"      
+    )
+    Rake::Task[:'ipa:zip'].invoke app
+    
+    puts "rewrote bundle id for #{app} to #{bundle_id}"
   end
 
-  task :unzip do
+
+  task :unzip, [:ipa] do |t, args|
+    ipa = args[:ipa]
+    unzip_path = "#{build_path}/#{File.basename(ipa).sub(/\.ipa$/, '')}"
+    rm_rf "#{unzip_path}"
     sh %(
-      unzip #{ipa} -d "ipa-unzipped"
+      unzip #{ipa} -d "#{unzip_path}"
     )
   end
 
-  task :zip do
+
+  task :zip, [:app_name] do |t, args|
+    app = args[:app_name]
     sh %(
-      (cd ipa-unzipped && zip -r ../ipa-rezipped.zip .)
+      (rm "#{build_path}/#{app}.ipa"; cd "#{build_path}/#{app}" && zip -r ../#{app}.ipa .)
     )
   end
+
 end
 
 
