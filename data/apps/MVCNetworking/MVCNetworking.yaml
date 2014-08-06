@@ -6,4 +6,8 @@ manifest_values:
 
 
 variants:
-  # list variants here.
+- 
+  id: MVCNetworking-eur
+  manifest_values:
+    ncgapplication:
+      description: stub description for EUR variant of MVCNetworking

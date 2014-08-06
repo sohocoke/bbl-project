@@ -32,7 +32,15 @@ profile = "data/citrix_2014.mobileprovision"
 
 namespace :app do
   desc "TODO unzip ipa, rewrite info.plist with new bundle id, rezip ipa."
-  task :clone => [ :'ipa:unzip', :'ipa:rewrite_bid', :'ipa:zip' ]
+  # task :clone => [ :'ipa:unzip', :'ipa:rewrite_bid', :'ipa:zip' ]
+  task :clone, [:app_name] => [ :'config:merge' ] do |t, args|
+    app = args[:app_name]
+    configs = YAML.load File.read("#{build_path}/#{app}-config.yaml")
+    configs['variants'].each do |variant_spec|
+      variant_name = variant_spec['id']
+      puts "clone variant '#{variant_name}'"
+    end
+  end
 
 
   desc "TODO wrap with mdx, unzip mdx, rewrite policy, rezip mdx, update app controller entry."
