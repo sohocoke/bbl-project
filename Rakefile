@@ -10,9 +10,9 @@ require_relative 'lib/configs'
 ## env
 
 log_path = "log/"
-cookies_file = "data/cookies.txt"
+build_path = "build/"
 
-appc_base_url = "https://161.202.193.123:4443"
+cookies_file = "log/cookies.txt"
 
 $curl_opts = "--compressed -k"
 # $curl_opts = "--compressed -k -v"  ## DEBUG
@@ -60,10 +60,13 @@ namespace :config do
   desc "generate merged configuration using config definitions"
   task :merge, [ :app_name ] do |t, args|
     raise "task needs arguments: see 'rake -T'" if args.nil?
-    puts cascaded_configs args[:app_name]
+    app = args[:app_name]
 
-    # TODO how to gracefully hand over this result?
+    configs = cascaded_configs app
 
+    merged_config_path = "#{build_path}/#{app}-config.yaml"
+    File.write merged_config_path, configs.to_yaml
+    puts "wrote #{configs['id']} to #{merged_config_path}"
   end
 
    desc "loop through all targets and deploy."
@@ -95,11 +98,12 @@ namespace :mdx do
 
     ipa = "data/apps/#{app_name}/#{app_name}.ipa"
     raise "no ipa at #{ipa}" unless File.exist? ipa
+    
+    mdx = "#{build_path}/#{app_name}.mdx"
 
     prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first
 
-    description = "XenMobile-treated app version:#{prep_tool_version} timestamp:#{Time.new.utc.to_s}"
-    mdx = "dist/#{app_name}.mdx"
+    description = "XenMobile-treated app. PrepTool version:#{prep_tool_version} timestamp:#{Time.new.utc.to_s}"
 
     ## preptool information.
     # Usage: CGAppCLPrepTool [ Wrap |Sign |SetInfo |GetInfo ] -Cert CERTIFICATE -Profile PROFILE -in INPUTFILE -out OUTPUTFILE -appDesc DESCRIPTION -logFile LOGFILE -logWriteLevel LEVEL -logDisplayLevel LEVEL
@@ -129,10 +133,10 @@ namespace :mdx do
   end
 
   task :unzip, [:app_name] do |t, args|
-    mdx = "dist/#{args[:app_name]}.mdx"
+    mdx = "#{build_path}/#{args[:app_name]}.mdx"
     sh %(
-      rm -r dist/mdx-unzipped
-      unzip #{mdx} -d "dist/mdx-unzipped"
+      rm -r #{build_path}/mdx-unzipped
+      unzip #{mdx} -d "#{build_path}/mdx-unzipped"
     )
   end
 
@@ -159,17 +163,13 @@ end
 
 
 namespace :app_controller do
-  headers = %(
-    -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept: application/json,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.8" -H "Connection: keep-alive" -H "X-Requested-With: CloudGateway AJAX" -H "Referer: #{appc_base_url}/ControlPoint/" -H "Origin: #{appc_base_url}" -H "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36"
-    ).strip
-
-
   desc "update app entry in app controller"
-  task :update, [:appc_base_url, :login_json, :app] => :login do |t, args|
+  task :update, [:appc_base_url, :login_json, :app] => [ :'config:merge', :login] do |t, args|
+    appc_base_url = args[:appc_base_url]
     app = args[:app]
-    mdx = "dist/#{app}.mdx"
-    manifest_json = "log/#{app}_manifest.json"
-    modified_manifest_json = "log/#{app}_manifest_modified.json"
+    mdx = "#{build_path}/#{app}.mdx"
+    manifest_json = "log/#{app}-manifest.json"
+    modified_manifest_json = "log/#{app}-manifest-modified.json"
 
     raise "no mdx at #{mdx}" unless File.exist? mdx
 
@@ -194,7 +194,7 @@ namespace :app_controller do
 
 
     # apply delta to the manifest, save.
-    config_delta = cascaded_configs(app)
+    config_delta = YAML.load "#{build_path}/#{app}-config.yaml"
     puts "applying config delta '#{config_delta['id']}' for #{app}"
     delta_applied = delta_applied JSON.parse(File.read(manifest_json)), config_delta['manifest_values']
     modified_json_str = dereferenced JSON.pretty_generate(delta_applied), config_delta['variables']
@@ -207,22 +207,22 @@ namespace :app_controller do
   end
 
 
-  desc "TODO create app entry in app controller"
-  task :create, [:app_name, :appc_base_url, :login_json] do |t, args|
-  # task :create, [:app_name, :appc_base_url, :login_json] => :login do |t, args|
+  # FIXME doesn't set metadata: use app_controller:update immediately after.
+  desc "create app entry in app controller"
+  task :create, [:app_name, :appc_base_url, :login_json] => :login do |t, args|
     puts args
     app_name = args[:app_name]
     appc_base_url = args[:appc_base_url]
-    mdx = "dist/#{app_name}.mdx"
+    mdx = "#{build_path}/#{app_name}.mdx"
 
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/api/v1/mobileApp #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data-binary "@#{mdx}" -H "Content-type: application/octet-stream"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/api/v1/mobileApp #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data-binary "@#{mdx}" -H "Content-type: application/octet-stream"
     )  
   end
 
   desc "get metadata for app entry"
   task :get_metadata, [:app_name, :appc_base_url, :login_json] => :login do |t, args|
-    metadata_path = "dist/#{args[:app_name]}-metadata.json"
+    metadata_path = "#{build_path}/#{args[:app_name]}-metadata.json"
     appc_base_url = args[:appc_base_url]
 
     app_id = id_for_app args[:app_name], JSON.parse(`cat log/app_controller_entries.log`)
@@ -240,17 +240,17 @@ namespace :app_controller do
     raise "nil parameter(s) to task :login; args: #{args}" unless appc_base_url && login_json
 
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/ #{headers} #{$curl_opts} -I --cookie-jar #{cookies_file}
+      /usr/bin/curl #{appc_base_url}/ControlPoint/ #{headers(appc_base_url)} #{$curl_opts} -I --cookie-jar #{cookies_file}
     )
 
     cookies_a = `cat #{cookies_file}`.each_line.map{|e| e.split("\t")}.map{|e| e[5..6]}.compact
     cookies_a << ['OCAJSESSIONID', '(null)']
     $cookies_as_headers = "Cookie: " + cookies_a.map{|k,v| "#{k}=#{v.strip}"}.join("; ")
 
-    $csrf_token_header=`/usr/bin/curl #{appc_base_url}/ControlPoint/JavaScriptServlet -X POST #{headers} #{$curl_opts} --cookie #{cookies_file} -H "FETCH-CSRF-TOKEN: 1"`.gsub(":", ": ")
+    $csrf_token_header=`/usr/bin/curl #{appc_base_url}/ControlPoint/JavaScriptServlet -X POST #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "FETCH-CSRF-TOKEN: 1"`.gsub(":", ": ")
 
     sh %( 
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/newlogin #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8" --data "@#{login_json}"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/newlogin #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8" --data "@#{login_json}"
     )
     puts "### login complete."
   end
@@ -274,6 +274,12 @@ namespace :app_controller do
     metadata = `
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/#{app_id}?_=1406733010550 #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8"
     `
+  end
+
+  def headers(appc_base_url)
+  %(
+    -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept: application/json,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.8" -H "Connection: keep-alive" -H "X-Requested-With: CloudGateway AJAX" -H "Referer: #{appc_base_url}/ControlPoint/" -H "Origin: #{appc_base_url}" -H "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36"
+    ).strip
   end
 
 end
