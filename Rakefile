@@ -31,14 +31,37 @@ profile = "data/citrix_2014.mobileprovision"
 ## user-interfacing tasks
 
 namespace :app do
-  desc "TODO unzip ipa, rewrite info.plist with new bundle id, rezip ipa."
+  desc "unzip ipa, rewrite info.plist with new bundle id, rezip ipa."
   # task :clone => [ :'ipa:unzip', :'ipa:rewrite_bid', :'ipa:zip' ]
-  task :clone, [:app_name] => [ :'config:merge' ] do |t, args|
+  task :clone, [:app_name] => [ 
+    :'config:merge', 
+  ] do |t, args|
     app = args[:app_name]
+    ipa = "data/apps/#{app}/#{app}.ipa"
+
     configs = YAML.load File.read("#{build_path}/#{app}-config.yaml")
     configs['variants'].each do |variant_spec|
       variant_name = variant_spec['id']
-      puts "clone variant '#{variant_name}'"
+      variant_path = "#{build_path}"
+      # variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
+      variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
+
+      # # copy the ipa.
+      # mkdir_p variant_path
+      # copy ipa, variant_ipa_path
+
+      # puts "cloned variant '#{variant_name}' to #{variant_path}"
+      
+      ## end it1: ipa was a red herring.
+
+      
+      ## it2: just create a bunch of variant mdx's to see if it works.
+      Rake::Task['mdx:create'].invoke app, variant_name
+
+      # # write the config.
+      File.write variant_config_path, variant_spec.to_yaml
+      
+      puts "packaged variant '#{variant_name}'"
     end
   end
 
@@ -93,13 +116,14 @@ end
 
 namespace :mdx do
   desc "create an .mdx from an .ipa"
-  task :create, [:app_name] do |t, args|
+  task :create, [:app_name, :variant_name] do |t, args|
     app_name = args[:app_name]
+    variant_name = args[:variant_name] || app_name
 
     ipa = "data/apps/#{app_name}/#{app_name}.ipa"
     raise "no ipa at #{ipa}" unless File.exist? ipa
     
-    mdx = "#{build_path}/#{app_name}.mdx"
+    mdx = "#{build_path}/#{variant_name}.mdx"
 
     prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first
 
@@ -128,7 +152,7 @@ namespace :mdx do
     ##
 
     sh %(
-      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}" -logFile "#{log_path}/#{app_name}-mdx.log" -logWriteLevel "4" -appName "#{app_name}" -appDesc "#{description}"
+      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}" -logFile "#{log_path}/#{variant_name}-mdx.log" -logWriteLevel "4" -appName "#{variant_name}" -appDesc "#{description}"
     )
   end
 
