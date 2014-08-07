@@ -106,16 +106,20 @@ namespace :config do
 
   desc "loop through all targets and deploy."
   task :deploy, [:app_name] => :merge do |t, args|
+    app = args[:app_name]
+ 
+    puts "## Deploy #{app} to all targets."
+ 
     targets.each do |target|
-      app = args[:app_name]
 
-      puts "### deploy #{app} to target '#{target['id']}'"
+      puts "# deploy #{app} to target '#{target['id']}'"
       if servers = target['servers']
         servers.each do |server|
           appc_base_url = server['base_url']
           login_json = server['credentials_path']
           
           # Rake::Task['app_controller:update'].invoke app, appc_base_url, login_json
+          Rake::Task['app_controller:create'].reenable
           Rake::Task['app_controller:create'].invoke app, appc_base_url, login_json
         end
       else
@@ -291,7 +295,7 @@ namespace :app_controller do
     sh %( 
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/newlogin #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8" --data "@#{login_json}"
     )
-    puts "### login complete."
+    puts "# login complete."
   end
 
 
