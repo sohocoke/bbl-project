@@ -70,20 +70,21 @@ namespace :app do
 
 
   desc "TODO wrap with mdx, unzip mdx, rewrite policy, rezip mdx, update app controller entry."
-  # task :deploy, [ :app_name ] => [ :'mdx:create', :'app:clone' ] do |t, args|  ## TEST
-  task :deploy, [ :app_name ] => [ :'app:clone' ] do |t, args|  ## TEST
+  task :deploy, [ :app_name ] => [ :'mdx:create', :'app:clone' ] do |t, args|  ## TEST
     app = args[:app_name]
 
+    mdx_names = [ app ]
     # for each variant, invoke app_controller:create
     variants = YAML.load(File.read("#{build_path}/#{app}-config.yaml"))['variants']
     if variants
-      variant_names = variants.map{|e| e['id']}
-      variant_names.each do |variant_name|
-        # Rake::Task['app_controller:create'].reenable
-        # Rake::Task['app_controller:create'].invoke variant_name, appc_base_url, login_json
-        Rake::Task['config:deploy'].reenable
-        Rake::Task['config:deploy'].invoke variant_name
-      end
+      mdx_names.concat variants.map{|e| e['id']}
+    end
+
+    mdx_names.each do |variant_name|
+      # Rake::Task['app_controller:create'].reenable
+      # Rake::Task['app_controller:create'].invoke variant_name, appc_base_url, login_json
+      Rake::Task['config:deploy'].reenable
+      Rake::Task['config:deploy'].invoke variant_name
     end
   end
 end
