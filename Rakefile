@@ -43,10 +43,15 @@ namespace :app do
     configs = YAML.load File.read("#{build_path}/#{app}-config.yaml")
     (variants = configs['variants']) && variants.each do |variant_spec|
       variant_name = variant_spec['id']
+
+      raise "variant name for #{app} is same as name for original" if variant_name == app
+
       variant_path = "#{build_path}"
       variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
       variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
+      
       variant_bundle_id = variant_spec['bundle_id']
+      riase "bundle id required for variant #{variant_name}" if variant_bundle_id.nil?
 
       # TODO copy original.
 
@@ -55,11 +60,11 @@ namespace :app do
       
       # create variant ipa.
       Rake::Task['ipa:rewrite_bid'].reenable
-      Rake::Task['ipa:rewrite_bid'].invoke ipa, variant_bundle_id 
+      Rake::Task['ipa:rewrite_bid'].invoke ipa, variant_bundle_id, variant_name
 
       # create variant mdx.
       Rake::Task['mdx:create'].reenable
-      Rake::Task['mdx:create'].invoke variant_name, ipa  # FIXME need to work with ipa path.
+      Rake::Task['mdx:create'].invoke variant_name, variant_ipa_path  # FIXME need to work with ipa path.
 
       # replace policy_metadata.xml in variant mdx with the one in original mdx. TODO
       # unzip, copy xml, zip
@@ -69,8 +74,8 @@ namespace :app do
   end
 
 
-  desc "TODO wrap with mdx, unzip mdx, rewrite policy, rezip mdx, update app controller entry."
-  task :deploy, [ :app_name ] => [ :'mdx:create', :'app:clone' ] do |t, args|  ## TEST
+  desc "wrap with mdx, unzip mdx, rewrite policy, rezip mdx, update app controller entry."
+  task :deploy, [ :app_name ] do |t, args|
     app = args[:app_name]
 
     mdx_names = [ app ]
@@ -333,10 +338,12 @@ namespace :ipa do
 
   desc "rewrite original bundle id with suffixed bundle id"
 
-  task :rewrite_bid, [:ipa, :bundle_id] => [:unzip] do |t, args|
+  task :rewrite_bid, [:ipa, :bundle_id, :variant_name] => [:unzip] do |t, args|
     app = File.basename(args[:ipa]).sub(/\.ipa$/, '')
     bundle_id = args[:bundle_id]
-    info_plist_path = "#{build_path}/#{app}//Payload/#{app}.app/Info.plist"
+    variant_name = args[:variant_name]
+
+    info_plist_path = Dir.glob("#{build_path}/#{app}/Payload/*.app/Info.plist").to_a.first
 
     # convert and sub string
     sh %(
@@ -350,7 +357,7 @@ namespace :ipa do
     sh %(
       plutil -convert binary1 "#{info_plist_path}"      
     )
-    Rake::Task[:'ipa:zip'].invoke app
+    Rake::Task[:'ipa:zip'].invoke app, variant_name
     
     puts "rewrote bundle id for #{app} to #{bundle_id}"
   end
@@ -366,10 +373,11 @@ namespace :ipa do
   end
 
 
-  task :zip, [:app_name] do |t, args|
+  task :zip, [:app_name, :ipa_name] do |t, args|
     app = args[:app_name]
+    ipa_name = args[:ipa_name]
     sh %(
-      (rm "#{build_path}/#{app}.ipa"; cd "#{build_path}/#{app}" && zip -r ../#{app}.ipa .)
+      (rm "#{build_path}/#{app}.ipa"; cd "#{build_path}/#{app}" && zip -r ../#{ipa_name}.ipa .)
     )
   end
 
