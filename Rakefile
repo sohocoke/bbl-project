@@ -41,7 +41,7 @@ namespace :app do
     ipa = "data/apps/#{app}/#{app}.ipa"
   
     configs = YAML.load File.read("#{build_path}/#{app}-config.yaml")
-    configs['variants'].each do |variant_spec|
+    (variants = configs['variants']) && variants.each do |variant_spec|
       variant_name = variant_spec['id']
       variant_path = "#{build_path}"
       variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
@@ -54,11 +54,12 @@ namespace :app do
       File.write variant_config_path, variant_spec.to_yaml
       
       # create variant ipa.
-      Rake::Task['ipa:rewrite_bid'].invoke ipa, variant_bundle_id
+      Rake::Task['ipa:rewrite_bid'].reenable
+      Rake::Task['ipa:rewrite_bid'].invoke ipa, variant_bundle_id 
 
       # create variant mdx.
       Rake::Task['mdx:create'].reenable
-      Rake::Task['mdx:create'].invoke app, variant_name
+      Rake::Task['mdx:create'].invoke variant_name, ipa  # FIXME need to work with ipa path.
 
       # replace policy_metadata.xml in variant mdx with the one in original mdx. TODO
       # unzip, copy xml, zip
@@ -69,13 +70,20 @@ namespace :app do
 
 
   desc "TODO wrap with mdx, unzip mdx, rewrite policy, rezip mdx, update app controller entry."
-  # task :deploy, [ :app_name ] => [ :'config:merge', :'mdx:create', :'mdx:unzip', :'mdx:rewrite_policy', :'mdx:zip' ]
-  task :deploy, [ :app_name ] do |t, args|
-    [ :'config:merge', 
-      :'mdx:create', 
-      :'config:deploy' 
-    ].each do |task_name|
-      Rake::Task[task_name].invoke args[:app_name]
+  # task :deploy, [ :app_name ] => [ :'mdx:create', :'app:clone' ] do |t, args|  ## TEST
+  task :deploy, [ :app_name ] => [ :'app:clone' ] do |t, args|  ## TEST
+    app = args[:app_name]
+
+    # for each variant, invoke app_controller:create
+    variants = YAML.load(File.read("#{build_path}/#{app}-config.yaml"))['variants']
+    if variants
+      variant_names = variants.map{|e| e['id']}
+      variant_names.each do |variant_name|
+        # Rake::Task['app_controller:create'].reenable
+        # Rake::Task['app_controller:create'].invoke variant_name, appc_base_url, login_json
+        Rake::Task['config:deploy'].reenable
+        Rake::Task['config:deploy'].invoke variant_name
+      end
     end
   end
 end
@@ -94,17 +102,20 @@ namespace :config do
     puts "wrote #{configs['id']} to #{merged_config_path}"
   end
 
-   desc "loop through all targets and deploy."
+
+  desc "loop through all targets and deploy."
   task :deploy, [:app_name] => :merge do |t, args|
     targets.each do |target|
-      puts "### deploy to target '#{target['id']}'"
+      app = args[:app_name]
+
+      puts "### deploy #{app} to target '#{target['id']}'"
       if servers = target['servers']
         servers.each do |server|
           appc_base_url = server['base_url']
           login_json = server['credentials_path']
           
-          # invoke app_controller:update
-          Rake::Task['app_controller:update'].invoke appc_base_url, login_json, args[:app_name]
+          # Rake::Task['app_controller:update'].invoke appc_base_url, login_json, app
+          Rake::Task['app_controller:create'].invoke app, appc_base_url, login_json
         end
       else
         puts "no servers defined for target '#{target['id']}'."
@@ -118,14 +129,13 @@ end
 
 namespace :mdx do
   desc "create an .mdx from an .ipa"
-  task :create, [:app_name, :variant_name] do |t, args|
+  task :create, [:app_name, :ipa] do |t, args|
     app_name = args[:app_name]
-    variant_name = args[:variant_name] || app_name
 
-    ipa = "data/apps/#{app_name}/#{app_name}.ipa"
+    ipa = args[:ipa] || "data/apps/#{app_name}/#{app_name}.ipa"
     raise "no ipa at #{ipa}" unless File.exist? ipa
     
-    mdx = "#{build_path}/#{variant_name}.mdx"
+    mdx = "#{build_path}/#{app_name}.mdx"
 
     prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first
 
@@ -154,7 +164,7 @@ namespace :mdx do
     ##
 
     sh %(
-      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}" -logFile "#{log_path}/#{variant_name}-mdx.log" -logWriteLevel "4" -appName "#{variant_name}" -appDesc "#{description}"
+      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}" -logFile "#{log_path}/#{app_name}-mdx.log" -logWriteLevel "4" -appName "#{app_name}" -appDesc "#{description}"
     )
 
     puts "packaged #{mdx} from #{ipa}"
@@ -203,19 +213,19 @@ namespace :app_controller do
 
     # get app id
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/app_controller_entries.log
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/app_controller_entries.log
     )
     entries_json = JSON.parse(`cat log/app_controller_entries.log`)
     app_id = id_for_app app, entries_json
 
     # upload binary
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/upload?CG_CSRFTOKEN=#{$csrf_token_header.gsub('CG_CSRFTOKEN: ', '')} #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --form "data=@#{mdx};type=application/octet-stream"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/upload?CG_CSRFTOKEN=#{$csrf_token_header.gsub('CG_CSRFTOKEN: ', '')} #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --form "data=@#{mdx};type=application/octet-stream"
     )
 
     # fetch manifest and save for the next request.
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data "#{app}.mdx"  > #{manifest_json}
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data "#{app}.mdx"  > #{manifest_json}
     )
     # prettify.
     File.write manifest_json, JSON.pretty_generate(JSON.parse(File.read(manifest_json)))
@@ -230,7 +240,7 @@ namespace :app_controller do
 
     puts "updating config for #{app}"
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{modified_manifest_json}"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers(appc_base_url)} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{modified_manifest_json}"
     )
   end
 
@@ -300,7 +310,7 @@ namespace :app_controller do
 
   def metadata_for_app_id(app_id, appc_base_url, headers, cookies_file)
     metadata = `
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/#{app_id}?_=1406733010550 #{headers} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/#{app_id}?_=1406733010550 #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-Type: application/json;charset=UTF-8"
     `
   end
 
