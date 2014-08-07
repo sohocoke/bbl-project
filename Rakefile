@@ -31,9 +31,13 @@ profile = "data/citrix_2014.mobileprovision"
 ## user-interfacing tasks
 
 namespace :app do
+  task :package, [:app_name] do |t, args|
+    Rake::Task['mdx:create'].reenable
+    Rake::Task['mdx:create'].invoke args[:app_name]  # FIXME need to work with ipa path.
+  end
+
   # pre-requisite: prototype mdx has been packaged.
   desc "unzip ipa, rewrite info.plist with new bundle id, rezip ipa."
-  # task :clone => [ :'ipa:unzip', :'ipa:rewrite_bid', :'ipa:zip' ]
   task :clone, [:app_name] => [ 
     :'config:merge', 
   ] do |t, args|
@@ -52,8 +56,6 @@ namespace :app do
       
       variant_bundle_id = variant_spec['bundle_id']
       riase "bundle id required for variant #{variant_name}" if variant_bundle_id.nil?
-
-      # TODO copy original.
 
       # write the variant config.
       File.write variant_config_path, variant_spec.to_yaml
@@ -91,6 +93,8 @@ namespace :app do
       Rake::Task['config:deploy'].reenable
       Rake::Task['config:deploy'].invoke variant_name
     end
+
+    # FIXME externalise loop on variants by tidying up interface between app:clone and app:deploy. 
   end
 end
 
