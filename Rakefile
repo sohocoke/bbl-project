@@ -33,7 +33,7 @@ profile = "data/citrix_2014.mobileprovision"
 namespace :app do
   task :package, [:app_name] do |t, args|
     Rake::Task['mdx:create'].reenable
-    Rake::Task['mdx:create'].invoke args[:app_name]  # FIXME need to work with ipa path.
+    Rake::Task['mdx:create'].invoke args[:app_name]
   end
 
   # pre-requisite: prototype mdx has been packaged.
@@ -55,7 +55,7 @@ namespace :app do
       variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
       
       variant_bundle_id = variant_spec['bundle_id']
-      riase "bundle id required for variant #{variant_name}" if variant_bundle_id.nil?
+      raise "bundle id required for variant #{variant_name}" if variant_bundle_id.nil?
 
       # write the variant config.
       File.write variant_config_path, variant_spec.to_yaml
@@ -66,10 +66,11 @@ namespace :app do
 
       # create variant mdx.
       Rake::Task['mdx:create'].reenable
-      Rake::Task['mdx:create'].invoke variant_name, variant_ipa_path  # FIXME need to work with ipa path.
+      Rake::Task['mdx:create'].invoke variant_name, variant_ipa_path
 
-      # replace policy_metadata.xml in variant mdx with the one in original mdx. TODO
-      # unzip, copy xml, zip
+      # replace policy_metadata.xml in variant mdx with the one in original mdx.
+      Rake::Task['mdx:create'].reenable
+      Rake::Task['mdx:replace_policy'].invoke variant_name, app
 
       puts "packaged variant '#{variant_name}'"
     end
@@ -184,34 +185,25 @@ namespace :mdx do
     puts "packaged #{mdx} from #{ipa}"
   end
 
-  task :unzip, [:app_name] do |t, args|
-    mdx = "#{build_path}/#{args[:app_name]}.mdx"
+  task :replace_policy, [:variant_name, :app_name] do |t, args|
     sh %(
-      rm -r #{build_path}/mdx-unzipped
-      unzip #{mdx} -d "#{build_path}/mdx-unzipped"
-    )
-  end
+      cd "#{build_path}"
 
-  # NOTE re-written policy does not apply unless submitted using the 'mobileappmgmt/upgrade' endpoint in the 'update-appc-entry' sequence.
-  task :rewrite_policy do
-    sh %(
-      # TODO add XenMobile policies since they won't be detected due to bundle id change.
-    )
-  end
+      rm -rf #{args[:app_name]}.mdx.unzipped #{args[:variant_name]}.mdx.unzipped
 
-  task :clean do
-    sh %(
-      rm mdx-rezipped.zip
+      unzip #{args[:app_name]}.mdx -d #{args[:app_name]}.mdx.unzipped
+      unzip #{args[:variant_name]}.mdx -d #{args[:variant_name]}.mdx.unzipped
+      
+      cp #{args[:app_name]}.mdx.unzipped/policy_metadata.xml #{args[:variant_name]}.mdx.unzipped/
+      
+      rm #{args[:variant_name]}.mdx
+      (cd #{args[:variant_name]}.mdx.unzipped; zip -r ../#{args[:variant_name]}.mdx .)
     )
-  end
 
-  task :zip do
-    sh %(
-      (cd mdx-unzipped && zip -r ../mdx-rezipped.zip .)
-    )
+    puts "replaced policy file in #{args[:variant_name]} with one in #{args[:app_name]}"
   end
-
-end
+  
+ end
 
 
 namespace :app_controller do
