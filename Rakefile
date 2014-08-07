@@ -31,6 +31,7 @@ profile = "data/citrix_2014.mobileprovision"
 ## user-interfacing tasks
 
 namespace :app do
+  desc "create an .mdx from an .ipa"
   task :package, [:app_name] do |t, args|
     Rake::Task['mdx:create'].reenable
     Rake::Task['mdx:create'].invoke args[:app_name]
@@ -44,8 +45,8 @@ namespace :app do
     app = args[:app_name]
     ipa = "data/apps/#{app}/#{app}.ipa"
   
-    configs = YAML.load File.read("#{build_path}/#{app}-config.yaml")
-    (variants = configs['variants']) && variants.each do |variant_spec|
+    config = YAML.load File.read("#{build_path}/#{app}-config.yaml")
+    (variants = config['variants']) && variants.each do |variant_spec|
       variant_name = variant_spec['id']
 
       raise "variant name for #{app} is same as name for original" if variant_name == app
@@ -58,7 +59,8 @@ namespace :app do
       raise "bundle id required for variant #{variant_name}" if variant_bundle_id.nil?
 
       # write the variant config.
-      File.write variant_config_path, variant_spec.to_yaml
+      cascaded_config = cascaded_variant_config app, variant_spec
+      File.write variant_config_path, cascaded_config.to_yaml
       
       # create variant ipa.
       Rake::Task['ipa:rewrite_bid'].reenable
@@ -106,15 +108,13 @@ namespace :config do
     raise "task needs arguments: see 'rake -T'" if args.nil?
     app = args[:app_name]
 
-    configs = cascaded_configs app
+    config = cascaded_config app
 
     merged_config_path = "#{build_path}/#{app}-config.yaml"
-    File.write merged_config_path, configs.to_yaml
-    puts "wrote #{configs['id']} to #{merged_config_path}"
+    File.write merged_config_path, config.to_yaml
+    puts "wrote #{config['id']} to #{merged_config_path}"
   end
 
-
-  desc "loop through all targets and deploy."
   task :deploy, [:app_name] => :merge do |t, args|
     app = args[:app_name]
  
@@ -143,7 +143,6 @@ end
 ## building-block tasks
 
 namespace :mdx do
-  desc "create an .mdx from an .ipa"
   task :create, [:app_name, :ipa] do |t, args|
     app_name = args[:app_name]
 
@@ -362,25 +361,6 @@ namespace :ipa do
     Rake::Task[:'ipa:zip'].invoke app, variant_name
     
     puts "rewrote bundle id for #{app} to #{bundle_id}"
-  end
-
-
-  task :unzip, [:ipa] do |t, args|
-    ipa = args[:ipa]
-    unzip_path = "#{build_path}/#{File.basename(ipa).sub(/\.ipa$/, '')}"
-    rm_rf "#{unzip_path}"
-    sh %(
-      unzip #{ipa} -d "#{unzip_path}"
-    )
-  end
-
-
-  task :zip, [:app_name, :ipa_name] do |t, args|
-    app = args[:app_name]
-    ipa_name = args[:ipa_name]
-    sh %(
-      (rm "#{build_path}/#{app}.ipa"; cd "#{build_path}/#{app}" && zip -r ../#{ipa_name}.ipa .)
-    )
   end
 
 end

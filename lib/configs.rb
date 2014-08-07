@@ -5,7 +5,7 @@ require 'yaml'
 require_relative 'hash_ext'
 
 
-def cascaded_configs( app )
+def cascaded_config( app )
 	templates = read_templates app
 
 	# validate existence of ids
@@ -18,6 +18,15 @@ def cascaded_configs( app )
 	templates[0].cascaded( *templates[1..-1], { "id" => "configuration combined from #{ids}" })
 end
 
+def cascaded_variant_config( app, variant_config )
+	app_config = cascaded_config(app)
+	app_config = app_config.cascaded( variant_config )
+
+	# no nested variants allowed
+	app_config.delete 'variants'
+
+	app_config
+end
 
 def delta_applied( config, config_delta )
 	# special treatment:
