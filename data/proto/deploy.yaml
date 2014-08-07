@@ -1,0 +1,42 @@
+# consider top-level entries in this structure as separate files, despite them all being in this file.
+
+
+# ?: support array merges?
+
+
+targets:
+  -
+    id: etit
+    description: test XenMobile instance
+    servers:
+    -
+      base_url: https://161.202.193.123:4443
+      credentials_path: data/login.json
+
+
+
+configs:
+  -
+    id: firmwide
+    manifest_values:
+      ncgapplication:
+        description: stub firm-wide description for app.
+      # more firm-wide configuration to go here.
+  -
+    id: region_x
+    manifest_values:
+      some_server_address_field: xxx
+
+
+
+apps:
+  -
+    id: WorxWeb
+
+    manifest_values:
+      ncgapplication:
+        description: stub description in deployment descriptor
+
+
+    variants:
+      # list variants here.
