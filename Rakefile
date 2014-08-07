@@ -114,7 +114,7 @@ namespace :config do
           appc_base_url = server['base_url']
           login_json = server['credentials_path']
           
-          # Rake::Task['app_controller:update'].invoke appc_base_url, login_json, app
+          # Rake::Task['app_controller:update'].invoke app, appc_base_url, login_json
           Rake::Task['app_controller:create'].invoke app, appc_base_url, login_json
         end
       else
@@ -202,7 +202,7 @@ end
 
 namespace :app_controller do
   desc "update app entry in app controller"
-  task :update, [:appc_base_url, :login_json, :app_name] => [ :'config:merge', :login] do |t, args|
+  task :update, [:app_name, :appc_base_url, :login_json] => [ :'config:merge', :login] do |t, args|
     appc_base_url = args[:appc_base_url]
     app = args[:app_name]
     mdx = "#{build_path}/#{app}.mdx"
