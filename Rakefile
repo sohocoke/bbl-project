@@ -238,20 +238,21 @@ namespace :app_controller do
 
 
     # apply delta to the manifest, save.
-    config_delta = YAML.load "#{build_path}/#{app}-config.yaml"
-    puts "applying config delta '#{config_delta['id']}' for #{app}"
+    config_delta_path = "#{build_path}/#{app}-config.yaml"
+    config_delta = YAML.load File.read(config_delta_path)
+    puts "# applying config delta '#{config_delta['id']}' for #{app} from #{config_delta_path}"
     delta_applied = delta_applied JSON.parse(File.read(manifest_json)), config_delta['manifest_values']
     modified_json_str = dereferenced JSON.pretty_generate(delta_applied), config_delta['variables']
     File.write modified_manifest_json, modified_json_str
 
-    puts "updating config for #{app}"
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers(appc_base_url)} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{modified_manifest_json}"
     )
+
+    puts "## updated app controller entry for #{app}"
   end
 
 
-  # FIXME doesn't set metadata: use app_controller:update immediately after.
   desc "create app entry in app controller"
   task :create, [:app_name, :appc_base_url, :login_json] => :login do |t, args|
     puts args
@@ -261,7 +262,12 @@ namespace :app_controller do
 
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/api/v1/mobileApp #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data-binary "@#{mdx}" -H "Content-type: application/octet-stream"
-    )  
+    )
+
+    # the 'create' endpoint doesn't properly set metadata, so immediately invoke an update.
+
+    Rake::Task['app_controller:update'].reenable
+    Rake::Task['app_controller:update'].invoke app_name, appc_base_url, args[:login_json]
   end
 
   desc "get metadata for app entry"
