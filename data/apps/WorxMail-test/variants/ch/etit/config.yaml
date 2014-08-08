@@ -1,5 +1,3 @@
-id: WorxMail-test-eur
-bundle_id: com.citrix.mailEUR
 manifest_values:
-ncgapplication:
-  description: stub description for EUR variant of WorxMail-test
+  ncgapplication:
+    description: stub description for EUR variant of WorxMail-test

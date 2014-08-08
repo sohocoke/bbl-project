@@ -6,5 +6,3 @@ manifest_values:
   # e.g.
   # ncgapplication:
   #   description: stub firm-wide description for app.
-  ncgapplication:
-    description: stub firm-wide description for app.

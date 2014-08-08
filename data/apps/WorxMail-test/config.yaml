@@ -1,0 +1,5 @@
+id: WorxMail-test
+
+manifest_values:
+  ncgapplication:
+    description: stub description in app deployment manifest

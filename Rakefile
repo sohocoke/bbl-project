@@ -46,23 +46,18 @@ namespace :app do
     app = args[:app_name]
     ipa = "{data_dir}/apps/#{app}/#{app}.ipa"
   
-    config = YAML.load File.read("#{build_dir}/#{app}-config.yaml")
-    (variants = config['variants']) && variants.each do |variant_spec|
+    variants.each do |variant_spec|
       variant_name = variant_spec['id']
 
       raise "variant name for #{app} is same as name for original" if variant_name == app
 
       variant_path = "#{build_dir}"
       variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
-      variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
+      # variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
       
       variant_bundle_id = variant_spec['bundle_id']
       raise "bundle id required for variant #{variant_name}" if variant_bundle_id.nil?
 
-      # write the variant config.
-      cascaded_config = cascaded_variant_config app, variant_spec
-      File.write variant_config_path, cascaded_config.to_yaml
-      
       # create variant ipa.
       Rake::Task['ipa:rewrite_bid'].reenable
       Rake::Task['ipa:rewrite_bid'].invoke ipa, variant_bundle_id, variant_name
@@ -114,8 +109,20 @@ namespace :config do
     merged_config_path = "#{build_dir}/#{app}-config.yaml"
     File.write merged_config_path, config.to_yaml
     puts "wrote #{config['id']} to #{merged_config_path}"
+
+    # TODO variants
+    # variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
+    config['variants'].each do |variant_config|
+      variant_name = variant_config['id']
+
+      puts "variant #{variant_name}"
+      # # write the variant config.
+      # cascaded_config = cascaded_variant_config app, variant_config
+      # File.write variant_config_path, cascaded_config.to_yaml
+    end
   end
 
+  # FIXME move.
   task :deploy, [:app_name] => :merge do |t, args|
     app = args[:app_name]
  
