@@ -40,8 +40,7 @@ end
 namespace :app do
   desc "create an .mdx from an .ipa"
   task :package, [:app_name] do |t, args|
-    Rake::Task['mdx:create'].reenable
-    Rake::Task['mdx:create'].invoke args[:app_name]
+    call_task 'mdx:create', args[:app_name]
   end
 
   # pre-requisite: prototype mdx has been packaged.
@@ -64,16 +63,13 @@ namespace :app do
       raise "bundle id required for variant #{variant_name}" if variant_bundle_id.nil?
 
       # create variant ipa.
-      Rake::Task['ipa:rewrite_bid'].reenable
-      Rake::Task['ipa:rewrite_bid'].invoke ipa, variant_bundle_id, variant_name
+      call_task 'ipa:rewrite_bid', ipa, variant_bundle_id, variant_name
 
       # create variant mdx.
-      Rake::Task['mdx:create'].reenable
-      Rake::Task['mdx:create'].invoke variant_name, variant_ipa_path
+      call_task 'mdx:create', variant_name, variant_ipa_path
 
       # replace policy_metadata.xml in variant mdx with the one in original mdx.
-      Rake::Task['mdx:create'].reenable
-      Rake::Task['mdx:replace_policy'].invoke variant_name, app
+      call_task 'mdx:replace_policy', variant_name, app
 
       puts "packaged variant '#{variant_name}'"
     end
@@ -87,10 +83,8 @@ namespace :app do
     mdx_names = Dir.glob("#{build_dir}/#{app}*.mdx").map {|e| File.basename(e).sub(/\.mdx$/, '')}
 
     mdx_names.each do |mdx|
-      # Rake::Task['app_controller:create'].reenable
-      # Rake::Task['app_controller:create'].invoke mdx, appc_base_url, login_json
-      Rake::Task['config:deploy'].reenable
-      Rake::Task['config:deploy'].invoke mdx
+      # call_task 'app_controller:create', mdx, appc_base_url, login_json
+      call_task 'config:deploy', mdx
     end
 
     # FIXME externalise loop on variants by tidying up interface between app:clone and app:deploy. 
@@ -137,9 +131,8 @@ namespace :config do
           appc_base_url = server['base_url']
           login_json = server['credentials_path']
           
-          # Rake::Task['app_controller:update'].invoke app, appc_base_url, login_json
-          Rake::Task['app_controller:create'].reenable
-          Rake::Task['app_controller:create'].invoke app, appc_base_url, login_json
+          # call_task 'app_controller:update', app, appc_base_url, login_json
+          call_task 'app_controller:create', app, appc_base_url, login_json
         end
       else
         puts "no servers defined for target '#{target['id']}'."
@@ -278,8 +271,7 @@ namespace :app_controller do
 
     # the 'create' endpoint doesn't properly set metadata, so immediately invoke an update.
 
-    Rake::Task['app_controller:update'].reenable
-    Rake::Task['app_controller:update'].invoke app_name, appc_base_url, args[:login_json]
+    call_task 'app_controller:update', app_name, appc_base_url, args[:login_json]
   end
 
   desc "get metadata for app entry"
@@ -371,7 +363,7 @@ namespace :ipa do
     sh %(
       plutil -convert binary1 "#{info_plist_path}"      
     )
-    Rake::Task[:'ipa:zip'].invoke app, variant_name
+    call_task :'ipa:zip', app, variant_name
     
     puts "rewrote bundle id for #{app} to #{bundle_id}"
   end
@@ -394,6 +386,13 @@ namespace :ipa do
     )
   end
 
+end
+
+
+
+def call_task task_name, *args
+  Rake::Task[task_name].reenable
+  Rake::Task[task_name].invoke *args
 end
 
 

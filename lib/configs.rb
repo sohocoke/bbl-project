@@ -80,9 +80,9 @@ def delta_applied( config, config_delta )
 
             case matching_vals.size
             when 0
-                raise "no match in #{vals} for #{predicate_name}=#{predicate_val}"
+                raise "no match in config for predicate #{predicate_name}='#{predicate_val}'"
             when 2
-                raise "multiple matches in #{vals} for #{predicate_name}=#{predicate_val}"
+                raise "multiple matches config for #{predicate_name}='#{predicate_val}'"
             else
                 debug "set #{target_k} on #{matching_vals[0]}"
                 matching_vals[0][target_k] = v
