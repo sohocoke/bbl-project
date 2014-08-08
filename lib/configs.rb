@@ -20,31 +20,27 @@ def cascaded_config( app )
       end
     end
 
-    # non-variant content
-    r = config_chunks.select{|e| e}.cascaded
-
-    # add a 'variants' elem listing cascaded variants with id's.
-    variant_files = config_files.select{|e| e =~ %r(/variants/)}
-    variants = []
-    variant_chunks = read_config variant_files
-    variant_chunks.each_with_index do |chunk, i|
-        if chunk == false
-            puts "#{variant_files[i]}: content read error"
-            next
-        end
-
-        if chunk['id']
-            # we have a node -- insert
-            variants << chunk  ## ?? cascade?
-
-            puts "wrote variant #{chunk}"
-        end
-    end
-
-    r['variants'] = variants
-
-    r
+    config_chunks.select{|e| e}.cascaded
 end
+
+def variants(app)
+    # enum variant files.
+    files = Dir.glob "data/apps/#{app}/variants/**/config.yaml"
+
+    # transform and filter leaf nodes.
+    chopped = files.map {|e| [ File.dirname(e), File.basename(e) ]}
+    leafs = chopped.select {|e| (o = YAML.load(File.read(e.join('/')))) && o['id']}
+
+    # collect cascaded configs.
+    leafs .map do |path, basename|
+      superpaths = (chopped - leafs).select {|p, b| path.index(p) }
+      superpath_configs = superpaths.map {|p, b| YAML.load File.read("#{p}/#{b}")}
+
+      leaf_config = YAML.load File.read("#{path}/#{basename}")
+      (superpath_configs + [leaf_config]).cascaded.merge({'id'=> leaf_config['id']})
+    end
+end
+
 
 def cascaded_variant_config( app, variant_config )
     app_config = cascaded_config(app)
@@ -138,7 +134,6 @@ private
     def targets
         Dir.glob("#{Base_dir}/destinations/**/servers.yaml").map {|e| Hash[ 'id', File.basename(File.dirname(e)), 'servers', YAML.load(File.read(e)) ] }
     end
-
 
     def read_config(config_files)
         puts "load config from #{config_files}"

@@ -12,6 +12,7 @@ require_relative 'lib/configs'
 log_dir = "log/"
 build_dir = "build/"
 data_dir = "data/"
+variant_path = "#{build_dir}"
 
 cookies_file = "log/cookies.txt"
 
@@ -25,7 +26,7 @@ prep_tool_bin = "/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"
 cert = "iPhone Distribution: Credit Suisse AG"
 
 # pre-requisite: enterprise provisioning profile.
-profile = "{data_dir}/citrix_2014.mobileprovision"
+profile = "#{data_dir}/citrix_2014.mobileprovision"
 
 
 
@@ -44,14 +45,13 @@ namespace :app do
     :'config:merge', 
   ] do |t, args|
     app = args[:app_name]
-    ipa = "{data_dir}/apps/#{app}/#{app}.ipa"
+    ipa = "#{data_dir}/apps/#{app}/#{app}.ipa"
   
-    variants.each do |variant_spec|
+    variants(app).each do |variant_spec|
       variant_name = variant_spec['id']
 
       raise "variant name for #{app} is same as name for original" if variant_name == app
 
-      variant_path = "#{build_dir}"
       variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
       # variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
       
@@ -75,22 +75,17 @@ namespace :app do
   end
 
 
-  desc "wrap with mdx, unzip mdx, rewrite policy, rezip mdx, update app controller entry."
+  desc "update app controller entries for an app and all variants."
   task :deploy, [ :app_name ] do |t, args|
     app = args[:app_name]
 
-    mdx_names = [ app ]
-    # for each variant, invoke app_controller:create
-    variants = YAML.load(File.read("#{build_dir}/#{app}-config.yaml"))['variants']
-    if variants
-      mdx_names.concat variants.map{|e| e['id']}
-    end
+    mdx_names = Dir.glob("#{build_dir}/#{app}*.mdx").map {|e| File.basename(e).sub(/\.mdx$/, '')}
 
-    mdx_names.each do |variant_name|
+    mdx_names.each do |mdx|
       # Rake::Task['app_controller:create'].reenable
-      # Rake::Task['app_controller:create'].invoke variant_name, appc_base_url, login_json
+      # Rake::Task['app_controller:create'].invoke mdx, appc_base_url, login_json
       Rake::Task['config:deploy'].reenable
-      Rake::Task['config:deploy'].invoke variant_name
+      Rake::Task['config:deploy'].invoke mdx
     end
 
     # FIXME externalise loop on variants by tidying up interface between app:clone and app:deploy. 
@@ -111,14 +106,15 @@ namespace :config do
     puts "wrote #{config['id']} to #{merged_config_path}"
 
     # TODO variants
-    # variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
-    config['variants'].each do |variant_config|
+    # config['variants'].each do |variant_config|
+    variants(app).each do |variant_config|
       variant_name = variant_config['id']
+      variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
 
       puts "variant #{variant_name}"
       # # write the variant config.
       # cascaded_config = cascaded_variant_config app, variant_config
-      # File.write variant_config_path, cascaded_config.to_yaml
+      File.write variant_config_path, variant_config.to_yaml
     end
   end
 
@@ -154,7 +150,7 @@ namespace :mdx do
   task :create, [:app_name, :ipa] do |t, args|
     app_name = args[:app_name]
 
-    ipa = args[:ipa] || "{data_dir}/apps/#{app_name}/#{app_name}.ipa"
+    ipa = args[:ipa] || "#{data_dir}/apps/#{app_name}/#{app_name}.ipa"
     raise "no ipa at #{ipa}" unless File.exist? ipa
     
     mdx = "#{build_dir}/#{app_name}.mdx"
@@ -247,8 +243,12 @@ namespace :app_controller do
     # apply delta to the manifest, save.
     config_delta_path = "#{build_dir}/#{app}-config.yaml"
     config_delta = YAML.load File.read(config_delta_path)
-    puts "# applying config delta '#{config_delta['id']}' for #{app} from #{config_delta_path}"
-    delta_applied = delta_applied JSON.parse(File.read(manifest_json)), config_delta['manifest_values']
+    delta_applied = JSON.parse(File.read(manifest_json))
+    if config_delta['manifest_values']
+      puts "# applying config delta '#{config_delta['id']}' for #{app} from #{config_delta_path}"
+      delta_applied = delta_applied delta_applied, config_delta['manifest_values']
+    end
+
     modified_json_str = dereferenced JSON.pretty_generate(delta_applied), config_delta['variables']
     File.write modified_manifest_json, modified_json_str
 
@@ -369,6 +369,24 @@ namespace :ipa do
     Rake::Task[:'ipa:zip'].invoke app, variant_name
     
     puts "rewrote bundle id for #{app} to #{bundle_id}"
+  end
+
+
+  task :unzip, [:ipa] do |t, args|
+    ipa = args[:ipa]
+    unzip_dir = "#{build_dir}/#{File.basename(ipa).sub(/\.ipa$/, '')}"
+    rm_rf "#{unzip_dir}"
+    sh %(
+      unzip #{ipa} -d "#{unzip_dir}"
+    )
+  end
+
+  task :zip, [:app_name, :ipa_name] do |t, args|
+    app = args[:app_name]
+    ipa_name = args[:ipa_name]
+    sh %(
+      (rm "#{build_dir}/#{app}.ipa"; cd "#{build_dir}/#{app}" && zip -r ../#{ipa_name}.ipa .)
+    )
   end
 
 end
