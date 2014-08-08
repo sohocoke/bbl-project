@@ -6,3 +6,6 @@ manifest_values:
 
   policies:
     policyValue[policyName='BackgroundServicesGateway']: '{var:netscaler_gateway_address}'
+    policyValue[policyName='ExchangeServer']: '{var:exchange_server_address}'
+    policyValue[policyName='MailDomain']: '{var:mail_domain}'
+    policyValue[policyName='BackgroundServices']: '{var:background_services_address}'
