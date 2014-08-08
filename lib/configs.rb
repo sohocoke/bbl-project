@@ -36,6 +36,9 @@ def variants(app)
       superpaths = (chopped - leafs).select {|p, b| path.index(p) }
       superpath_configs = superpaths.map {|p, b| YAML.load File.read("#{p}/#{b}")}
 
+      # remove non-content elements.
+      superpath_configs = superpath_configs.select {|e| e}
+
       leaf_config = YAML.load File.read("#{path}/#{basename}")
       (superpath_configs + [leaf_config]).cascaded.merge({'id'=> leaf_config['id']})
     end
@@ -105,6 +108,9 @@ def dereferenced( str, variables )
     variable_ref_p = /\{var:(.+?)\}/  # e.g. {var:my-variable-name}
 
     matches = str.each_line.map{|e| variable_ref_p.match(e)}.compact
+
+    raise "variables are required" if (! matches.empty? && variables.nil?)
+
     matches.each do |match_d|
         var = match_d[1]
         raise "no variable '#{var}' defined" unless variables.has_key? var
@@ -134,6 +140,12 @@ private
     def targets
         Dir.glob("#{Base_dir}/destinations/**/servers.yaml").map {|e| Hash[ 'id', File.basename(File.dirname(e)), 'servers', YAML.load(File.read(e)) ] }
     end
+
+    def variables
+        hashes = Dir.glob("#{Base_dir}/destinations/**/variables.yaml").map {|e| YAML.load File.read(e) }
+        hashes[0]  # TODO merge
+    end
+
 
     def read_config(config_files)
         puts "load config from #{config_files}"

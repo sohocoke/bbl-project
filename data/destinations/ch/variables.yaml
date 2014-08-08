@@ -1,7 +1,2 @@
-id: region_x
-manifest_values:
-  some_server_address_field: xxx
-
-variables:  # variables are used by other configuration blocks with the syntax '{var:var_name}'
-  netscaler_gateway_address: netscaler_address.
+netscaler_gateway_address: netscaler_address.
 

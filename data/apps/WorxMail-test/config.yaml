@@ -3,3 +3,6 @@ id: WorxMail-test
 manifest_values:
   ncgapplication:
     description: stub description in app deployment manifest
+
+  policies:
+    policyValue[policyName='BackgroundServicesGateway']: '{var:netscaler_gateway_address}'

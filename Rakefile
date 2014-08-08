@@ -32,6 +32,11 @@ profile = "#{data_dir}/citrix_2014.mobileprovision"
 
 ## user-interfacing tasks
 
+
+task :clean do
+  sh %(rm -rf build/*)
+end
+
 namespace :app do
   desc "create an .mdx from an .ipa"
   task :package, [:app_name] do |t, args|
@@ -92,6 +97,8 @@ namespace :app do
   end
 end
 
+
+
 namespace :config do
 
   desc "generate merged configuration using config definitions"
@@ -105,16 +112,14 @@ namespace :config do
     File.write merged_config_path, config.to_yaml
     puts "wrote #{config['id']} to #{merged_config_path}"
 
-    # TODO variants
-    # config['variants'].each do |variant_config|
+    # variants
     variants(app).each do |variant_config|
       variant_name = variant_config['id']
       variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
 
-      puts "variant #{variant_name}"
-      # # write the variant config.
-      # cascaded_config = cascaded_variant_config app, variant_config
-      File.write variant_config_path, variant_config.to_yaml
+      cascaded_variant_config = [ config, variant_config ].cascaded
+      File.write variant_config_path, cascaded_variant_config.to_yaml
+      puts "wrote config for variant #{variant_name}"
     end
   end
 
@@ -249,7 +254,7 @@ namespace :app_controller do
       delta_applied = delta_applied delta_applied, config_delta['manifest_values']
     end
 
-    modified_json_str = dereferenced JSON.pretty_generate(delta_applied), config_delta['variables']
+    modified_json_str = dereferenced JSON.pretty_generate(delta_applied), variables
     File.write modified_manifest_json, modified_json_str
 
     sh %(
