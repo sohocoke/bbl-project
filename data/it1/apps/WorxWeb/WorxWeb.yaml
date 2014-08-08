@@ -1,0 +1,9 @@
+id: WorxWeb
+
+manifest_values:
+  ncgapplication:
+    description: stub description in deployment descriptor
+
+
+variants:
+  # list variants here.

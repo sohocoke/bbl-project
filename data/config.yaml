@@ -1,0 +1,10 @@
+# globally applicable policy here.
+
+id: firmwide
+manifest_values:
+  # more firm-wide configuration to go here.
+  # e.g.
+  # ncgapplication:
+  #   description: stub firm-wide description for app.
+  ncgapplication:
+    description: stub firm-wide description for app.

@@ -1,0 +1,14 @@
+id: MVCNetworking
+
+manifest_values:
+  ncgapplication:
+    description: stub description in app deployment manifest
+
+
+variants:
+- 
+  id: MVCNetworking-eur
+  bundle_id: com.citrix.mailEUR
+  manifest_values:
+    ncgapplication:
+      description: stub description for EUR variant of MVCNetworking
