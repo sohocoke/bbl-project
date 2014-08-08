@@ -5,6 +5,6 @@ manifest_values:
 manifest_values:
   policies:
     policyValue[policyName='BackgroundServicesGateway']: '{var:netscaler_gateway_address_eu}'
-    policyValue[policyName='ExeuangeServer']: '{var:exeuange_server_address_eu}'
+    policyValue[policyName='ExchangeServer']: '{var:exchange_server_address_eu}'
     policyValue[policyName='MailDomain']: '{var:mail_domain_eu}'
     policyValue[policyName='BackgroundServices']: '{var:background_services_address_eu}'
