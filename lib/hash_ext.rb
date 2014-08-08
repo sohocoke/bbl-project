@@ -23,3 +23,18 @@ class Hash
     cascaded
   end
 end
+
+
+class Array  # of hashes
+  def cascaded
+    raise "can't cascade an empty Array" if self.empty?
+
+    raise "#{self} is not an Array of Hashes" if ! self.reject{|e| e.is_a? Hash}.empty?
+
+
+    ids = self.map {|e| e['id']}
+
+    self[0].cascaded( *self[1..-1], { "id" => "configuration combined from #{ids}" })
+
+  end
+end

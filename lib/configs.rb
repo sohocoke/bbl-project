@@ -4,18 +4,22 @@ require 'yaml'
 
 require_relative 'hash_ext'
 
+Base_dir = 'data'
+
 
 def cascaded_config( app )
-	templates = read_templates app
+	# order of the config files
+	config_files = Dir.glob "#{Base_dir}/**/config.yaml"
 
-	# validate existence of ids
-	templates.each do |c|
-		raise "id not found in config: #{c}" unless c['id']
+	config = read_config config_files
+
+	config_files.each_with_index do |f, i|
+	  if config[i] == false
+	    puts "#{f}: content read error"
+	  end
 	end
 
-	ids = templates.map {|e| e['id']}
-
-	templates[0].cascaded( *templates[1..-1], { "id" => "configuration combined from #{ids}" })
+	config.select{|e| e}.cascaded
 end
 
 def cascaded_variant_config( app, variant_config )
@@ -105,25 +109,19 @@ private
 		key =~ (/(.+?)\[(.+?)='(.+?)'\]/)
 	end
 
-	def read_templates(app)
-		templates + [ YAML.load(File.read("data/apps/#{app}/#{app}.yaml")) ]
-	end
-
-	def read_configs
-		YAML.load File.read('data/config/configs.yaml')
-	end
-
 
 
 	def targets
-		read_configs['targets']
-	end
-
-	def templates
-		read_configs['templates']
+		Dir.glob("#{Base_dir}/destinations/**/servers.yaml").map {|e| Hash[ 'id', File.basename(File.dirname(e)), 'servers', YAML.load(File.read(e)) ] }
 	end
 
 
+	def read_config(config_files)
+		puts "load config from #{config_files}"
+
+		# config objects
+		config = config_files.map {|f| YAML.load File.read(f)}
+	end
 
 	def debug(msg)
 		# puts msg
