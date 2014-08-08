@@ -9,8 +9,9 @@ require_relative 'lib/configs'
 
 ## env
 
-log_path = "log/"
-build_path = "build/"
+log_dir = "log/"
+build_dir = "build/"
+data_dir = "data/"
 
 cookies_file = "log/cookies.txt"
 
@@ -24,7 +25,7 @@ prep_tool_bin = "/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"
 cert = "iPhone Distribution: Credit Suisse AG"
 
 # pre-requisite: enterprise provisioning profile.
-profile = "data/citrix_2014.mobileprovision"
+profile = "{data_dir}/citrix_2014.mobileprovision"
 
 
 
@@ -43,15 +44,15 @@ namespace :app do
     :'config:merge', 
   ] do |t, args|
     app = args[:app_name]
-    ipa = "data/apps/#{app}/#{app}.ipa"
+    ipa = "{data_dir}/apps/#{app}/#{app}.ipa"
   
-    config = YAML.load File.read("#{build_path}/#{app}-config.yaml")
+    config = YAML.load File.read("#{build_dir}/#{app}-config.yaml")
     (variants = config['variants']) && variants.each do |variant_spec|
       variant_name = variant_spec['id']
 
       raise "variant name for #{app} is same as name for original" if variant_name == app
 
-      variant_path = "#{build_path}"
+      variant_path = "#{build_dir}"
       variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
       variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
       
@@ -85,7 +86,7 @@ namespace :app do
 
     mdx_names = [ app ]
     # for each variant, invoke app_controller:create
-    variants = YAML.load(File.read("#{build_path}/#{app}-config.yaml"))['variants']
+    variants = YAML.load(File.read("#{build_dir}/#{app}-config.yaml"))['variants']
     if variants
       mdx_names.concat variants.map{|e| e['id']}
     end
@@ -110,7 +111,7 @@ namespace :config do
 
     config = cascaded_config app
 
-    merged_config_path = "#{build_path}/#{app}-config.yaml"
+    merged_config_path = "#{build_dir}/#{app}-config.yaml"
     File.write merged_config_path, config.to_yaml
     puts "wrote #{config['id']} to #{merged_config_path}"
   end
@@ -146,10 +147,10 @@ namespace :mdx do
   task :create, [:app_name, :ipa] do |t, args|
     app_name = args[:app_name]
 
-    ipa = args[:ipa] || "data/apps/#{app_name}/#{app_name}.ipa"
+    ipa = args[:ipa] || "{data_dir}/apps/#{app_name}/#{app_name}.ipa"
     raise "no ipa at #{ipa}" unless File.exist? ipa
     
-    mdx = "#{build_path}/#{app_name}.mdx"
+    mdx = "#{build_dir}/#{app_name}.mdx"
 
     prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first
 
@@ -178,7 +179,7 @@ namespace :mdx do
     ##
 
     sh %(
-      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}" -logFile "#{log_path}/#{app_name}-mdx.log" -logWriteLevel "4" -appName "#{app_name}" -appDesc "#{description}"
+      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}" -logFile "#{log_dir}/#{app_name}-mdx.log" -logWriteLevel "4" -appName "#{app_name}" -appDesc "#{description}"
     )
 
     puts "packaged #{mdx} from #{ipa}"
@@ -186,7 +187,7 @@ namespace :mdx do
 
   task :replace_policy, [:variant_name, :app_name] do |t, args|
     sh %(
-      cd "#{build_path}"
+      cd "#{build_dir}"
 
       rm -rf #{args[:app_name]}.mdx.unzipped #{args[:variant_name]}.mdx.unzipped
 
@@ -210,7 +211,7 @@ namespace :app_controller do
   task :update, [:app_name, :appc_base_url, :login_json] => [ :'config:merge', :login] do |t, args|
     appc_base_url = args[:appc_base_url]
     app = args[:app_name]
-    mdx = "#{build_path}/#{app}.mdx"
+    mdx = "#{build_dir}/#{app}.mdx"
     manifest_json = "log/#{app}-manifest.json"
     modified_manifest_json = "log/#{app}-manifest-modified.json"
 
@@ -237,7 +238,7 @@ namespace :app_controller do
 
 
     # apply delta to the manifest, save.
-    config_delta_path = "#{build_path}/#{app}-config.yaml"
+    config_delta_path = "#{build_dir}/#{app}-config.yaml"
     config_delta = YAML.load File.read(config_delta_path)
     puts "# applying config delta '#{config_delta['id']}' for #{app} from #{config_delta_path}"
     delta_applied = delta_applied JSON.parse(File.read(manifest_json)), config_delta['manifest_values']
@@ -257,7 +258,7 @@ namespace :app_controller do
     puts args
     app_name = args[:app_name]
     appc_base_url = args[:appc_base_url]
-    mdx = "#{build_path}/#{app_name}.mdx"
+    mdx = "#{build_dir}/#{app_name}.mdx"
 
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/api/v1/mobileApp #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data-binary "@#{mdx}" -H "Content-type: application/octet-stream"
@@ -271,7 +272,7 @@ namespace :app_controller do
 
   desc "get metadata for app entry"
   task :get_metadata, [:app_name, :appc_base_url, :login_json] => :login do |t, args|
-    metadata_path = "#{build_path}/#{args[:app_name]}-metadata.json"
+    metadata_path = "#{build_dir}/#{args[:app_name]}-metadata.json"
     appc_base_url = args[:appc_base_url]
 
     app_id = id_for_app args[:app_name], JSON.parse(`cat log/app_controller_entries.log`)
@@ -344,7 +345,7 @@ namespace :ipa do
     bundle_id = args[:bundle_id]
     variant_name = args[:variant_name]
 
-    info_plist_path = Dir.glob("#{build_path}/#{app}/Payload/*.app/Info.plist").to_a.first
+    info_plist_path = Dir.glob("#{build_dir}/#{app}/Payload/*.app/Info.plist").to_a.first
 
     # convert and sub string
     sh %(
