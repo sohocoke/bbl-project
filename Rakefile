@@ -38,10 +38,12 @@ task :clean do
 end
 
 namespace :app do
+
   desc "create an .mdx from an .ipa"
   task :package, [:app_name] do |t, args|
     call_task 'mdx:create', args[:app_name]
   end
+
 
   # pre-requisite: prototype mdx has been packaged.
   desc "unzip ipa, rewrite info.plist with new bundle id, rezip ipa."
@@ -80,11 +82,11 @@ namespace :app do
   task :deploy, [ :app_name ] do |t, args|
     app = args[:app_name]
 
-    mdx_names = Dir.glob("#{build_dir}/#{app}*.mdx").map {|e| File.basename(e).sub(/\.mdx$/, '')}
+    package_names = Dir.glob("#{build_dir}/#{app}*.mdx").map {|e| File.basename(e).sub(/\.mdx$/, '')}
 
-    mdx_names.each do |mdx|
-      # call_task 'app_controller:create', mdx, appc_base_url, login_json
-      call_task 'config:deploy', mdx
+    package_names.each do |package|
+      # call_task 'app_controller:create', package, appc_base_url, login_json
+      call_task 'config:deploy', package
     end
 
     # FIXME externalise loop on variants by tidying up interface between app:clone and app:deploy. 
@@ -126,6 +128,7 @@ namespace :config do
     targets.each do |target|
 
       puts "# deploy #{app} to target '#{target['id']}'"
+
       if servers = target['servers']
         servers.each do |server|
           appc_base_url = server['base_url']
@@ -204,10 +207,61 @@ namespace :mdx do
     puts "replaced policy file in #{args[:variant_name]} with one in #{args[:app_name]}"
   end
   
- end
+end
+
+
+
+namespace :ipa do
+
+  desc "rewrite original bundle id with suffixed bundle id"
+  task :rewrite_bid, [:ipa, :bundle_id, :variant_name] => [:unzip] do |t, args|
+    app = File.basename(args[:ipa]).sub(/\.ipa$/, '')
+    bundle_id = args[:bundle_id]
+    variant_name = args[:variant_name]
+
+    info_plist_path = Dir.glob("#{build_dir}/#{app}/Payload/*.app/Info.plist").to_a.first
+
+    # convert and sub string
+    sh %(
+      plutil -convert json "#{info_plist_path}"      
+    )
+    plist_str = File.read info_plist_path
+    plist_str.gsub!(/"CFBundleIdentifier":".*?"/, %("CFBundleIdentifier":"#{bundle_id}"))
+    File.write info_plist_path, plist_str 
+
+    # convert back and re-zip
+    sh %(
+      plutil -convert binary1 "#{info_plist_path}"      
+    )
+    call_task :'ipa:zip', app, variant_name
+    
+    puts "rewrote bundle id for #{app} to #{bundle_id}"
+  end
+
+
+  task :unzip, [:ipa] do |t, args|
+    ipa = args[:ipa]
+    unzip_dir = "#{build_dir}/#{File.basename(ipa).sub(/\.ipa$/, '')}"
+    rm_rf "#{unzip_dir}"
+    sh %(
+      unzip #{ipa} -d "#{unzip_dir}"
+    )
+  end
+
+  task :zip, [:app_name, :ipa_name] do |t, args|
+    app = args[:app_name]
+    ipa_name = args[:ipa_name]
+    sh %(
+      (rm "#{build_dir}/#{app}.ipa"; cd "#{build_dir}/#{app}" && zip -r ../#{ipa_name}.ipa .)
+    )
+  end
+
+end
+
 
 
 namespace :app_controller do
+
   desc "update app entry in app controller"
   task :update, [:app_name, :appc_base_url, :login_json] => [ :'config:merge', :login] do |t, args|
     appc_base_url = args[:appc_base_url]
@@ -334,56 +388,6 @@ namespace :app_controller do
   %(
     -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept: application/json,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.8" -H "Connection: keep-alive" -H "X-Requested-With: CloudGateway AJAX" -H "Referer: #{appc_base_url}/ControlPoint/" -H "Origin: #{appc_base_url}" -H "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36"
     ).strip
-  end
-
-end
-
-
-
-namespace :ipa do
-
-  desc "rewrite original bundle id with suffixed bundle id"
-
-  task :rewrite_bid, [:ipa, :bundle_id, :variant_name] => [:unzip] do |t, args|
-    app = File.basename(args[:ipa]).sub(/\.ipa$/, '')
-    bundle_id = args[:bundle_id]
-    variant_name = args[:variant_name]
-
-    info_plist_path = Dir.glob("#{build_dir}/#{app}/Payload/*.app/Info.plist").to_a.first
-
-    # convert and sub string
-    sh %(
-      plutil -convert json "#{info_plist_path}"      
-    )
-    plist_str = File.read info_plist_path
-    plist_str.gsub!(/"CFBundleIdentifier":".*?"/, %("CFBundleIdentifier":"#{bundle_id}"))
-    File.write info_plist_path, plist_str 
-
-    # convert back and re-zip
-    sh %(
-      plutil -convert binary1 "#{info_plist_path}"      
-    )
-    call_task :'ipa:zip', app, variant_name
-    
-    puts "rewrote bundle id for #{app} to #{bundle_id}"
-  end
-
-
-  task :unzip, [:ipa] do |t, args|
-    ipa = args[:ipa]
-    unzip_dir = "#{build_dir}/#{File.basename(ipa).sub(/\.ipa$/, '')}"
-    rm_rf "#{unzip_dir}"
-    sh %(
-      unzip #{ipa} -d "#{unzip_dir}"
-    )
-  end
-
-  task :zip, [:app_name, :ipa_name] do |t, args|
-    app = args[:app_name]
-    ipa_name = args[:ipa_name]
-    sh %(
-      (rm "#{build_dir}/#{app}.ipa"; cd "#{build_dir}/#{app}" && zip -r ../#{ipa_name}.ipa .)
-    )
   end
 
 end

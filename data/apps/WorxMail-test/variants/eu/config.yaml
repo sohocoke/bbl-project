@@ -1,8 +1,8 @@
 manifest_values:
+
   ncgapplication:
     description: stub description for EU variant of WorxMail-test
 
-manifest_values:
   policies:
     policyValue[policyName='BackgroundServicesGateway']: '{var:netscaler_gateway_address_eu}'
     policyValue[policyName='ExchangeServer']: '{var:exchange_server_address_eu}'
