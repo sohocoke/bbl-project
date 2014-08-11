@@ -83,30 +83,36 @@ namespace :app do
     app = args[:app_name]
     targets_regexp = args[:targets_regexp]   # FIXME arg validation
 
-    package_names = Dir.glob("#{build_dir}/#{app}*.mdx").map {|e| File.basename(e).sub(/\.mdx$/, '')}
-
     targets = targets(targets_regexp)
+
+    package_names = Dir.glob("#{build_dir}/#{app}*.mdx").map {|e| File.basename(e).sub(/\.mdx$/, '')}
 
     puts "## targeting #{targets}"
 
     targets.each do |target|
 
+      raise "no servers defined for target '#{target['id']}'." if ! target['servers']
+
       # call_task 'config:deploy', package
       package_names.each do |package|
 
-        puts "# deploy #{package} to target '#{target['id']}'"
+        config = YAML.load File.read("#{build_dir}/#{package}-config.yaml")
+        if target['id'] =~ /#{config['targets']}/
 
-        if servers = target['servers']
-          servers.each do |server|
+          puts "# deploy #{package} to target '#{target['id']}'"
+
+          target['servers'].each do |server|
             appc_base_url = server['base_url']
             login_json = server['credentials_path']
             
             call_task 'app_controller:create', package, appc_base_url, login_json
             # call_task 'app_controller:update', package, appc_base_url, login_json
           end
+
         else
-          puts "no servers defined for target '#{target['id']}'."
+          puts "# skipping #{package} as #{target} not in its scoped targets"
         end
+
       end  
 
     end

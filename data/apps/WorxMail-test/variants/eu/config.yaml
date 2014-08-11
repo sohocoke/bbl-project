@@ -8,3 +8,5 @@ manifest_values:
     policyValue[policyName='ExchangeServer']: '{var:exchange_server_address_eu}'
     policyValue[policyName='MailDomain']: '{var:mail_domain_eu}'
     policyValue[policyName='BackgroundServices']: '{var:background_services_address_eu}'
+
+targets: eu-.*
