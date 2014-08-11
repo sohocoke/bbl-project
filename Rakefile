@@ -79,18 +79,39 @@ namespace :app do
 
 
   desc "update app controller entries for an app and all variants."
-  task :deploy, [ :app_name ] do |t, args|
+  task :deploy, [ :app_name, :targets_regexp ] do |t, args|
     app = args[:app_name]
+    targets_regexp = args[:targets_regexp]   # FIXME arg validation
 
     package_names = Dir.glob("#{build_dir}/#{app}*.mdx").map {|e| File.basename(e).sub(/\.mdx$/, '')}
 
-    package_names.each do |package|
-      # call_task 'app_controller:create', package, appc_base_url, login_json
-      call_task 'config:deploy', package
-    end
+    targets = targets(targets_regexp)
 
-    # FIXME externalise loop on variants by tidying up interface between app:clone and app:deploy. 
+    puts "## targeting #{targets}"
+
+    targets.each do |target|
+
+      # call_task 'config:deploy', package
+      package_names.each do |package|
+
+        puts "# deploy #{package} to target '#{target['id']}'"
+
+        if servers = target['servers']
+          servers.each do |server|
+            appc_base_url = server['base_url']
+            login_json = server['credentials_path']
+            
+            call_task 'app_controller:create', package, appc_base_url, login_json
+            # call_task 'app_controller:update', package, appc_base_url, login_json
+          end
+        else
+          puts "no servers defined for target '#{target['id']}'."
+        end
+      end  
+
+    end
   end
+
 end
 
 
@@ -119,29 +140,6 @@ namespace :config do
     end
   end
 
-  # FIXME move.
-  task :deploy, [:app_name] => :merge do |t, args|
-    app = args[:app_name]
- 
-    puts "## Deploy #{app} to all targets."
- 
-    targets.each do |target|
-
-      puts "# deploy #{app} to target '#{target['id']}'"
-
-      if servers = target['servers']
-        servers.each do |server|
-          appc_base_url = server['base_url']
-          login_json = server['credentials_path']
-          
-          # call_task 'app_controller:update', app, appc_base_url, login_json
-          call_task 'app_controller:create', app, appc_base_url, login_json
-        end
-      else
-        puts "no servers defined for target '#{target['id']}'."
-      end
-    end  
-  end
 end
 
 
