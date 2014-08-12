@@ -58,6 +58,8 @@ namespace :app do
 
       raise "variant name for #{app} is same as name for original" if variant_name == app
 
+      ## ios
+
       variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
       # variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
       
@@ -72,6 +74,11 @@ namespace :app do
 
       # replace policy_metadata.xml in variant mdx with the one in original mdx.
       call_task 'mdx:replace_policy', variant_name, app
+
+
+      ## android TODO
+
+
 
       puts "packaged variant '#{variant_name}'"
     end
@@ -152,6 +159,7 @@ end
 ## building-block tasks
 
 namespace :mdx do
+
   task :create, [:app_name, :ipa] do |t, args|
     app_name = args[:app_name]
 
