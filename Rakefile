@@ -77,9 +77,25 @@ namespace :app do
 
 
       ## android TODO
+      
+      # # unzip archive
+      # unzip package.apk
 
+      # # convert xml to text
+      # c./AndroidManifest.xml -o out.xml
 
+      # ?? how to pack it back in?
+      # aapt package -v -f -A "$DEV_HOME"/assets -M "$DEV_HOME"/AndroidManifest.xml -S "$DEV_HOME"/res -I "$ANDROID_HOME"/platforms/android-15/android.jar -F "$DEV_HOME"/bin/AndroidTest.unsigned.apk "$DEV_HOME"/bin
+      # FIXME need to convert all xml's to text.
 
+      ## END ALT
+
+      # ALT
+      # apktool d /Users/andy/Documents/src/SwipeTest/SwipeTest.apk  # decompile
+      # <edit pacakge id>
+      # apktool b SwipeTest SwipeTest-clone.apk  # archive into .apk
+
+      
       puts "packaged variant '#{variant_name}'"
     end
   end
@@ -199,6 +215,11 @@ namespace :mdx do
     )
 
     puts "packaged #{mdx} from #{ipa}"
+
+    # ANDROID
+    # commands:
+    # export PATH="$PATH":/Users/andy/Applications/development\ apps/Android\ Studio.app/sdk/build-tools/android-4.4W:/Users/andy/Applications/development\ apps/Android\ Studio.app/sdk/platform-tools:/Users/andy/Applications/development\ apps/Android\ Studio.app/sdk/tools
+    # java -jar /Applications/Citrix/MDXToolkit/ManagedAppUtility.jar wrap -in data/apps/WorxMail-test/WorxMail-test.apk -out build/WorxMail-test-android.mdx
   end
 
   task :replace_policy, [:variant_name, :app_name] do |t, args|
