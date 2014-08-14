@@ -1,5 +1,5 @@
 id: WorxMail-test-ch-android
-bundle_id: com.citrix.mailCH
+package_id: com.citrix.mailCH
 
 manifest_values:
   policies:

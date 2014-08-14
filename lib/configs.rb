@@ -24,8 +24,11 @@ def cascaded_config( app )
 end
 
 def variants(app)
+    app_dir = "data/apps/#{app}"
+    raise "no app set up at #{app_dir}" unless File.exists?(app_dir)
+
     # enum variant files.
-    files = Dir.glob "data/apps/#{app}/variants/**/config.yaml"
+    files = Dir.glob "#{app_dir}/variants/**/config.yaml"
 
     # transform and filter leaf nodes.
     chopped = files.map {|e| [ File.dirname(e), File.basename(e) ]}

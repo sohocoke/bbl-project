@@ -1,10 +1,11 @@
 require 'json'
+require 'xml'
 require 'rake/packagetask'
 require_relative 'lib/configs'
 
 # FIXME: make all curl -v output go to stdout.
 # TODO: capture all shell execution output, do some sanity checks for errors. (grep 'HTTP/1.1')
-# TODO: extract params.
+# TODO: parameterise arguments related to android signing.
 
 
 ## env
@@ -29,6 +30,9 @@ cert = "iPhone Distribution: Credit Suisse AG"
 profile = "#{data_dir}/citrix_2014.mobileprovision"
 
 
+android_utils_paths = "~/Downloads/apktool1.5.2:~/.bin:/Users/andy/Applications/development apps/Android Studio.app/sdk/build-tools/android-4.4W:/Users/andy/Applications/development apps/Android Studio.app/sdk/platform-tools:/Users/andy/Applications/development apps/Android Studio.app/sdk/tools"
+
+
 
 ## user-interfacing tasks
 
@@ -37,11 +41,12 @@ task :clean do
   sh %(rm -rf build/*)
 end
 
+
 namespace :app do
 
-  desc "create an .mdx from an .ipa"
+  desc "create an .mdx from an .ipa, or .apk of an app"
   task :package, [:app_name] do |t, args|
-    call_task 'mdx:create', args[:app_name]
+    call_task 'ipa:make_mdx', args[:app_name]
   end
 
 
@@ -52,51 +57,47 @@ namespace :app do
   ] do |t, args|
     app = args[:app_name]
     ipa = "#{data_dir}/apps/#{app}/#{app}.ipa"
+    apk = "#{data_dir}/apps/#{app}/#{app}.apk"
   
     variants(app).each do |variant_spec|
       variant_name = variant_spec['id']
+      variant_bundle_id = variant_spec['bundle_id']
+      variant_package_id = variant_spec['package_id']
 
       raise "variant name for #{app} is same as name for original" if variant_name == app
 
-      ## ios
+      if variant_bundle_id
+        # ios
+        variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
+        # variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
 
-      variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
-      # variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
+        ## ios
+        call_task 'ipa:clone', app, variant_bundle_id, variant_name
+        call_task 'ipa:make_mdx', variant_name, variant_ipa_path
+      elsif variant_package_id
+        variant_apk_path = "#{variant_path}/#{File.basename(apk).gsub(app, variant_name)}"
+
+        call_task 'apk:clone', app, variant_package_id, variant_name
+        call_task 'apk:make_mdx', variant_name, variant_apk_path
+      else
+        raise "define a unique variant id (iOS) or package_id (Android) for variant '#{variant_name}'"
+      end
+
       
-      variant_bundle_id = variant_spec['bundle_id']
-      raise "bundle id required for variant #{variant_name}" if variant_bundle_id.nil?
-
-      # create variant ipa.
-      call_task 'ipa:rewrite_bid', ipa, variant_bundle_id, variant_name
-
-      # create variant mdx.
-      call_task 'mdx:create', variant_name, variant_ipa_path
-
-      # replace policy_metadata.xml in variant mdx with the one in original mdx.
       call_task 'mdx:replace_policy', variant_name, app
+
+      puts "packaged variant '#{variant_name}'"
 
 
       ## android TODO
+
+      # call_task 'apk:clone'
+      # call_task 'ipa:make_mdx', variant_name, variant_ipa_path  # TODO decouple from ios
+      # call_task 'mdx:replace_policy', variant_name, app
+
+      # puts "packaged variant '#{variant_name}'"
       
-      # # unzip archive
-      # unzip package.apk
-
-      # # convert xml to text
-      # c./AndroidManifest.xml -o out.xml
-
-      # ?? how to pack it back in?
-      # aapt package -v -f -A "$DEV_HOME"/assets -M "$DEV_HOME"/AndroidManifest.xml -S "$DEV_HOME"/res -I "$ANDROID_HOME"/platforms/android-15/android.jar -F "$DEV_HOME"/bin/AndroidTest.unsigned.apk "$DEV_HOME"/bin
-      # FIXME need to convert all xml's to text.
-
-      ## END ALT
-
-      # ALT
-      # apktool d /Users/andy/Documents/src/SwipeTest/SwipeTest.apk  # decompile
-      # <edit pacakge id>
-      # apktool b SwipeTest SwipeTest-clone.apk  # archive into .apk
-
       
-      puts "packaged variant '#{variant_name}'"
     end
   end
 
@@ -144,7 +145,6 @@ namespace :app do
 end
 
 
-
 namespace :config do
 
   desc "generate merged configuration using config definitions"
@@ -172,11 +172,71 @@ namespace :config do
 end
 
 
+
 ## building-block tasks
 
 namespace :mdx do
 
-  task :create, [:app_name, :ipa] do |t, args|
+  task :replace_policy, [:variant_name, :app_name] do |t, args|
+    sh %(
+      cd "#{build_dir}"
+
+      rm -rf #{args[:app_name]}.mdx.unzipped #{args[:variant_name]}.mdx.unzipped
+
+      unzip #{args[:app_name]}.mdx -d #{args[:app_name]}.mdx.unzipped
+      unzip #{args[:variant_name]}.mdx -d #{args[:variant_name]}.mdx.unzipped
+      
+      cp #{args[:app_name]}.mdx.unzipped/policy_metadata.xml #{args[:variant_name]}.mdx.unzipped/
+      
+      rm #{args[:variant_name]}.mdx
+      (cd #{args[:variant_name]}.mdx.unzipped; zip -r ../#{args[:variant_name]}.mdx .)
+    )
+
+    puts "replaced policy file in #{args[:variant_name]} with one in #{args[:app_name]}"
+  end
+  
+end
+
+
+namespace :ipa do
+
+  desc "clone an ipa"
+  task :clone, [:app, :variant_name, :variant_bundle_id] do |t, args|
+    app = args[:app]
+    ipa = "#{data_dir}/apps/#{app}/#{app}.ipa"
+    
+    # create variant ipa.
+    call_task 'ipa:rewrite_bid', ipa, args[:variant_bundle_id], args[:variant_name]
+  end
+
+  desc "rewrite original bundle id with suffixed bundle id"
+  task :rewrite_bid, [:ipa, :bundle_id, :variant_name] do |t, args|
+    call_task 'ipa:unzip', args[:ipa]
+
+    app = File.basename(args[:ipa]).sub(/\.ipa$/, '')
+    bundle_id = args[:bundle_id]
+    variant_name = args[:variant_name]
+
+    info_plist_path = Dir.glob("#{build_dir}/#{app}/Payload/*.app/Info.plist").to_a.first
+
+    # convert and sub string
+    sh %(
+      plutil -convert json "#{info_plist_path}"      
+    )
+    plist_str = File.read info_plist_path
+    plist_str.gsub!(/"CFBundleIdentifier":".*?"/, %("CFBundleIdentifier":"#{bundle_id}"))
+    File.write info_plist_path, plist_str 
+
+    # convert back and re-zip
+    sh %(
+      plutil -convert binary1 "#{info_plist_path}"      
+    )
+    call_task :'ipa:zip', app, variant_name
+    
+    puts "rewrote bundle id for #{app} to #{bundle_id}"
+  end
+
+  task :make_mdx, [:app_name, :ipa] do |t, args|
     app_name = args[:app_name]
 
     ipa = args[:ipa] || "#{data_dir}/apps/#{app_name}/#{app_name}.ipa"
@@ -215,62 +275,7 @@ namespace :mdx do
     )
 
     puts "packaged #{mdx} from #{ipa}"
-
-    # ANDROID
-    # commands:
-    # export PATH="$PATH":/Users/andy/Applications/development\ apps/Android\ Studio.app/sdk/build-tools/android-4.4W:/Users/andy/Applications/development\ apps/Android\ Studio.app/sdk/platform-tools:/Users/andy/Applications/development\ apps/Android\ Studio.app/sdk/tools
-    # java -jar /Applications/Citrix/MDXToolkit/ManagedAppUtility.jar wrap -in data/apps/WorxMail-test/WorxMail-test.apk -out build/WorxMail-test-android.mdx
   end
-
-  task :replace_policy, [:variant_name, :app_name] do |t, args|
-    sh %(
-      cd "#{build_dir}"
-
-      rm -rf #{args[:app_name]}.mdx.unzipped #{args[:variant_name]}.mdx.unzipped
-
-      unzip #{args[:app_name]}.mdx -d #{args[:app_name]}.mdx.unzipped
-      unzip #{args[:variant_name]}.mdx -d #{args[:variant_name]}.mdx.unzipped
-      
-      cp #{args[:app_name]}.mdx.unzipped/policy_metadata.xml #{args[:variant_name]}.mdx.unzipped/
-      
-      rm #{args[:variant_name]}.mdx
-      (cd #{args[:variant_name]}.mdx.unzipped; zip -r ../#{args[:variant_name]}.mdx .)
-    )
-
-    puts "replaced policy file in #{args[:variant_name]} with one in #{args[:app_name]}"
-  end
-  
-end
-
-
-
-namespace :ipa do
-
-  desc "rewrite original bundle id with suffixed bundle id"
-  task :rewrite_bid, [:ipa, :bundle_id, :variant_name] => [:unzip] do |t, args|
-    app = File.basename(args[:ipa]).sub(/\.ipa$/, '')
-    bundle_id = args[:bundle_id]
-    variant_name = args[:variant_name]
-
-    info_plist_path = Dir.glob("#{build_dir}/#{app}/Payload/*.app/Info.plist").to_a.first
-
-    # convert and sub string
-    sh %(
-      plutil -convert json "#{info_plist_path}"      
-    )
-    plist_str = File.read info_plist_path
-    plist_str.gsub!(/"CFBundleIdentifier":".*?"/, %("CFBundleIdentifier":"#{bundle_id}"))
-    File.write info_plist_path, plist_str 
-
-    # convert back and re-zip
-    sh %(
-      plutil -convert binary1 "#{info_plist_path}"      
-    )
-    call_task :'ipa:zip', app, variant_name
-    
-    puts "rewrote bundle id for #{app} to #{bundle_id}"
-  end
-
 
   task :unzip, [:ipa] do |t, args|
     ipa = args[:ipa]
@@ -291,6 +296,55 @@ namespace :ipa do
 
 end
 
+
+namespace :apk do
+  desc "clone an apk"
+  task :clone, [:app, :package_id, :variant_name] do |t, args|
+    app = args[:app]
+    package_id = args[:package_id]
+    variant_name = args[:variant_name]
+
+    sh %(
+      export PATH="#{android_utils_paths}:$PATH"
+      cd build
+      
+      rm -rf #{app}
+      apktool d ../#{data_dir}/apps/#{app}/#{app}.apk  # decompile
+    )
+
+    # edit package id
+    doc = XML::Parser.file("#{build_dir}/#{app}/AndroidManifest.xml").parse
+    a = doc.root.attributes.get_attribute('package')
+    a.value = package_id
+    doc.save "#{build_dir}/#{app}/AndroidManifest.xml"
+
+    sh %(
+      export PATH="#{android_utils_paths}:$PATH"
+      cd #{build_dir}
+
+      apktool b #{app} #{variant_name}.apk  # archive into .apk
+    )
+
+    puts "rewrote package id for #{app} to #{package_id}"
+  end
+
+  task :make_mdx, [:app_name, :apk] do |t, args|
+    app_name = args[:app_name]
+    apk = args[:apk] || "#{data_dir}/apps/#{app_name}/#{app_name}.apk"
+
+    mdx = "#{build_dir}/#{app_name}-android.mdx"
+
+    # ANDROID
+    # commands:
+    # export PATH="$PATH":/Users/andy/Applications/development\ apps/Android\ Studio.app/sdk/build-tools/android-4.4W:/Users/andy/Applications/development\ apps/Android\ Studio.app/sdk/platform-tools:/Users/andy/Applications/development\ apps/Android\ Studio.app/sdk/tools
+
+    sh %(
+      export PATH="#{android_utils_paths}:$PATH"
+
+      java -jar /Applications/Citrix/MDXToolkit/ManagedAppUtility.jar wrap -in #{apk} -out build/#{mdx} -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android
+    )
+  end
+end
 
 
 namespace :app_controller do
@@ -418,8 +472,8 @@ namespace :app_controller do
   end
 
   def headers(appc_base_url)
-  %(
-    -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept: application/json,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.8" -H "Connection: keep-alive" -H "X-Requested-With: CloudGateway AJAX" -H "Referer: #{appc_base_url}/ControlPoint/" -H "Origin: #{appc_base_url}" -H "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36"
+    %(
+      -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept: application/json,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.8" -H "Connection: keep-alive" -H "X-Requested-With: CloudGateway AJAX" -H "Referer: #{appc_base_url}/ControlPoint/" -H "Origin: #{appc_base_url}" -H "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36"
     ).strip
   end
 
