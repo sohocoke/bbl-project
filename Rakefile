@@ -30,7 +30,7 @@ cert = "iPhone Distribution: Credit Suisse AG"
 profile = "#{data_dir}/citrix_2014.mobileprovision"
 
 
-android_utils_paths = "~/Downloads/apktool1.5.2:~/.bin:/Users/andy/Applications/development apps/Android Studio.app/sdk/build-tools/android-4.4W:/Users/andy/Applications/development apps/Android Studio.app/sdk/platform-tools:/Users/andy/Applications/development apps/Android Studio.app/sdk/tools"
+android_utils_paths = "`pwd`/ext/apktool1.5.2:`pwd`/ext/android-sdk/build-tools/android-4.4W"
 
 
 
@@ -59,25 +59,28 @@ namespace :app do
     ipa = "#{data_dir}/apps/#{app}/#{app}.ipa"
     apk = "#{data_dir}/apps/#{app}/#{app}.apk"
   
-    variants(app).each do |variant_spec|
-      variant_name = variant_spec['id']
-      variant_bundle_id = variant_spec['bundle_id']
-      variant_package_id = variant_spec['package_id']
+    variants(app).each do |variant_config|
+      variant_name = variant_config['id']
+      variant_bundle_id = variant_config['bundle_id']
+      variant_package_id = variant_config['package_id']
 
       raise "variant name for #{app} is same as name for original" if variant_name == app
 
       if variant_bundle_id
         # ios
+
         variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
         # variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
 
-        ## ios
-        call_task 'ipa:clone', app, variant_bundle_id, variant_name
+        call_task 'ipa:clone', app, variant_name, variant_bundle_id
         call_task 'ipa:make_mdx', variant_name, variant_ipa_path
+
       elsif variant_package_id
+        # android
+
         variant_apk_path = "#{variant_path}/#{File.basename(apk).gsub(app, variant_name)}"
 
-        call_task 'apk:clone', app, variant_package_id, variant_name
+        call_task 'apk:clone', app, variant_name, variant_package_id
         call_task 'apk:make_mdx', variant_name, variant_apk_path
       else
         raise "define a unique variant id (iOS) or package_id (Android) for variant '#{variant_name}'"
@@ -87,16 +90,6 @@ namespace :app do
       call_task 'mdx:replace_policy', variant_name, app
 
       puts "packaged variant '#{variant_name}'"
-
-
-      ## android TODO
-
-      # call_task 'apk:clone'
-      # call_task 'ipa:make_mdx', variant_name, variant_ipa_path  # TODO decouple from ios
-      # call_task 'mdx:replace_policy', variant_name, app
-
-      # puts "packaged variant '#{variant_name}'"
-      
       
     end
   end
@@ -299,14 +292,14 @@ end
 
 namespace :apk do
   desc "clone an apk"
-  task :clone, [:app, :package_id, :variant_name] do |t, args|
+  task :clone, [:app, :variant_name, :package_id] do |t, args|
     app = args[:app]
     package_id = args[:package_id]
     variant_name = args[:variant_name]
 
     sh %(
       export PATH="#{android_utils_paths}:$PATH"
-      cd build
+      cd #{build_dir}
       
       rm -rf #{app}
       apktool d ../#{data_dir}/apps/#{app}/#{app}.apk  # decompile
@@ -332,7 +325,7 @@ namespace :apk do
     app_name = args[:app_name]
     apk = args[:apk] || "#{data_dir}/apps/#{app_name}/#{app_name}.apk"
 
-    mdx = "#{build_dir}/#{app_name}-android.mdx"
+    mdx = "#{build_dir}/#{app_name}.mdx"
 
     # ANDROID
     # commands:
@@ -341,7 +334,7 @@ namespace :apk do
     sh %(
       export PATH="#{android_utils_paths}:$PATH"
 
-      java -jar /Applications/Citrix/MDXToolkit/ManagedAppUtility.jar wrap -in #{apk} -out build/#{mdx} -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android
+      java -jar /Applications/Citrix/MDXToolkit/ManagedAppUtility.jar wrap -in #{apk} -out #{mdx} -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android
     )
   end
 end
@@ -350,7 +343,7 @@ end
 namespace :app_controller do
 
   desc "update app entry in app controller"
-  task :update, [:app_name, :appc_base_url, :login_json] => [ :'config:merge', :login] do |t, args|
+  task :update, [:app_name, :appc_base_url, :login_json] => [:login] do |t, args|
     appc_base_url = args[:appc_base_url]
     app = args[:app_name]
     mdx = "#{build_dir}/#{app}.mdx"
