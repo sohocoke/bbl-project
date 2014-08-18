@@ -109,8 +109,9 @@ namespace :app do
     targets = targets(targets_regexp)
 
     package_names = Dir.glob("#{build_dir}/#{app}*.mdx").map {|e| File.basename(e).sub(/\.mdx$/, '')}
+    raise "no .mdx files found in #{build_dir}" if package_names.length == 0
 
-    puts "## targeting #{targets}"
+    puts "## targeting #{targets} for packages #{package_names}"
 
     targets.each do |target|
 
@@ -327,11 +328,12 @@ namespace :apk do
       apktool d ../#{data_dir}/apps/#{app}/#{app}.apk  # decompile
     )
 
-    # edit package id
-    doc = XML::Parser.file("#{build_dir}/#{app}/AndroidManifest.xml").parse
-    a = doc.root.attributes.get_attribute('package')
-    a.value = package_id
-    doc.save "#{build_dir}/#{app}/AndroidManifest.xml"
+    matching_files = `grep -rl 'com.citrix.mail' #{build_dir}`.each_line.to_a
+    matching_files.each do |file|
+      file.strip!
+      content = File.read(file)
+      File.write file, content.gsub(/com.citrix.mail/, package_id)
+    end
 
     puts "replaced package id with #{package_id}
     "
