@@ -32,8 +32,7 @@ profile = "#{data_dir}/citrix_2014.mobileprovision"
 
 android_utils_paths = "`pwd`/ext/apktool1.5.2:`pwd`/ext/android-sdk/build-tools/android-4.4W"
 
-mkdir_p build_dir
-mkdir_p log_dir
+
 
 ## user-interfacing tasks
 

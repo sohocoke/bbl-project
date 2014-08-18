@@ -1,3 +1,2 @@
-log
-dist
-build
+log/*
+build/*
