@@ -1,6 +1,13 @@
+# required properties
+
 id: WorxMail-test
+targets: .*
+
+
+# optional properties
 
 manifest_values:
+
   ncgapplication:
     description: stub description in app deployment manifest
 
@@ -14,4 +21,3 @@ manifest_values:
     policyValue[policyName='CertificateLabel']: prod
     policyValue[policyName='PreferredVpnMode']: FullTunnel
 
-targets: .*

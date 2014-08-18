@@ -22,6 +22,7 @@ $curl_opts = "--compressed -k"
 
 # pre-requisite: MDX Toolkit installed.
 prep_tool_bin = "/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"
+prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first
 
 # pre-requisite: enterprise cert installed.
 cert = "iPhone Distribution: Credit Suisse AG"
@@ -46,7 +47,10 @@ namespace :app do
 
   desc "create an .mdx from an .ipa, or .apk of an app"
   task :package, [:app_name] do |t, args|
+    call_task 'config:merge', args[:app_name]
+    
     call_task 'ipa:make_mdx', args[:app_name]
+    call_task 'apk:make_mdx', args[:app_name]
   end
 
 
@@ -58,6 +62,8 @@ namespace :app do
     app = args[:app_name]
     ipa = "#{data_dir}/apps/#{app}/#{app}.ipa"
     apk = "#{data_dir}/apps/#{app}/#{app}.apk"
+
+    call_task 'config:merge_variants', args[:app_name]
   
     variants(app).each do |variant_config|
       variant_name = variant_config['id']
@@ -113,7 +119,9 @@ namespace :app do
       # call_task 'config:deploy', package
       package_names.each do |package|
 
-        config = YAML.load File.read("#{build_dir}/#{package}-config.yaml")
+        config_file = "#{build_dir}/#{package}-config.yaml"
+        content = File.read(config_file)
+        config = YAML.load content
         if target['id'] =~ /#{config['targets']}/
 
           puts "# deploy #{package} to target '#{target['id']}'"
@@ -147,14 +155,30 @@ namespace :config do
 
     config = cascaded_config app
 
-    merged_config_path = "#{build_dir}/#{app}-config.yaml"
-    File.write merged_config_path, config.to_yaml
-    puts "wrote #{config['id']} to #{merged_config_path}"
+    [ :ios, :android ].each do |platform|
+      merged_config_path = "#{build_dir}/#{app}-#{platform}-config.yaml"
+      File.write merged_config_path, config.to_yaml
+      puts "wrote #{config['id']} to #{merged_config_path}"
+    end
+  end
 
-    # variants
+  task :merge_variants, [ :app_name ] do |t, args|
+    app = args[:app_name]
+
+    call_task 'config:merge', args[:app_name]
+
+    config = cascaded_config app
+
     variants(app).each do |variant_config|
       variant_name = variant_config['id']
-      variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
+      platform = 
+        if variant_config['bundle_id']
+          :ios
+        else
+          :android
+        end
+
+      variant_config_path = "#{variant_path}/#{variant_name}-#{platform}-config.yaml"
 
       cascaded_variant_config = [ config, variant_config ].cascaded
       File.write variant_config_path, cascaded_variant_config.to_yaml
@@ -235,9 +259,7 @@ namespace :ipa do
     ipa = args[:ipa] || "#{data_dir}/apps/#{app_name}/#{app_name}.ipa"
     raise "no ipa at #{ipa}" unless File.exist? ipa
     
-    mdx = "#{build_dir}/#{app_name}.mdx"
-
-    prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first
+    mdx = "#{build_dir}/#{app_name}-ios.mdx"
 
     description = "XenMobile-treated app. PrepTool version:#{prep_tool_version} timestamp:#{Time.new.utc.to_s}"
 
@@ -264,7 +286,7 @@ namespace :ipa do
     ##
 
     sh %(
-      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}" -logFile "#{log_dir}/#{app_name}-mdx.log" -logWriteLevel "4" -appName "#{app_name}" -appDesc "#{description}"
+      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}"  -appName "#{app_name}-ios" -appDesc "#{description}" -logFile "#{log_dir}/#{app_name}-mdx.log" -logWriteLevel "4"
     )
 
     puts "packaged #{mdx} from #{ipa}"
@@ -311,6 +333,8 @@ namespace :apk do
     a.value = package_id
     doc.save "#{build_dir}/#{app}/AndroidManifest.xml"
 
+    puts "replaced package id with #{package_id}
+    "
     sh %(
       export PATH="#{android_utils_paths}:$PATH"
       cd #{build_dir}
@@ -325,7 +349,9 @@ namespace :apk do
     app_name = args[:app_name]
     apk = args[:apk] || "#{data_dir}/apps/#{app_name}/#{app_name}.apk"
 
-    mdx = "#{build_dir}/#{app_name}.mdx"
+    mdx = "#{build_dir}/#{app_name}-android.mdx"
+
+    description = "XenMobile-treated app. PrepTool version:#{prep_tool_version} timestamp:#{Time.new.utc.to_s}"
 
     # ANDROID
     # commands:
@@ -334,7 +360,7 @@ namespace :apk do
     sh %(
       export PATH="#{android_utils_paths}:$PATH"
 
-      java -jar /Applications/Citrix/MDXToolkit/ManagedAppUtility.jar wrap -in #{apk} -out #{mdx} -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android
+      java -jar /Applications/Citrix/MDXToolkit/ManagedAppUtility.jar wrap -in #{apk} -out #{mdx} -appName "#{app_name}-android" -appDesc "#{description}" -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android
     )
   end
 end
@@ -452,7 +478,7 @@ namespace :app_controller do
 
     matching_entries = apps_by_id.select{|k,v| v == app}
     if matching_entries.size != 1
-      raise "matching entries for app '#{app}': #{matching_entries}"
+      raise "expected 1 entry matching '#{app}' but got: #{matching_entries}"
     end
 
     app_id = matching_entries.keys.first
