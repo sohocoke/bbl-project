@@ -73,7 +73,8 @@ namespace :app do
       raise "variant name for #{app} is same as name for original" if variant_name == app
 
       if variant_bundle_id
-        # ios
+
+        platform = :ios
 
         variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
         # variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
@@ -82,7 +83,8 @@ namespace :app do
         call_task 'ipa:make_mdx', variant_name, variant_ipa_path
 
       elsif variant_package_id
-        # android
+
+        platform = :android
 
         variant_apk_path = "#{variant_path}/#{File.basename(apk).gsub(app, variant_name)}"
 
@@ -93,9 +95,9 @@ namespace :app do
       end
 
       
-      call_task 'mdx:replace_policy', variant_name, app
+      call_task 'mdx:replace_policy', "#{variant_name}-#{platform}", "#{app}-#{platform}"
 
-      puts "packaged variant '#{variant_name}'"
+      puts "## packaged variant '#{variant_name}-#{platform}'"
       
     end
   end
@@ -157,9 +159,22 @@ namespace :config do
     config = cascaded_config app
 
     [ :ios, :android ].each do |platform|
+      # cascade platform-specific manifest_values
+      platform_specific_config =
+        if platform_manifest_values = config["manifest_values[#{platform}]"]
+          [ 
+            config, 
+            {
+              'manifest_values' => platform_manifest_values
+            }
+          ].cascaded
+        else
+          config
+        end
+
       merged_config_path = "#{build_dir}/#{app}-#{platform}-config.yaml"
-      File.write merged_config_path, config.to_yaml
-      puts "wrote #{config['id']} to #{merged_config_path}"
+      File.write merged_config_path, platform_specific_config.to_yaml
+      puts "# #{merged_config_path}: using #{platform_specific_config['id']}"
     end
   end
 
@@ -183,7 +198,7 @@ namespace :config do
 
       cascaded_variant_config = [ config, variant_config ].cascaded
       File.write variant_config_path, cascaded_variant_config.to_yaml
-      puts "wrote config for variant #{variant_name}"
+      puts "# #{variant_config_path}: config for #{variant_name}-#{platform}"
     end
   end
 
@@ -196,21 +211,23 @@ end
 namespace :mdx do
 
   task :replace_policy, [:variant_name, :app_name] do |t, args|
+    app_name = args[:app_name]
+
     sh %(
       cd "#{build_dir}"
 
-      rm -rf #{args[:app_name]}.mdx.unzipped #{args[:variant_name]}.mdx.unzipped
+      rm -rf #{app_name}.mdx.unzipped #{args[:variant_name]}.mdx.unzipped
 
-      unzip #{args[:app_name]}.mdx -d #{args[:app_name]}.mdx.unzipped
+      unzip #{app_name}.mdx -d #{app_name}.mdx.unzipped
       unzip #{args[:variant_name]}.mdx -d #{args[:variant_name]}.mdx.unzipped
       
-      cp #{args[:app_name]}.mdx.unzipped/policy_metadata.xml #{args[:variant_name]}.mdx.unzipped/
+      cp #{app_name}.mdx.unzipped/policy_metadata.xml #{args[:variant_name]}.mdx.unzipped/
       
       rm #{args[:variant_name]}.mdx
       (cd #{args[:variant_name]}.mdx.unzipped; zip -r ../#{args[:variant_name]}.mdx .)
     )
 
-    puts "replaced policy file in #{args[:variant_name]} with one in #{args[:app_name]}"
+    puts "replaced policy file in #{args[:variant_name]} with one in #{app_name}"
   end
   
 end
@@ -251,7 +268,7 @@ namespace :ipa do
     )
     call_task :'ipa:zip', app, variant_name
     
-    puts "rewrote bundle id for #{app} to #{bundle_id}"
+    puts "# rewrote bundle id for #{app} to #{bundle_id}"
   end
 
   task :make_mdx, [:app_name, :ipa] do |t, args|
@@ -344,7 +361,7 @@ namespace :apk do
       apktool b #{app} #{variant_name}.apk  # archive into .apk
     )
 
-    puts "rewrote package id for #{app} to #{package_id}"
+    puts "# rewrote package id for #{app} to #{package_id}"
   end
 
   task :make_mdx, [:app_name, :apk] do |t, args|

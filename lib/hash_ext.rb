@@ -34,7 +34,7 @@ class Array  # of hashes
 
     ids = self.map {|e| e['id']}
 
-    self[0].cascaded( *self[1..-1], { "id" => "configuration combined from #{ids}" })
+    self[0].cascaded( *self[1..-1], { "id" => "config combined from #{ids}" })
 
   end
 end

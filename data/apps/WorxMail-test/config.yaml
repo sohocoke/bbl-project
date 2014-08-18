@@ -12,12 +12,21 @@ manifest_values:
     description: stub description in app deployment manifest
 
   policies:
-    policyValue[policyName='BackgroundServicesGateway']: '{var:netscaler_gateway_address}'
     policyValue[policyName='ExchangeServer']: '{var:exchange_server_address}'
     policyValue[policyName='MailDomain']: '{var:mail_domain}'
     policyValue[policyName='BackgroundServices']: '{var:background_services_address}'
 
     policyValue[policyName='NetworkAccess']: NetworkAccessTunneled
     policyValue[policyName='CertificateLabel']: prod
+
+
+manifest_values[ios]:
+
+  policies:
+    policyValue[policyName='BackgroundServicesGateway']: '{var:netscaler_gateway_address}'
     policyValue[policyName='PreferredVpnMode']: FullTunnel
 
+
+manifest_values[android]:
+
+  policies:
