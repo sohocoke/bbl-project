@@ -1,19 +1,20 @@
-# TODO de-duplicate.
+# TODO de-duplicate vis-a-vis other variables files.
 
-netscaler_gateway_address: CHEXCAS0001.ch.ad.hedani.net
-exchange_server_address: mm-ch.credit-suisse.com:443
-mail_domain: ch.ad.hedani.net
+
+exchange_server_address: CHEXCAS0001.ch.ad.hedani.net
 background_services_address: CHEXCAS0001.ch.ad.hedani.net:443
+mail_domain: ch.ad.hedani.net
+background_services_gateway_address: mm-ch.credit-suisse.com:443
 
 
-netscaler_gateway_address_ch: CHEXCAS0001.ch.ad.hedani.net
-exchange_server_address_ch: mm-ch.credit-suisse.com:443
-mail_domain_ch: ch.ad.hedani.net
+exchange_server_address_ch: CHEXCAS0001.ch.ad.hedani.net
 background_services_address_ch: CHEXCAS0001.gbl.ad.hedani.net:443
+mail_domain_ch: ch.ad.hedani.net
+background_services_gateway_address_ch: mm-ch.credit-suisse.com:443
 
 
-netscaler_gateway_address_eu: EUEXCAS0001.eur.ad.hedani.net
-exchange_server_address_eu: mm-ch.credit-suisse.com:443
-mail_domain_eu: eu.ad.hedani.net
-background_services_address_eu: EUEXCAS0001.eu.ad.hedani.net:443
+exchange_server_address_eu: EUEXCAS0001.eur.ad.hedani.net
+background_services_address_eu: EUEXCAS0001.eur.ad.hedani.net:443
+mail_domain_eu: eur.ad.hedani.net
+background_services_gateway_address_eu: mm-ch.credit-suisse.com:443
 
