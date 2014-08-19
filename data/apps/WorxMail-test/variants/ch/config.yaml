@@ -1,3 +1,5 @@
+targets: (ch-etit|(uk|eu)-.*)
+
 manifest_values:
 
   ncgapplication:
@@ -8,4 +10,3 @@ manifest_values:
     policyValue[policyName='MailDomain']: '{var:mail_domain_ch}'
     policyValue[policyName='BackgroundServices']: '{var:background_services_address_ch}'
 
-targets: ch-.*

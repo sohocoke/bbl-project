@@ -1,12 +1,16 @@
-netscaler_gateway_address: netscaler_address.
-exchange_server_address: stub-address
-mail_domain: stub-address
-background_services_address: stub-address
+# TODO de-duplicate.
+
+netscaler_gateway_address: CHEXCAS0001.ch.ad.hedani.net
+exchange_server_address: mm-ch.credit-suisse.com:443
+mail_domain: ch.ad.hedani.net
+background_services_address: CHEXCAS0001.ch.ad.hedani.net:443
+
 
 netscaler_gateway_address_ch: CHEXCAS0001.ch.ad.hedani.net
 exchange_server_address_ch: mm-ch.credit-suisse.com:443
 mail_domain_ch: ch.ad.hedani.net
 background_services_address_ch: CHEXCAS0001.gbl.ad.hedani.net:443
+
 
 netscaler_gateway_address_eu: EUEXCAS0001.eur.ad.hedani.net
 exchange_server_address_eu: mm-ch.credit-suisse.com:443
