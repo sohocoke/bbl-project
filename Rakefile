@@ -345,7 +345,7 @@ namespace :apk do
       apktool d ../#{data_dir}/apps/#{app}/#{app}.apk  # decompile
     )
 
-    matching_files = `grep -rl 'com.citrix.mail' #{build_dir}`.each_line.to_a
+    matching_files = `grep -rl 'com.citrix.mail' #{build_dir}/#{app}`.each_line.to_a
     matching_files.each do |file|
       file.strip!
       content = File.read(file)
