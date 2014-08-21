@@ -1,0 +1,21 @@
+# required properties
+id: WorxWeb-test
+targets: .*-(pta|prod)  # all environments where PROD cert label should be used.
+
+
+# optional properties
+
+manifest_values:
+  policies:
+    policyValue[policyName='CertificateLabel']: PROD
+
+
+# manifest_values[ios]:
+
+#   policies:
+#     policyValue[policyName='PreferredVpnMode']: FullTunnel
+
+
+# manifest_values[android]:
+
+#   policies:

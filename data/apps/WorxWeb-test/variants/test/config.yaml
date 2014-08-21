@@ -1,0 +1,8 @@
+targets: .*-(etit|adit)  # all environments where test cert label should be used.
+
+
+manifest_values:
+
+  policies:
+
+    policyValue[policyName='CertificateLabel']: TEST
