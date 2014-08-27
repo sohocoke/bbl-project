@@ -16,4 +16,7 @@ mail_domain_eu: eur.ad.hedani.net
 background_services_gateway_address_eu: mm-ch.credit-suisse.com:443
 
 
-# TODO global config.yaml
+exchange_server_address_bra: BREXCAS0001.gbl.ad.hedani.net
+background_services_address_bra: BREXCAS0001.gbl.ad.hedani.net
+mail_domain_bra: gbl.ad.hedani.net
+background_services_gateway_address_bra: mm-am.credit-suisse.com:443
