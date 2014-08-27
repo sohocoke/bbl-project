@@ -304,10 +304,10 @@ namespace :ipa do
     ##
 
     sh %(
-      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}"  -appName "#{app_name}-ios" -appDesc "#{description}" -logFile "#{log_dir}/#{app_name}-mdx.log" -logWriteLevel "4"
+      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}"  -appName "#{app_name}-ios" -appDesc "#{description}" -logFile "#{log_dir}/#{app_name}-ios-mdx-verbose.log" -logWriteLevel "4" > "#{log_dir}/#{app_name}-ios-mdx.log"
     )
 
-    puts "packaged #{mdx} from #{ipa}"
+    puts "# packaged #{mdx} from #{ipa}"
   end
 
   task :unzip, [:ipa] do |t, args|
@@ -315,7 +315,7 @@ namespace :ipa do
     unzip_dir = "#{build_dir}/#{File.basename(ipa).sub(/\.ipa$/, '')}"
     rm_rf "#{unzip_dir}"
     sh %(
-      unzip #{ipa} -d "#{unzip_dir}"
+      unzip #{ipa} -d "#{unzip_dir}" > /dev/null
     )
   end
 
@@ -323,7 +323,7 @@ namespace :ipa do
     app = args[:app_name]
     ipa_name = args[:ipa_name]
     sh %(
-      (rm "#{build_dir}/#{app}.ipa"; cd "#{build_dir}/#{app}" && zip -r ../#{ipa_name}.ipa .)
+      (rm "#{build_dir}/#{app}.ipa"; cd "#{build_dir}/#{app}" && zip -r ../#{ipa_name}.ipa . > /dev/null)
     )
   end
 
@@ -379,8 +379,10 @@ namespace :apk do
     sh %(
       export PATH="#{android_utils_paths}:$PATH"
 
-      java -jar /Applications/Citrix/MDXToolkit/ManagedAppUtility.jar wrap -in #{apk} -out #{mdx} -appName "#{app_name}-android" -appDesc "#{description}" -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android
+      java -jar /Applications/Citrix/MDXToolkit/ManagedAppUtility.jar wrap -in #{apk} -out #{mdx} -appName "#{app_name}-android" -appDesc "#{description}" -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android > "#{log_dir}/#{app_name}-android-mdx.log"
     )
+
+    puts "# packaged #{mdx}"
   end
 end
 
