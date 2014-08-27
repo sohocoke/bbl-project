@@ -146,9 +146,20 @@ private
             .select {|e| e['id'] =~ /#{pattern}/}
     end
 
-    def variables
-        hashes = Dir.glob("#{Base_dir}/destinations/**/variables.yaml").map {|e| YAML.load File.read(e) }
-        hashes[0]  # TODO merge
+    def variables(env_name)
+        variables_files = Dir.glob("#{Base_dir}/destinations/**/variables.yaml")
+
+        # find dirs leading up to dir for env_name
+        dir_for_env_name = Dir.glob("#{Base_dir}/destinations/**/#{env_name}")[0]
+        # find variable files in order
+        current_path = ''
+        variables_files = dir_for_env_name.split('/').map do |path_segment|
+            current_path += path_segment + '/'
+            Dir.glob("#{current_path}/variables.yaml")[0]
+        end .compact
+
+        hashes = variables_files.map {|e| YAML.load File.read(e) }
+        hashes.cascaded
     end
 
 

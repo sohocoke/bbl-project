@@ -115,26 +115,26 @@ namespace :app do
 
     puts "## targeting #{targets} for packages #{package_names}"
 
+    # for each target, call the app_controller:create task.
     targets.each do |target|
 
       raise "no servers defined for target '#{target['id']}'." if ! target['servers']
 
-      # call_task 'config:deploy', package
       package_names.each do |package|
 
         config_file = "#{build_dir}/#{package}-config.yaml"
         content = File.read(config_file)
         config = YAML.load content
-        if target['id'] =~ /#{config['targets']}/
 
-          puts "# deploy #{package} to target '#{target['id']}'"
+        if target['id'] =~ /#{config['targets']}/
+          target_name = target['id']
+          puts "# deploy #{package} to target '#{target_name}'"
 
           target['servers'].each do |server|
             appc_base_url = server['base_url']
             login_json = server['credentials_path']
             
-            call_task 'app_controller:create', package, appc_base_url, login_json
-            # call_task 'app_controller:update', package, appc_base_url, login_json
+            call_task 'app_controller:create', package, appc_base_url, login_json, target_name
           end
 
         else
@@ -388,9 +388,11 @@ end
 namespace :app_controller do
 
   desc "update app entry in app controller"
-  task :update, [:app_name, :appc_base_url, :login_json] => [:login] do |t, args|
+  task :update, [:app_name, :appc_base_url, :login_json, :env_name] => [:login] do |t, args|
     appc_base_url = args[:appc_base_url]
     app = args[:app_name]
+    env_name = args[:env_name]
+
     mdx = "#{build_dir}/#{app}.mdx"
     manifest_json = "log/#{app}-manifest.json"
     modified_manifest_json = "log/#{app}-manifest-modified.json"
@@ -426,7 +428,7 @@ namespace :app_controller do
       delta_applied = delta_applied delta_applied, config_delta['manifest_values']
     end
 
-    modified_json_str = dereferenced JSON.pretty_generate(delta_applied), variables
+    modified_json_str = dereferenced JSON.pretty_generate(delta_applied), variables(env_name)
     File.write modified_manifest_json, modified_json_str
 
     sh %(
@@ -438,7 +440,7 @@ namespace :app_controller do
 
 
   desc "create app entry in app controller"
-  task :create, [:app_name, :appc_base_url, :login_json] => :login do |t, args|
+  task :create, [:app_name, :appc_base_url, :login_json, :env_name] => :login do |t, args|
     puts args
     app_name = args[:app_name]
     appc_base_url = args[:appc_base_url]
@@ -449,8 +451,7 @@ namespace :app_controller do
     )
 
     # the 'create' endpoint doesn't properly set metadata, so immediately invoke an update.
-
-    call_task 'app_controller:update', app_name, appc_base_url, args[:login_json]
+    call_task 'app_controller:update', app_name, appc_base_url, args[:login_json], args[:env_name]
   end
 
   desc "get metadata for app entry"
@@ -488,6 +489,14 @@ namespace :app_controller do
     puts "# login complete."
   end
 
+
+  task :get_config, [:appc_base_url, :login_json] => :login do |t, args|
+    appc_base_url = args[:appc_base_url]
+    sh %(
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/release/snapshot?_=1409057781201 #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/snapshot.bin
+
+    )
+  end
 
   ## util
 
