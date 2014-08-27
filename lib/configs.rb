@@ -72,6 +72,25 @@ def variants(app)
 end
 
 
+def variables(env_name)
+    variables_files = Dir.glob("#{Base_dir}/destinations/**/variables.yaml")
+
+    # find dirs leading up to dir for env_name
+    dir_for_env_name = Dir.glob("#{Base_dir}/destinations/**/#{env_name}")[0]
+    # find variable files in order
+    current_path = ''
+    variables_files = dir_for_env_name.split('/').map do |path_segment|
+        current_path += path_segment + '/'
+        Dir.glob("#{current_path}/variables.yaml")[0]
+    end .compact
+
+    p variables_files
+    hashes = variables_files.map {|e| (o = YAML.load(File.read(e))) ? o : {} }
+    hashes.cascaded
+end
+
+
+
 def cascaded_variant_config( app, variant_config )
     app_config = cascaded_config(app)
     app_config = app_config.cascaded( variant_config )
@@ -169,23 +188,6 @@ private
             .map {|e| Hash[ 'id', File.basename(File.dirname(e)), 'servers', YAML.load(File.read(e)) ] }
             .select {|e| e['id'] =~ /#{pattern}/}
     end
-
-    def variables(env_name)
-        variables_files = Dir.glob("#{Base_dir}/destinations/**/variables.yaml")
-
-        # find dirs leading up to dir for env_name
-        dir_for_env_name = Dir.glob("#{Base_dir}/destinations/**/#{env_name}")[0]
-        # find variable files in order
-        current_path = ''
-        variables_files = dir_for_env_name.split('/').map do |path_segment|
-            current_path += path_segment + '/'
-            Dir.glob("#{current_path}/variables.yaml")[0]
-        end .compact
-
-        hashes = variables_files.map {|e| YAML.load File.read(e) }
-        hashes.cascaded
-    end
-
 
     def read_config(config_files)
         puts "load config from #{config_files}"

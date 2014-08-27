@@ -1,0 +1,22 @@
+exchange_server_address_ch: CHEXCAS0001.ch.ad.hedani.net
+background_services_address_ch: CHEXCAS0001.gbl.ad.hedani.net:443
+mail_domain_ch: ch.ad.hedani.net
+background_services_gateway_address_ch: mm-ch.credit-suisse.com:443
+
+
+exchange_server_address_eu: EUEXCAS0001.eur.ad.hedani.net
+background_services_address_eu: EUEXCAS0001.eur.ad.hedani.net:443
+mail_domain_eu: eur.ad.hedani.net
+background_services_gateway_address_eu: mm-ch.credit-suisse.com:443
+
+
+exchange_server_address_bra: BREXCAS0001.gbl.ad.hedani.net
+background_services_address_bra: BREXCAS0001.gbl.ad.hedani.net
+mail_domain_bra: gbl.ad.hedani.net
+background_services_gateway_address_bra: mm-am.credit-suisse.com:443
+
+
+exchange_server_address_hkg: HKEXCAS0001.gbl.ad.hedani.net
+background_services_address_hkg: HKEXCAS0001.gbl.ad.hedani.net
+mail_domain_hkg: gbl.ad.hedani.net
+background_services_gateway_address_hkg: mm-ap.credit-suisse.com:443
