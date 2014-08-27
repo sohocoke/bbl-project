@@ -492,14 +492,16 @@ namespace :app_controller do
   end
 
 
-  task :get_config, [:appc_base_url, :login_json] => :login do |t, args|
-    appc_base_url = args[:appc_base_url]
-    sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/release/snapshot?_=1409057781201 #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/snapshot.bin
+  namespace :config do
+    task :get, [:appc_base_url, :login_json] => :login do |t, args|
+      appc_base_url = args[:appc_base_url]
+      sh %(
+        /usr/bin/curl #{appc_base_url}/ControlPoint/rest/release/snapshot?_=1409057781201 #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/snapshot.bin
 
-    )
+      )
+    end
   end
-
+  
   ## util
 
   def id_for_app(app, entries_json)
