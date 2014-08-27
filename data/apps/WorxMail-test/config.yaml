@@ -18,7 +18,9 @@ manifest_values:
     policyValue[policyName='BackgroundServicesGateway']: '{var:background_services_gateway_address}'
 
     policyValue[policyName='NetworkAccess']: NetworkAccessTunneled
-    policyValue[policyName='CertificateLabel']: prod
+    policyValue[policyName='CertificateLabel']: PROD
+
+  role: WorxMail
 
 
 manifest_values[ios]:
