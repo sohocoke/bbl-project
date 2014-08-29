@@ -1,0 +1,13 @@
+targets: (ch-etit|ch-.*)
+
+manifest_values:
+
+  ncgapplication:
+    description: WorxMail for RU exchange infrastructure
+
+  policies:
+    policyValue[policyName='ExchangeServer']: '{var:exchange_server_address_ru}'
+    policyValue[policyName='MailDomain']: '{var:mail_domain_ru}'
+    policyValue[policyName='BackgroundServices']: '{var:background_services_address_ru}'
+
+  role: WorxMail RU
