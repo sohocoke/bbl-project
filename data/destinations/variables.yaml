@@ -39,3 +39,9 @@ background_services_address_ru: RUEXCAS0001.eur.ad.hedani.net
 mail_domain_ru: eur.ad.hedani.net
 background_services_gateway_address_ru: mm-ch.credit-suisse.com:443
 
+
+exchange_server_address_tw: TWEXCAS0001.gbl.ad.hedani.net
+background_services_address_tw: TWEXCAS0001.gbl.ad.hedani.net
+mail_domain_tw: eur.ad.hedani.net
+background_services_gateway_address_tw: mm-ap.credit-suisse.com:443
+
