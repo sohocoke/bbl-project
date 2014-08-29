@@ -9,7 +9,7 @@ targets: .*
 manifest_values:
 
   ncgapplication:
-    description: stub description in app deployment manifest
+    description: WorxMail for hub location Exchange infrastructure
 
   policies:
     policyValue[policyName='ExchangeServer']: '{var:exchange_server_address}'

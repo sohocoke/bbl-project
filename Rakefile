@@ -18,8 +18,8 @@ variant_path = "#{build_dir}"
 
 cookies_file = "log/cookies.txt"
 
-$curl_opts = "--compressed -k"
-# $curl_opts = "--compressed -k -v"  ## DEBUG
+$curl_opts = "--compressed -k -s"
+# $curl_opts += "-v"  ## DEBUG
 
 # pre-requisite: MDX Toolkit installed.
 prep_tool_bin = "/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"
