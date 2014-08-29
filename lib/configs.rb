@@ -39,20 +39,21 @@ def platforms( app = nil)
     .compact
 end
 
-def cascaded_config( app )
-    # order of the config files
-    config_files = [ "#{Base_dir}/config.yaml" ] + Dir.glob("#{Base_dir}/apps/#{app}/**/config.yaml")
+def targets(pattern)
+    Dir.glob("#{Base_dir}/destinations/**/servers.yaml")
+        .map {|e| Hash[ 'id', File.basename(File.dirname(e)), 'servers', YAML.load(File.read(e)) ] }
+        .select {|e| e['id'] =~ /#{pattern}/}
+end
 
-    non_variant_config_files = config_files.reject {|e| e =~ %r(/variants/)}  # exclude variants
-    config_chunks = read_config non_variant_config_files
 
-    non_variant_config_files.each_with_index do |f, i|
-      if config_chunks[i] == false
-        puts "#{f}: content read error"
-      end
-    end
-
-    config_chunks.select{|e| e}.cascaded
+def apps(pattern, opts = { variants: true })
+    Dir.glob("#{Base_dir}/apps/**/config.yaml")
+        .map {|e| File.read e}
+        .map {|e| YAML.load(e)}
+        .map {|e| e ? e['id'] : nil}
+        .compact
+        .grep(pattern)
+        .uniq
 end
 
 
@@ -95,6 +96,23 @@ end
 
 def original(variant)
     apps.map {|e| [e, variants(e)] } .find {|e| ! e[1].select {|e| e =~ /^#{variant}/}.empty? } .first
+end
+
+
+def cascaded_config( app )
+    # order of the config files
+    config_files = [ "#{Base_dir}/config.yaml" ] + Dir.glob("#{Base_dir}/apps/#{app}/**/config.yaml")
+
+    non_variant_config_files = config_files.reject {|e| e =~ %r(/variants/)}  # exclude variants
+    config_chunks = read_config non_variant_config_files
+
+    non_variant_config_files.each_with_index do |f, i|
+      if config_chunks[i] == false
+        puts "#{f}: content read error"
+      end
+    end
+
+    config_chunks.select{|e| e}.cascaded
 end
 
 
@@ -235,12 +253,6 @@ private
     end
 
 
-
-    def targets(pattern)
-        Dir.glob("#{Base_dir}/destinations/**/servers.yaml")
-            .map {|e| Hash[ 'id', File.basename(File.dirname(e)), 'servers', YAML.load(File.read(e)) ] }
-            .select {|e| e['id'] =~ /#{pattern}/}
-    end
 
     def read_config(config_files)
         puts "load config from #{config_files}"
