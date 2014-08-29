@@ -6,8 +6,8 @@ manifest_values:
     description: WorxMail for BRA Exchange infrastructure
 
   policies:
-    policyValue[policyName='ExchangeServer']: '{var:exchange_server_address_bra}'
-    policyValue[policyName='MailDomain']: '{var:mail_domain_bra}'
-    policyValue[policyName='BackgroundServices']: '{var:background_services_address_bra}'
+    policyValue[policyName='ExchangeServer']: '{var:exchange_server_address_br}'
+    policyValue[policyName='MailDomain']: '{var:mail_domain_br}'
+    policyValue[policyName='BackgroundServices']: '{var:background_services_address_br}'
 
-  role: WorxMail BRA
+  role: WorxMail BR

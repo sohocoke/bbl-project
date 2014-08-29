@@ -1,0 +1,13 @@
+targets: (ch-etit|ap-.*)
+
+manifest_values:
+
+  ncgapplication:
+    description: WorxMail for HK exchange infrastructure
+
+  policies:
+    policyValue[policyName='ExchangeServer']: '{var:exchange_server_address_hk}'
+    policyValue[policyName='MailDomain']: '{var:mail_domain_hk}'
+    policyValue[policyName='BackgroundServices']: '{var:background_services_address_hk}'
+
+  role: WorxMail HK
