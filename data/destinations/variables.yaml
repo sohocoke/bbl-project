@@ -20,3 +20,10 @@ exchange_server_address_hkg: HKEXCAS0001.gbl.ad.hedani.net
 background_services_address_hkg: HKEXCAS0001.gbl.ad.hedani.net
 mail_domain_hkg: gbl.ad.hedani.net
 background_services_gateway_address_hkg: mm-ap.credit-suisse.com:443
+
+
+exchange_server_address_gb: GBEXCAS0001.gbl.ad.hedani.net
+background_services_address_gb: GBEXCAS0001.gbl.ad.hedani.net
+mail_domain_gb: gbl.ad.hedani.net
+background_services_gateway_address_gb: mm-ch.credit-suisse.com:443
+
