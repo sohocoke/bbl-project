@@ -454,17 +454,20 @@ namespace :app_controller do
     File.write manifest_json, JSON.pretty_generate(JSON.parse(File.read(manifest_json)))
 
 
-    # apply delta to the manifest, save.
-    config_delta_path = "#{build_dir}/#{app}-config.yaml"
-    config_delta = YAML.load File.read(config_delta_path)
-    delta_applied = JSON.parse(File.read(manifest_json))
-    if config_delta['manifest_values']
-      puts "# applying config delta '#{config_delta['id']}' for #{app} from #{config_delta_path}"
-      delta_applied = delta_applied delta_applied, config_delta['manifest_values']
-    end
+    # # apply delta to the manifest, save.
+    # config_delta_path = "#{build_dir}/#{app}-config.yaml"
+    # config_delta = YAML.load File.read(config_delta_path)
+    # delta_applied = JSON.parse(File.read(manifest_json))
+    # if config_delta['manifest_values']
+    #   puts "# applying config delta '#{config_delta['id']}' for #{app} from #{config_delta_path}"
+    #   delta_applied = delta_applied delta_applied, config_delta['manifest_values']
+    # end
 
-    modified_json_str = dereferenced JSON.pretty_generate(delta_applied), variables(env_name)
-    File.write modified_manifest_json, modified_json_str
+    # modified_json_str = dereferenced JSON.pretty_generate(delta_applied), variables(env_name)
+    # File.write modified_manifest_json, modified_json_str
+
+    # SUPERCEDED by policy delta application in mdx. we may need this back in the future when users self-service the full deployment process.
+    modified_manifest_json = manifest_json
 
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers(appc_base_url)} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{modified_manifest_json}"
