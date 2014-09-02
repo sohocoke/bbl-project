@@ -7,6 +7,38 @@ require_relative 'hash_ext'
 Base_dir = 'data'
 
 
+#= file-based operations
+
+def apply_policy_delta( policy_xml_filename, policy_delta )
+    # save backup
+    FileUtils.cp policy_xml_filename, "#{policy_xml_filename}.orig"
+
+    # getting the Document
+    doc = XML::Document.file(policy_xml_filename)
+    
+
+    policy_delta.each do |k, v|
+        predicate_val = /.+\[.+='(.*)'\]/.match(k)[1]
+        
+        p "applying value '#{v}' to policy '#{predicate_val}'"
+        
+        # grabbing the node
+        node = doc.find("/PolicyMetadata/Policies/Policy[PolicyName='#{predicate_val}']/PolicyDefault").first
+
+        # TODO assert only 1.
+
+        # modifying the node
+        node.content = v.to_s
+    end
+
+
+    # saving the doc
+    doc.save policy_xml_filename, indent:true
+end
+
+
+#= object-based operations
+
 def cascaded_config( app )
     # order of the config files
     config_files = [ "#{Base_dir}/config.yaml" ] + Dir.glob("#{Base_dir}/apps/#{app}/**/config.yaml")

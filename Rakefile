@@ -56,6 +56,10 @@ namespace :app do
   
     call_task 'ipa:make_mdx', app if File.exists? ipa
     call_task 'apk:make_mdx', app if File.exists? apk
+
+    Dir.glob("#{build_dir}/#{app}-*.mdx").each do |mdx|
+      call_task 'mdx:apply_policy_delta', mdx.sub(/\.mdx$/, '').sub(/^#{build_dir}\/*/,'')
+    end
   end
 
 
@@ -99,8 +103,7 @@ namespace :app do
         raise "define a unique variant id (iOS) or package_id (Android) for variant '#{variant_name}'"
       end
 
-      
-      call_task 'mdx:replace_policy', "#{variant_name}-#{platform}", "#{app}-#{platform}"
+      call_task 'mdx:apply_policy_delta', "#{variant_name}-#{platform}", "#{app}-#{platform}" 
 
       puts "## packaged variant '#{variant_name}-#{platform}'"
       
@@ -225,9 +228,15 @@ namespace :mdx do
 
       unzip #{app_name}.mdx -d #{app_name}.mdx.unzipped
       unzip #{args[:variant_name]}.mdx -d #{args[:variant_name]}.mdx.unzipped
-      
+
       cp #{app_name}.mdx.unzipped/policy_metadata.xml #{args[:variant_name]}.mdx.unzipped/
-      
+    )
+
+
+
+    sh %(
+      cd "#{build_dir}"
+
       rm #{args[:variant_name]}.mdx
       (cd #{args[:variant_name]}.mdx.unzipped; zip -r ../#{args[:variant_name]}.mdx .)
     )
@@ -235,6 +244,39 @@ namespace :mdx do
     puts "replaced policy file in #{args[:variant_name]} with one in #{app_name}"
   end
   
+  task :apply_policy_delta, [:app, :policy_src_app] do |t, args|
+    app = args[:app]
+    policy_src_app = args[:policy_src_app] || app
+
+    call_task 'mdx:unzip', policy_src_app
+
+    call_task 'mdx:unzip', app if app != policy_src_app
+
+    policy_xml = "#{build_dir}/#{policy_src_app}.mdx.unzipped/policy_metadata.xml"
+
+    config_delta_path = "#{build_dir}/#{app}-config.yaml"
+    policy_delta = YAML.load(File.read(config_delta_path))['manifest_values']['policies']
+
+    apply_policy_delta policy_xml, policy_delta
+
+    call_task 'mdx:zip', app
+  end
+
+  task :unzip, [:app] do |t, args|
+    sh %(
+      cd #{build_dir}
+      rm -rf #{args[:app]}.mdx.unzipped
+      unzip #{args[:app]}.mdx -d #{args[:app]}.mdx.unzipped
+    )
+  end
+
+  task :zip, [:app] do |t, args|
+    sh %(
+      cd #{build_dir}
+      rm #{args[:app]}.mdx
+      (cd #{args[:app]}.mdx.unzipped; zip -r ../#{args[:app]}.mdx .)
+    )
+  end
 end
 
 
