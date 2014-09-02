@@ -47,10 +47,15 @@ namespace :app do
 
   desc "create an .mdx from an .ipa, or .apk of an app"
   task :package, [:app_name] do |t, args|
-    call_task 'config:merge', args[:app_name]
-    
-    call_task 'ipa:make_mdx', args[:app_name]
-    call_task 'apk:make_mdx', args[:app_name]
+    app = args[:app_name]
+
+    call_task 'config:merge', app
+
+    ipa = "#{data_dir}/apps/#{app}/#{app}.ipa"
+    apk = "#{data_dir}/apps/#{app}/#{app}.apk"
+  
+    call_task 'ipa:make_mdx', app if File.exists? ipa
+    call_task 'apk:make_mdx', app if File.exists? apk
   end
 
 
