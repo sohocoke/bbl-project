@@ -250,7 +250,6 @@ namespace :mdx do
 
     call_task 'mdx:unzip', policy_src_app
 
-    call_task 'mdx:unzip', app if app != policy_src_app
 
     policy_xml = "#{build_dir}/#{policy_src_app}.mdx.unzipped/policy_metadata.xml"
 
@@ -259,7 +258,15 @@ namespace :mdx do
 
     apply_policy_delta policy_xml, policy_delta
 
+    # prep destination if necessary
+    if app != policy_src_app
+      call_task 'mdx:unzip', app
+      sh %( cp #{policy_xml} #{build_dir}/#{app}.mdx.unzipped/ )
+    end
+
     call_task 'mdx:zip', app
+
+    puts "# applied config delta #{config_delta_path} to #{policy_xml} and repackaged mdx for #{app}"
   end
 
   task :unzip, [:app] do |t, args|
