@@ -118,7 +118,6 @@ namespace :app do
 
     targets = targets(targets_regexp)
 
-
     # for each target, call the app_controller:create task.
     targets.each do |target|
       raise "no servers defined for target '#{target_name}'." if ! target['servers']
