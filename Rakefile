@@ -23,7 +23,7 @@ $curl_opts = "--compressed -k"
 
 # pre-requisite: MDX Toolkit installed.
 prep_tool_bin = "/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"
-prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first.strip
+prep_tool_jar = "/Applications/Citrix/MDXToolkit/ManagedAppUtility.jar"
 
 # pre-requisite: enterprise cert installed.
 cert = "iPhone Distribution: Credit Suisse AG"
@@ -33,7 +33,7 @@ profile = "#{data_dir}/citrix_2015.mobileprovision"
 
 
 android_utils_paths = "`pwd`/ext/apktool1.5.2:`pwd`/ext/android-sdk/build-tools/android-4.4W"
-
+prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first.strip
 
 
 ## user-interfacing tasks
@@ -430,7 +430,7 @@ namespace :apk do
     sh %(
       export PATH="#{android_utils_paths}:$PATH"
 
-      java -jar /Applications/Citrix/MDXToolkit/ManagedAppUtility.jar wrap -in #{apk} -out #{mdx} -appName "#{app_name}-android" -appDesc "#{description}" -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android > "#{log_dir}/#{app_name}-android-mdx.log"
+      java -jar #{prep_tool_jar} wrap -in #{apk} -out #{mdx} -appName "#{app_name}-android" -appDesc "#{description}" -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android > "#{log_dir}/#{app_name}-android-mdx.log"
     )
 
     puts "# packaged #{mdx}"
