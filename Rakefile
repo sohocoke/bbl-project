@@ -22,7 +22,7 @@ $curl_opts = "--compressed -k"
 
 # pre-requisite: MDX Toolkit installed.
 prep_tool_bin = "/Applications/Citrix/MDXToolkit/CGAppCLPrepTool"
-prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first
+prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).flatten.first.strip
 
 # pre-requisite: enterprise cert installed.
 cert = "iPhone Distribution: Credit Suisse AG"
@@ -74,6 +74,7 @@ namespace :app do
     call_task 'config:merge_variants', args[:app_name]
   
     variants(app).each do |variant_config|
+
       variant_name = variant_config['id']
       variant_bundle_id = variant_config['bundle_id']
       variant_package_id = variant_config['package_id']
@@ -81,7 +82,6 @@ namespace :app do
       raise "variant name for #{app} is same as name for original" if variant_name == app
 
       if variant_bundle_id
-
         platform = :ios
 
         variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
@@ -91,7 +91,6 @@ namespace :app do
         call_task 'ipa:make_mdx', variant_name, variant_ipa_path
 
       elsif variant_package_id
-
         platform = :android
 
         variant_apk_path = "#{variant_path}/#{File.basename(apk).gsub(app, variant_name)}"
@@ -231,7 +230,7 @@ namespace :mdx do
 
     apply_policy_delta policy_xml, policy_delta
 
-    # prep destination if necessary
+    # prep destination files if necessary
     if app != policy_src_app
       call_task 'mdx:unzip', app
       sh %( cp #{policy_xml} #{build_dir}/#{app}.mdx.unzipped/ )
@@ -246,7 +245,7 @@ namespace :mdx do
     sh %(
       cd #{build_dir}
       rm -rf #{args[:app]}.mdx.unzipped
-      unzip #{args[:app]}.mdx -d #{args[:app]}.mdx.unzipped
+      unzip -q #{args[:app]}.mdx -d #{args[:app]}.mdx.unzipped
     )
   end
 
@@ -254,7 +253,7 @@ namespace :mdx do
     sh %(
       cd #{build_dir}
       rm #{args[:app]}.mdx
-      (cd #{args[:app]}.mdx.unzipped; zip -r ../#{args[:app]}.mdx .)
+      (cd #{args[:app]}.mdx.unzipped; zip -q -r ../#{args[:app]}.mdx .)
     )
   end
 end
@@ -331,7 +330,7 @@ namespace :ipa do
     ##
 
     sh %(
-      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}"  -appName "#{app_name}-ios" -appDesc "#{description}" -logFile "#{log_dir}/#{app_name}-ios-mdx-verbose.log" -logWriteLevel "4" > "#{log_dir}/#{app_name}-ios-mdx.log"
+      #{prep_tool_bin} Wrap -Cert "#{cert}" -Profile "#{profile}" -in "#{ipa}" -out "#{mdx}"  -appName "#{app_name}-ios" -appDesc "#{description}" -logFile "#{log_dir}/#{app_name}-ios-mdx-verbose.log" -logWriteLevel "4" &> "#{log_dir}/#{app_name}-ios-mdx.log"
     )
 
     puts "# packaged #{mdx} from #{ipa}"
@@ -342,7 +341,7 @@ namespace :ipa do
     unzip_dir = "#{build_dir}/#{File.basename(ipa).sub(/\.ipa$/, '')}"
     rm_rf "#{unzip_dir}"
     sh %(
-      unzip #{ipa} -d "#{unzip_dir}" > /dev/null
+      unzip -q #{ipa} -d "#{unzip_dir}" > /dev/null
     )
   end
 
@@ -350,7 +349,7 @@ namespace :ipa do
     app = args[:app_name]
     ipa_name = args[:ipa_name]
     sh %(
-      (rm "#{build_dir}/#{app}.ipa"; cd "#{build_dir}/#{app}" && zip -r ../#{ipa_name}.ipa . > /dev/null)
+      (rm "#{build_dir}/#{app}.ipa"; cd "#{build_dir}/#{app}" && zip -q -r ../#{ipa_name}.ipa . > /dev/null)
     )
   end
 
