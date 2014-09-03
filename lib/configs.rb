@@ -7,19 +7,6 @@ require_relative 'hash_ext'
 Base_dir = 'data'
 
 
-#= file-based operations
-
-def apply_policy_delta( policy_xml_filename, policy_delta )
-    # save backup
-    FileUtils.cp policy_xml_filename, "#{policy_xml_filename}.orig"
-
-    policy_xml = File.read policy_xml_filename
-
-    modified_xml = policy_applied policy_xml, policy_delta
-
-    File.write policy_xml_filename, modified_xml
-end
-
 def policy_applied policy_xml, policy_delta
     # getting the Document
     doc = XML::Document.string policy_xml    
