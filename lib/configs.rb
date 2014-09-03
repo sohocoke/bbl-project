@@ -13,9 +13,16 @@ def apply_policy_delta( policy_xml_filename, policy_delta )
     # save backup
     FileUtils.cp policy_xml_filename, "#{policy_xml_filename}.orig"
 
+    policy_xml = File.read policy_xml_filename
+
+    modified_xml = policy_applied policy_xml, policy_delta
+
+    File.write policy_xml_filename, modified_xml
+end
+
+def policy_applied policy_xml, policy_delta
     # getting the Document
-    doc = XML::Document.file(policy_xml_filename)
-    
+    doc = XML::Document.string policy_xml    
 
     policy_delta.each do |k, v|
         predicate_val = /.+\[.+='(.*)'\]/.match(k)[1]
@@ -31,9 +38,7 @@ def apply_policy_delta( policy_xml_filename, policy_delta )
         node.content = v.to_s
     end
 
-
-    # saving the doc
-    doc.save policy_xml_filename, indent:true
+    doc.to_s
 end
 
 
@@ -205,3 +210,11 @@ private
     def debug(msg)
         # puts msg
     end
+
+
+
+# ### test
+#     require 'fileutils'
+#     require 'xml'
+#     policy_delta = YAML.load(File.read("#{File.dirname(__FILE__)}/../build/WorxMail-test-ios-config.yaml"))['manifest_values']['policies']
+#     apply_policy_delta "#{File.dirname(__FILE__)}/../build/WorxMail-test-ios.mdx.unzipped/policy_metadata.xml", policy_delta

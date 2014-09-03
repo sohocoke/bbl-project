@@ -222,13 +222,15 @@ namespace :mdx do
 
     call_task 'mdx:unzip', policy_src_app
 
-
+    # apply the policy delta and save 
     policy_xml = "#{build_dir}/#{policy_src_app}.mdx.unzipped/policy_metadata.xml"
-
-    config_delta_path = "#{build_dir}/#{app}-config.yaml"
-    policy_delta = YAML.load(File.read(config_delta_path))['manifest_values']['policies']
+    config_path = "#{build_dir}/#{app}-config.yaml"
+    config_str = File.read(config_path)
+    policy_delta = YAML.load(config_str)['manifest_values']['policies']
 
     apply_policy_delta policy_xml, policy_delta
+
+    # config_with_dereferenced_vars = dereferenced config_str, variables(env_name)  # FIXME env_name requires another multiplexing step.
 
     # prep destination files if necessary
     if app != policy_src_app
@@ -238,7 +240,7 @@ namespace :mdx do
 
     call_task 'mdx:zip', app
 
-    puts "# applied config delta #{config_delta_path} to #{policy_xml} and repackaged mdx for #{app}"
+    puts "# applied config delta #{config_path} to #{policy_xml} and repackaged mdx for #{app}"
   end
 
   task :unzip, [:app] do |t, args|
