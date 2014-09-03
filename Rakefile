@@ -28,7 +28,7 @@ prep_tool_version = `#{prep_tool_bin}`.each_line.to_a[1].scan(/version(.*)/).fla
 cert = "iPhone Distribution: Credit Suisse AG"
 
 # pre-requisite: enterprise provisioning profile.
-profile = "#{data_dir}/citrix_2014.mobileprovision"
+profile = "#{data_dir}/citrix_2015.mobileprovision"
 
 
 android_utils_paths = "`pwd`/ext/apktool1.5.2:`pwd`/ext/android-sdk/build-tools/android-4.4W"
