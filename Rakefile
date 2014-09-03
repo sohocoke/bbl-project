@@ -386,6 +386,8 @@ namespace :apk do
     package_id = args[:package_id]
     variant_name = args[:variant_name]
 
+    original_package_id = variants(app).find{|e| e['id'] == variant_name}['package_id'] || (raise "package_id not defined in config for #{app}")
+
     sh %(
       export PATH="#{android_utils_paths}:$PATH"
       cd #{build_dir}
@@ -394,11 +396,11 @@ namespace :apk do
       apktool d ../#{data_dir}/apps/#{app}/#{app}.apk  # decompile
     )
 
-    matching_files = `grep -rl 'com.citrix.mail' #{build_dir}/#{app}`.each_line.to_a
+    matching_files = `grep -rl '#{original_package_id}' #{build_dir}/#{app}`.each_line.to_a
     matching_files.each do |file|
       file.strip!
       content = File.read(file)
-      File.write file, content.gsub(/com.citrix.mail/, package_id)
+      File.write file, content.gsub(original_package_id, package_id)
     end
 
     puts "replaced package id with #{package_id}
