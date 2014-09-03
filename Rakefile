@@ -7,6 +7,7 @@ require_relative 'lib/configs'
 # TODO: capture all shell execution output, do some sanity checks for errors. (grep 'HTTP/1.1')
 # TODO: parameterise arguments related to android signing.
 
+Pattern_variable = /\{var:.+\}/
 
 ## env
 
@@ -219,26 +220,48 @@ namespace :mdx do
   task :apply_policy_delta, [:app, :policy_src_app] do |t, args|
     app = args[:app]
     policy_src_app = args[:policy_src_app] || app
+    source_staging_path = "#{build_dir}/#{policy_src_app}.mdx.unzipped"
+    target_staging_path = "#{build_dir}/#{app}.mdx.unzipped"
 
     call_task 'mdx:unzip', policy_src_app
+    FileUtils.cp_r source_staging_path, target_staging_path if policy_src_app != app
+
+    # apply the policy delta and save 
+    policy_xml = "#{source_staging_path}/policy_metadata.xml"
+    config_path = "#{build_dir}/#{app}-config.yaml"
+    config_str = File.read(config_path)
+    config = YAML.load(config_str)
+    policy_delta = config['manifest_values']['policies']
+
+    policy_xml_str = File.read policy_xml
+    modified_xml = policy_applied policy_xml_str, policy_delta
+
+    File.write "#{target_staging_path}/policy_metadata.xml", modified_xml
 
 
-    policy_xml = "#{build_dir}/#{policy_src_app}.mdx.unzipped/policy_metadata.xml"
+    # config_with_dereferenced_vars = dereferenced config_str, variables(env_name)  # FIXME env_name requires another multiplexing step.
+    if modified_xml =~ Pattern_variable
+      puts "policy metadata contains variables; proceeding with target-specific cloning."
+      
+      # stage files for each matching target.
+      targets_regexp = config['targets']
+      targets(targets_regexp).each do |target|
+        env_name = target['id']
+        final_staging_path = "#{build_dir}/#{app}-#{env_name}.mdx.unzipped"
 
-    config_delta_path = "#{build_dir}/#{app}-config.yaml"
-    policy_delta = YAML.load(File.read(config_delta_path))['manifest_values']['policies']
+        FileUtils.cp_r target_staging_path, final_staging_path
 
-    apply_policy_delta policy_xml, policy_delta
+        xml_with_dereferenced_vars = dereferenced modified_xml, variables(env_name)
+        File.write "#{final_staging_path}/policy_metadata.xml", xml_with_dereferenced_vars
 
-    # prep destination files if necessary
-    if app != policy_src_app
-      call_task 'mdx:unzip', app
-      sh %( cp #{policy_xml} #{build_dir}/#{app}.mdx.unzipped/ )
+        call_task 'mdx:zip', "#{app}-#{env_name}"
+      end
+    else
+      call_task 'mdx:zip', app
     end
 
-    call_task 'mdx:zip', app
 
-    puts "# applied config delta #{config_delta_path} to #{policy_xml} and repackaged mdx for #{app}"
+    puts "# applied config delta #{config_path} to #{policy_xml} and repackaged mdx for #{app}"
   end
 
   task :unzip, [:app] do |t, args|
