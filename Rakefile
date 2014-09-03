@@ -7,6 +7,7 @@ require_relative 'lib/configs'
 # TODO: capture all shell execution output, do some sanity checks for errors. (grep 'HTTP/1.1')
 # TODO: parameterise arguments related to android signing.
 
+Pattern_variable = /\{var:.+\}/
 
 ## env
 
@@ -229,16 +230,36 @@ namespace :mdx do
     policy_xml = "#{source_staging_path}/policy_metadata.xml"
     config_path = "#{build_dir}/#{app}-config.yaml"
     config_str = File.read(config_path)
-    policy_delta = YAML.load(config_str)['manifest_values']['policies']
+    config = YAML.load(config_str)
+    policy_delta = config['manifest_values']['policies']
 
     policy_xml_str = File.read policy_xml
     modified_xml = policy_applied policy_xml_str, policy_delta
 
     File.write "#{target_staging_path}/policy_metadata.xml", modified_xml
 
-    # config_with_dereferenced_vars = dereferenced config_str, variables(env_name)  # FIXME env_name requires another multiplexing step.
 
-    call_task 'mdx:zip', app
+    # config_with_dereferenced_vars = dereferenced config_str, variables(env_name)  # FIXME env_name requires another multiplexing step.
+    if modified_xml =~ Pattern_variable
+      puts "policy metadata contains variables; proceeding with target-specific cloning."
+      
+      # stage files for each matching target.
+      targets_regexp = config['targets']
+      targets(targets_regexp).each do |target|
+        env_name = target['id']
+        final_staging_path = "#{build_dir}/#{app}-#{env_name}.mdx.unzipped"
+
+        FileUtils.cp_r target_staging_path, final_staging_path
+
+        xml_with_dereferenced_vars = dereferenced modified_xml, variables(env_name)
+        File.write "#{final_staging_path}/policy_metadata.xml", xml_with_dereferenced_vars
+
+        call_task 'mdx:zip', "#{app}-#{env_name}"
+      end
+    else
+      call_task 'mdx:zip', app
+    end
+
 
     puts "# applied config delta #{config_path} to #{policy_xml} and repackaged mdx for #{app}"
   end
