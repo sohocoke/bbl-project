@@ -117,24 +117,29 @@ namespace :app do
 
     targets = targets(targets_regexp)
 
-    package_names = Dir.glob("#{build_dir}/#{app}*.mdx").map {|e| File.basename(e).sub(/\.mdx$/, '')}
-    raise "no .mdx files found in #{build_dir}" if package_names.length == 0
-
-    puts "## targeting #{targets} for packages #{package_names}"
 
     # for each target, call the app_controller:create task.
     targets.each do |target|
+      raise "no servers defined for target '#{target_name}'." if ! target['servers']
 
-      raise "no servers defined for target '#{target['id']}'." if ! target['servers']
+      target_name = target['id']
 
+      package_names = Dir.glob("#{build_dir}/#{app}*.mdx").map {|e| File.basename(e).sub(/\.mdx$/, '')}
+      raise "no .mdx files found in #{build_dir}" if package_names.length == 0
+
+      # first check if env-specific packages have been made.
+      if (env_specific_packages = package_names.grep(/#{target_name}/)).size > 1
+        package_names = env_specific_packages
+      end
+      
+      puts "## targeting #{target_name} for packages #{package_names}"
       package_names.each do |package|
 
-        config_file = "#{build_dir}/#{package}-config.yaml"
+        config_file = "#{build_dir}/#{package.gsub("-#{target_name}", '')}-config.yaml"
         content = File.read(config_file)
         config = YAML.load content
 
-        if target['id'] =~ /#{config['targets']}/
-          target_name = target['id']
+        if target_name =~ /#{config['targets']}/
           puts "# deploy #{package} to target '#{target_name}'"
 
           target['servers'].each do |server|
@@ -463,7 +468,7 @@ namespace :app_controller do
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/app_controller_entries.log
     )
     entries_json = JSON.parse(`cat log/app_controller_entries.log`)
-    app_id = id_for_app app, entries_json
+    app_id = id_for_app app.sub(/-#{env_name}/,''), entries_json
 
     # upload binary
     sh %(
