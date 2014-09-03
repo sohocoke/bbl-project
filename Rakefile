@@ -45,7 +45,7 @@ end
 
 namespace :app do
 
-  desc "create an .mdx from an .ipa, or .apk of an app"
+  desc "create an .mdx from an .ipa, or .apk of an app."
   task :package, [:app_name] do |t, args|
     app = args[:app_name]
 
@@ -63,8 +63,7 @@ namespace :app do
   end
 
 
-  # pre-requisite: prototype mdx has been packaged.
-  desc "unzip ipa, rewrite info.plist with new bundle id, rezip ipa."
+  desc "create variants defined in app configuration."
   task :clone, [:app_name] => [ 
     :'config:merge', 
   ] do |t, args|
@@ -142,7 +141,7 @@ namespace :app do
             appc_base_url = server['base_url']
             login_json = server['credentials_path']
             
-            call_task 'app_controller:create', package, appc_base_url, login_json, target_name
+            call_task 'app_controller:crupdate', package, appc_base_url, login_json, target_name
           end
 
         else
@@ -218,39 +217,12 @@ end
 
 namespace :mdx do
 
-  task :replace_policy, [:variant_name, :app_name] do |t, args|
-    app_name = args[:app_name]
-
-    sh %(
-      cd "#{build_dir}"
-
-      rm -rf #{app_name}.mdx.unzipped #{args[:variant_name]}.mdx.unzipped
-
-      unzip #{app_name}.mdx -d #{app_name}.mdx.unzipped
-      unzip #{args[:variant_name]}.mdx -d #{args[:variant_name]}.mdx.unzipped
-
-      cp #{app_name}.mdx.unzipped/policy_metadata.xml #{args[:variant_name]}.mdx.unzipped/
-    )
-
-
-
-    sh %(
-      cd "#{build_dir}"
-
-      rm #{args[:variant_name]}.mdx
-      (cd #{args[:variant_name]}.mdx.unzipped; zip -r ../#{args[:variant_name]}.mdx .)
-    )
-
-    puts "replaced policy file in #{args[:variant_name]} with one in #{app_name}"
-  end
-  
   task :apply_policy_delta, [:app, :policy_src_app] do |t, args|
     app = args[:app]
     policy_src_app = args[:policy_src_app] || app
 
     call_task 'mdx:unzip', policy_src_app
 
-    call_task 'mdx:unzip', app if app != policy_src_app
 
     policy_xml = "#{build_dir}/#{policy_src_app}.mdx.unzipped/policy_metadata.xml"
 
@@ -259,7 +231,15 @@ namespace :mdx do
 
     apply_policy_delta policy_xml, policy_delta
 
+    # prep destination if necessary
+    if app != policy_src_app
+      call_task 'mdx:unzip', app
+      sh %( cp #{policy_xml} #{build_dir}/#{app}.mdx.unzipped/ )
+    end
+
     call_task 'mdx:zip', app
+
+    puts "# applied config delta #{config_delta_path} to #{policy_xml} and repackaged mdx for #{app}"
   end
 
   task :unzip, [:app] do |t, args|
@@ -435,6 +415,12 @@ end
 
 
 namespace :app_controller do
+  desc "create or update app entry in app controller"
+  task :crupdate, [:app_name, :appc_base_url, :login_json, :env_name] => [:login] do |t, args|
+    # a primitive implementation.
+    call_task 'app_controller:create', args[:app_name], args[:appc_base_url], args[:login_json], args[:env_name]
+    call_task 'app_controller:update', args[:app_name], args[:appc_base_url], args[:login_json], args[:env_name]
+  end
 
   desc "update app entry in app controller"
   task :update, [:app_name, :appc_base_url, :login_json, :env_name] => [:login] do |t, args|
@@ -468,17 +454,20 @@ namespace :app_controller do
     File.write manifest_json, JSON.pretty_generate(JSON.parse(File.read(manifest_json)))
 
 
-    # apply delta to the manifest, save.
-    config_delta_path = "#{build_dir}/#{app}-config.yaml"
-    config_delta = YAML.load File.read(config_delta_path)
-    delta_applied = JSON.parse(File.read(manifest_json))
-    if config_delta['manifest_values']
-      puts "# applying config delta '#{config_delta['id']}' for #{app} from #{config_delta_path}"
-      delta_applied = delta_applied delta_applied, config_delta['manifest_values']
-    end
+    # # apply delta to the manifest, save.
+    # config_delta_path = "#{build_dir}/#{app}-config.yaml"
+    # config_delta = YAML.load File.read(config_delta_path)
+    # delta_applied = JSON.parse(File.read(manifest_json))
+    # if config_delta['manifest_values']
+    #   puts "# applying config delta '#{config_delta['id']}' for #{app} from #{config_delta_path}"
+    #   delta_applied = delta_applied delta_applied, config_delta['manifest_values']
+    # end
 
-    modified_json_str = dereferenced JSON.pretty_generate(delta_applied), variables(env_name)
-    File.write modified_manifest_json, modified_json_str
+    # modified_json_str = dereferenced JSON.pretty_generate(delta_applied), variables(env_name)
+    # File.write modified_manifest_json, modified_json_str
+
+    # SUPERCEDED by policy delta application in mdx. we may need this back in the future when users self-service the full deployment process.
+    modified_manifest_json = manifest_json
 
     sh %(
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers(appc_base_url)} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{modified_manifest_json}"
