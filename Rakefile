@@ -244,7 +244,6 @@ namespace :mdx do
     File.write "#{target_staging_path}/policy_metadata.xml", modified_xml
 
 
-    # config_with_dereferenced_vars = dereferenced config_str, variables(env_name)  # FIXME env_name requires another multiplexing step.
     if modified_xml =~ Pattern_variable
       puts "policy metadata contains variables; proceeding with target-specific cloning."
       
@@ -427,7 +426,7 @@ namespace :apk do
 
     mdx = "#{build_dir}/#{app_name}-android.mdx"
 
-    description = "XenMobile-treated app. PrepTool version:#{prep_tool_version} timestamp:#{Time.new.utc.to_s}"
+    description = "PrepTool version:#{prep_tool_version} timestamp:#{Time.new.utc.to_s}"
 
     # ANDROID
     # commands:
@@ -465,7 +464,7 @@ namespace :app_controller do
     raise "no mdx at #{mdx}" unless File.exist? mdx
 
     sh %(
-      # get app id
+      # get app ids
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/app_controller_entries.log
     )
     entries_json = JSON.parse(`cat log/app_controller_entries.log`)
@@ -473,12 +472,13 @@ namespace :app_controller do
 
     sh %(
       # upload binary
-      /usr/bin/curl #{appc_base_url}/ControlPoint/upload?CG_CSRFTOKEN=#{$csrf_token_header.gsub('CG_CSRFTOKEN: ', '')} #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --form "data=@#{mdx};type=application/octet-stream"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/upload?CG_CSRFTOKEN=#{$csrf_token_header.gsub('CG_CSRFTOKEN: ', '')} --form "data=@#{mdx};type=application/octet-stream" #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}"
     )
 
     # fetch manifest and save for the next request.
     sh %(
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data "#{app}.mdx"  > #{manifest_json}
+      # get app manifest
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgradepkg/#{app_id} --data "#{app}.mdx" #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}"  > #{manifest_json}
     )
     # prettify.
     File.write manifest_json, JSON.pretty_generate(JSON.parse(File.read(manifest_json)))
@@ -501,7 +501,7 @@ namespace :app_controller do
 
     sh %(
       # upload manifest
-      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers(appc_base_url)} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{modified_manifest_json}"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} --data "@#{modified_manifest_json}" #{headers(appc_base_url)} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" 
     )
 
     puts "## updated app controller entry for #{app}"
@@ -517,7 +517,7 @@ namespace :app_controller do
 
     sh %(
       # post new entry
-      /usr/bin/curl #{appc_base_url}/ControlPoint/api/v1/mobileApp #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data-binary "@#{mdx}" -H "Content-type: application/octet-stream"
+      /usr/bin/curl #{appc_base_url}/ControlPoint/api/v1/mobileApp --data-binary "@#{mdx}" #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" -H "Content-type: application/octet-stream"
     )
 
     # # the 'create' endpoint doesn't properly set metadata, so immediately invoke an update.
