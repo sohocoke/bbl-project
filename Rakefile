@@ -58,7 +58,7 @@ namespace :app do
     call_task 'ipa:make_mdx', app if File.exists? ipa
     call_task 'apk:make_mdx', app if File.exists? apk
 
-    Dir.glob("#{build_dir}/#{app}-*.mdx").each do |mdx|
+    Dir.glob("#{build_dir}/#{app}.mdx").each do |mdx|
       call_task 'mdx:apply_policy_delta', mdx.sub(/\.mdx$/, '').sub(/^#{build_dir}\/*/,'')
     end
   end
@@ -86,7 +86,6 @@ namespace :app do
         platform = :ios
 
         variant_ipa_path = "#{variant_path}/#{File.basename(ipa).gsub(app, variant_name)}"
-        # variant_config_path = "#{variant_path}/#{variant_name}-config.yaml"
 
         call_task 'ipa:clone', app, variant_name, variant_bundle_id
         call_task 'ipa:make_mdx', variant_name, variant_ipa_path
