@@ -101,6 +101,8 @@ namespace :app do
         raise "define a unique variant id (iOS) or package_id (Android) for variant '#{variant_name}'"
       end
 
+      call_task 'mdx:unzip', "#{variant_name}-#{platform}"
+
       call_task 'mdx:apply_policy_delta', "#{variant_name}-#{platform}", "#{app}-#{platform}" 
 
       puts "## packaged variant '#{variant_name}-#{platform}'"
@@ -228,7 +230,6 @@ namespace :mdx do
     target_staging_path = "#{build_dir}/#{app}.mdx.unzipped"
 
     call_task 'mdx:unzip', policy_src_app
-    FileUtils.cp_r source_staging_path, target_staging_path if policy_src_app != app
 
     # apply the policy delta and save 
     policy_xml = "#{source_staging_path}/policy_metadata.xml"
@@ -253,6 +254,7 @@ namespace :mdx do
         env_name = target['id']
         final_staging_path = "#{build_dir}/#{app}-#{env_name}.mdx.unzipped"
 
+        FileUtils.rm_rf final_staging_path
         FileUtils.cp_r target_staging_path, final_staging_path
 
         xml_with_dereferenced_vars = dereferenced modified_xml, variables(env_name)
@@ -390,7 +392,7 @@ namespace :apk do
     package_id = args[:package_id]
     variant_name = args[:variant_name]
 
-    original_package_id = variants(app).find{|e| e['id'] == variant_name}['package_id'] || (raise "package_id not defined in config for #{app}")
+    apk_unzipped_path = "#{build_dir}/#{app}"
 
     sh %(
       export PATH="#{android_utils_paths}:$PATH"
@@ -400,15 +402,15 @@ namespace :apk do
       apktool d ../#{data_dir}/apps/#{app}/#{app}.apk  # decompile
     )
 
-    matching_files = `grep -rl '#{original_package_id}' #{build_dir}/#{app}`.each_line.to_a
+    original_package_id = `xmllint --xpath 'string(/manifest/@package)' #{apk_unzipped_path}/AndroidManifest.xml`
+
+    matching_files = `grep -rl '#{original_package_id}' #{apk_unzipped_path}`.each_line.to_a
     matching_files.each do |file|
       file.strip!
       content = File.read(file)
       File.write file, content.gsub(original_package_id, package_id)
     end
 
-    puts "replaced package id with #{package_id}
-    "
     sh %(
       export PATH="#{android_utils_paths}:$PATH"
       cd #{build_dir}
@@ -416,7 +418,7 @@ namespace :apk do
       apktool b #{app} #{variant_name}.apk  # archive into .apk
     )
 
-    puts "# rewrote package id for #{app} to #{package_id}"
+    puts "# rewrote package id #{original_package_id} to #{package_id}"
   end
 
   task :make_mdx, [:app_name, :apk] do |t, args|
