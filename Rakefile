@@ -463,15 +463,15 @@ namespace :app_controller do
 
     raise "no mdx at #{mdx}" unless File.exist? mdx
 
-    # get app id
     sh %(
+      # get app id
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/application?_=1406621245975 #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" > log/app_controller_entries.log
     )
     entries_json = JSON.parse(`cat log/app_controller_entries.log`)
     app_id = id_for_app app.sub(/-#{env_name}/,''), entries_json
 
-    # upload binary
     sh %(
+      # upload binary
       /usr/bin/curl #{appc_base_url}/ControlPoint/upload?CG_CSRFTOKEN=#{$csrf_token_header.gsub('CG_CSRFTOKEN: ', '')} #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --form "data=@#{mdx};type=application/octet-stream"
     )
 
@@ -499,6 +499,7 @@ namespace :app_controller do
     modified_manifest_json = manifest_json
 
     sh %(
+      # upload manifest
       /usr/bin/curl #{appc_base_url}/ControlPoint/rest/mobileappmgmt/upgrade/#{app_id} #{headers(appc_base_url)} #{$curl_opts} -H "#{$cookies_as_headers}" -H "Content-Type: application/json;charset=UTF-8" -H "#{$csrf_token_header}" --data "@#{modified_manifest_json}"
     )
 
@@ -514,11 +515,12 @@ namespace :app_controller do
     mdx = "#{build_dir}/#{app_name}.mdx"
 
     sh %(
+      # post new entry
       /usr/bin/curl #{appc_base_url}/ControlPoint/api/v1/mobileApp #{headers(appc_base_url)} #{$curl_opts} --cookie #{cookies_file} -H "#{$csrf_token_header}" --data-binary "@#{mdx}" -H "Content-type: application/octet-stream"
     )
 
-    # the 'create' endpoint doesn't properly set metadata, so immediately invoke an update.
-    call_task 'app_controller:update', app_name, appc_base_url, args[:login_json], args[:env_name]
+    # # the 'create' endpoint doesn't properly set metadata, so immediately invoke an update.
+    # call_task 'app_controller:update', app_name, appc_base_url, args[:login_json], args[:env_name]
   end
 
   desc "get metadata for app entry"
