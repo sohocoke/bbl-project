@@ -8,6 +8,7 @@ require_relative '../lib/configs'
 class Server < Sinatra::Base
 
   # a simple GET API for list data.
+
   get '/apps' do
     # CORS permission for angular dev-phase resources
     # FIXME reduce scope to dev only.
@@ -18,6 +19,11 @@ class Server < Sinatra::Base
         }
     end
     .to_json
+  end
+
+  get '/destinations' do
+    response['Access-Control-Allow-Origin'] = "*"
+    targets(/.*/).to_json
   end
 
 
