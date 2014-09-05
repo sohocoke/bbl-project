@@ -6,31 +6,38 @@ require_relative 'hash_ext'
 
 Base_dir = 'data'
 
-
-def policy_applied policy_xml, policy_delta
-    # getting the Document
-    doc = XML::Document.string policy_xml    
-
-    policy_delta.each do |k, v|
-        predicate_val = /.+\[.+='(.*)'\]/.match(k)[1]
-        
-        puts "setting policy '#{predicate_val}' = #{v}"
-        
-        # grabbing the node
-        node = doc.find("/PolicyMetadata/Policies/Policy[PolicyName='#{predicate_val}']/PolicyDefault").first
-
-        raise "couldn't find node #{predicate_val}" if node.nil?
-        # TODO assert only 1.
-
-        # modifying the node
-        node.content = v.to_s
+def deployables
+    apps.map do |app|
+        originals =
+            if (platforms = platforms(app)).size > 1
+                platforms.map { |e| "#{app}-#{e}" }
+            else
+                [ app ]
+            end
+        originals + variants(app)
     end
-
-    doc.to_s
+    .flatten
 end
 
 
-#= object-based operations
+def apps
+    Dir.glob("#{Base_dir}/apps/*").map {|e| File.basename e}
+end
+
+
+def variants(app)
+    variant_configs(app).flatten.map do |e|
+        id = "#{e['id']}"
+        if platforms(app).size > 1
+            platform = e['package_id'] ? :android : :ios
+
+            id += "-#{platform}"
+        end
+
+        id
+    end
+end
+
 
 def cascaded_config( app )
     # order of the config files
@@ -48,7 +55,22 @@ def cascaded_config( app )
     config_chunks.select{|e| e}.cascaded
 end
 
-def variants(app)
+
+def platforms( app )
+    {
+        ios: :ipa,
+        android: :apk
+    }.map do |platform, package_type|
+        if Dir.glob("#{Base_dir}/apps/#{app}/*.#{package_type}").size != 0
+            platform
+        else
+            nil
+        end
+    end
+    .compact
+end
+
+def variant_configs(app)
     app_dir = "data/apps/#{app}"
     raise "no app set up at #{app_dir}" unless File.exists?(app_dir)
 
@@ -101,6 +123,9 @@ def cascaded_variant_config( app, variant_config )
 
     app_config
 end
+
+
+#= general config handling
 
 def delta_applied( config, config_delta )
     # special treatment:
@@ -166,6 +191,28 @@ def dereferenced( str, variables )
     end
 
     str
+end
+
+
+def policy_applied policy_xml, policy_delta
+    # getting the Document
+    doc = XML::Document.string policy_xml    
+
+    policy_delta.each do |k, v|
+        predicate_val = /.+\[.+='(.*)'\]/.match(k)[1]
+        
+        p "applying value '#{v}' to policy '#{predicate_val}'"
+        
+        # grabbing the node
+        node = doc.find("/PolicyMetadata/Policies/Policy[PolicyName='#{predicate_val}']/PolicyDefault").first
+
+        # TODO assert only 1.
+
+        # modifying the node
+        node.content = v.to_s
+    end
+
+    doc.to_s
 end
 
 

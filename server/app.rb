@@ -1,7 +1,9 @@
 require 'sinatra'
+require 'sinatra/base'
+
 require 'json'
 
-require 'sinatra/base'
+require_relative '../lib/configs'
 
 class Server < Sinatra::Base
 
@@ -10,14 +12,12 @@ class Server < Sinatra::Base
     # CORS permission for angular dev-phase resources
     # FIXME reduce scope to dev only.
     response['Access-Control-Allow-Origin'] = "*"
-    [
-      {
-        id: "ch-etit"
-      },
-      {
-        id: "ch-prod"
-      }
-    ].to_json
+    deployables.map do |e|
+        {
+          id: e
+        }
+    end
+    .to_json
   end
 
 

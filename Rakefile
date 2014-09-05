@@ -74,7 +74,7 @@ namespace :app do
 
     call_task 'config:merge_variants', args[:app_name]
   
-    variants(app).each do |variant_config|
+    variant_configs(app).each do |variant_config|
 
       variant_name = variant_config['id']
       variant_bundle_id = variant_config['bundle_id']
@@ -197,7 +197,7 @@ namespace :config do
 
     config = cascaded_config app
 
-    variants(app).each do |variant_config|
+    variant_configs(app).each do |variant_config|
       variant_name = variant_config['id']
       platform = 
         if variant_config['bundle_id']
