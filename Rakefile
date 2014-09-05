@@ -561,6 +561,7 @@ namespace :app_controller do
 
 
   namespace :config do
+    desc "export appc config"
     task :get, [:appc_base_url, :login_json] => :login do |t, args|
       appc_base_url = args[:appc_base_url]
       sh %(
