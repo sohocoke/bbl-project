@@ -1,0 +1,5 @@
+exchange_server_address: GBEXCAS0001.ch.ad.hedani.net
+background_services_address: GBEXCAS0001.ch.ad.hedani.net:443
+mail_domain: gbl.ad.hedani.net
+background_services_gateway_address: mm-ea.credit-suisse.com:443
+
