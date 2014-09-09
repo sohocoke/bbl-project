@@ -3,3 +3,5 @@ background_services_address: SGEXCAS0001.gbl.ad.hedani.net:443
 mail_domain: gbl.ad.hedani.net
 background_services_gateway_address: mm-ap.credit-suisse.com:443
 
+background_services_gateway_address_ch: mm-ap.credit-suisse.com:443
+background_services_gateway_address_gb: mm-ap.credit-suisse.com:443

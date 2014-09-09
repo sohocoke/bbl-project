@@ -1,5 +1,5 @@
 exchange_server_address_ch: CHEXCAS0001.ch.ad.hedani.net
-background_services_address_ch: CHEXCAS0001.gbl.ad.hedani.net:443
+background_services_address_ch: CHEXCAS0001.ch.ad.hedani.net:443
 mail_domain_ch: ch.ad.hedani.net
 background_services_gateway_address_ch: mm-ch.credit-suisse.com:443
 

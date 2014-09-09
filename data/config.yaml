@@ -12,4 +12,4 @@ manifest_values:
     policyValue[policyName='DisableCamera']: true
     policyValue[policyName='PreferredVpnMode']: FullTunnel
     policyValue[policyName='DefaultLoggerOutput']: file,console
-    policyValue[policyName='OutboundURLFilter']: ^http:=ctxmobilebrowser:,^https:=ctxmobilebrowsers:,^mailto:=ctxmail:,+^citrixreceiver:,+^telprompt:,+^tel:,+^col-g2m-2:,+^maps:ios_addr,+^sms:,+^facetime:,+^ctxnotes:</PolicyDefault>
+    policyValue[policyName='OutboundURLFilter']: '^http:=ctxmobilebrowser:,^https:=ctxmobilebrowsers:,^mailto:=ctxmail:,+^citrixreceiver:,+^telprompt:,+^tel:,+^sms:,+^ctxnotes:'
