@@ -1,10 +1,15 @@
 # globally applicable policy here.
 
 id: firmwide
-manifest_values:
-  # more firm-wide configuration to go here.
-  # e.g.
-  # ncgapplication:
-  #   description: stub firm-wide description for app.
-
 targets: .*
+
+manifest_values:
+  # common policies -- if necesssary, override in the app- or variant-specific properties.
+  policies:
+    policyValue[policyName='MaxOfflinePeriod']: 96
+    policyValue[policyName='WipeDataOnAppLock']: true
+    policyValue[policyName='DisableLocation']: true
+    policyValue[policyName='DisableCamera']: true
+    policyValue[policyName='PreferredVpnMode']: FullTunnel
+    policyValue[policyName='DefaultLoggerOutput']: file,console
+    policyValue[policyName='OutboundURLFilter']: ^http:=ctxmobilebrowser:,^https:=ctxmobilebrowsers:,^mailto:=ctxmail:,+^citrixreceiver:,+^telprompt:,+^tel:,+^col-g2m-2:,+^maps:ios_addr,+^sms:,+^facetime:,+^ctxnotes:</PolicyDefault>
