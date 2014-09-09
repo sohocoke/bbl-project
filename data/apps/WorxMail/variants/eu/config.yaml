@@ -3,7 +3,7 @@ targets: ch-.*
 manifest_values:
 
   ncgapplication:
-    description: stub description for EU variant of WorxMail-test
+    description: stub description for EU variant of WorxMail
 
   policies:
     policyValue[policyName='ExchangeServer']: '{var:exchange_server_address_eu}'

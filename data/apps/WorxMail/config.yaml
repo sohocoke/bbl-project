@@ -1,6 +1,6 @@
 # required properties
 
-id: WorxMail-test
+id: WorxMail
 targets: .*
 
 
