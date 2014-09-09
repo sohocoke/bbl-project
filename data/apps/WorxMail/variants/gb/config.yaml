@@ -1,4 +1,4 @@
-targets: (ch-etit|ea-.*)
+targets: (ch-etit|ap-.*)
 
 manifest_values:
 
