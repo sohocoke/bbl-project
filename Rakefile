@@ -332,7 +332,7 @@ namespace :ipa do
     
     mdx = "#{build_dir}/#{app_name}-ios.mdx"
 
-    description = "XenMobile-treated app. PrepTool version:#{prep_tool_version} timestamp:#{Time.new.utc.to_s}"
+    description = "XenMobile-wrapped app. PrepTool version:#{prep_tool_version} timestamp:#{Time.new.utc.to_s}"
 
     ## preptool information.
     # Usage: CGAppCLPrepTool [ Wrap |Sign |SetInfo |GetInfo ] -Cert CERTIFICATE -Profile PROFILE -in INPUTFILE -out OUTPUTFILE -appDesc DESCRIPTION -logFile LOGFILE -logWriteLevel LEVEL -logDisplayLevel LEVEL
