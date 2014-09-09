@@ -58,8 +58,8 @@ namespace :app do
     call_task 'ipa:make_mdx', app if File.exists? ipa
     call_task 'apk:make_mdx', app if File.exists? apk
 
-    Dir.glob("#{build_dir}/#{app}.mdx").each do |mdx|
-      call_task 'mdx:apply_policy_delta', mdx.sub(/\.mdx$/, '').sub(/^#{build_dir}\/*/,'')
+    Dir.glob("#{build_dir}/#{app}-{ios,android}.mdx").each do |mdx|
+      call_task 'mdx:apply_policy_delta', File.basename(mdx).sub(/\.mdx$/, '').sub(/^#{build_dir}\/*/,'')
     end
   end
 
@@ -434,7 +434,7 @@ namespace :apk do
     sh %(
       export PATH="#{android_utils_paths}:$PATH"
 
-      java -jar #{prep_tool_jar} wrap -in #{apk} -out #{mdx} -appName "#{app_name}-android" -appDesc "#{description}" -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android > "#{log_dir}/#{app_name}-android-mdx.log"
+      java -jar #{prep_tool_jar} wrap -in #{apk} -out #{mdx} -app "#{app_name}-android" -desc "#{description}" -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android > "#{log_dir}/#{app_name}-android-mdx.log"
     )
 
     puts "# packaged #{mdx}"
