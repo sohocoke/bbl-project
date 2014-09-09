@@ -1,4 +1,4 @@
-targets: (ch-etit|(uk|eu)-.*)
+targets: (ch-etit|ea-.*)
 
 manifest_values:
 
