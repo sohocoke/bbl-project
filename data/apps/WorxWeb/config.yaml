@@ -1,5 +1,5 @@
 # required properties
-id: WorxWeb-test
+id: WorxWeb
 targets: .*  # all environments where PROD cert label should be used.
 
 
