@@ -1,0 +1,256 @@
+
+/* Common Time related strings */
+"CTXDAY"        = "天";
+"CTXDAYS"       = "天";
+"CTXHOUR"       = "小时";
+"CTXHOURS"      = "小时";
+"CTXMINUTE"     = "分钟";
+"CTXMINUTES"    = "分钟";
+"CTXSECOND"     = "秒";
+"CTXSECONDS"    = "秒";
+ 
+
+/* Product name related strings */
+"CTXMDXControllerAppProductName"        = "Worx Home";
+
+
+/* Common Alert Button Strings */
+"AlertButtonCONNECT"            = "连接";
+"AlertButtonCANCEL"             = "取消";
+"AlertButtonDISMISS"            = "放弃";
+"AlertButtonLATER"              = "稍后";
+"AlertButtonLOGON"              = "登录";
+"AlertButtonEXIT"               = "退出";
+"AlertButtonQUIT"               = "退出";
+"AlertButtonOK"                 = "确定";
+"AlertButtonUPDATENOW"          = "立即更新";
+"AlertButtonSETTINGS"           = "设置";
+"AlertButtonINSTALL"            = "安装";
+"AlertButtonOPENRECEIVER"       = "授权";
+"AlertButtonSTARTRECEIVER"      = "启动";
+"AlertButtonADDACCOUNT"         = "添加帐户";
+"AlertButtonCONTINUE"           = "继续";
+"AlertButtonMANAGEME"           = "工作应用程序";
+"AlertButtonDONOTMANAGEME"      = "个人应用程序";
+"AlertButtonTRYAGAIN"           = "重试";
+
+
+/* Alerts related text strings */
+
+/* App name in title, product name in message */
+"ReceiverNotInstalledAlertTitle"                = "%@";
+"ReceiverNotInstalledAlertMsg"                  = "请安装 %@ 以使用此应用程序。";
+
+/* Product name */
+"LogonRequiredAlertTitle"                       = "%@";
+"LogonRequiredAlertMsg"                         = "登录以安全地使用此应用程序。";
+
+"LogonRequiredForUserEntropyAlertTitle"         = "%@";
+"LogonRequiredForUserEntropyAlertMsg"           = "登录以安全地使用此应用程序。";
+
+"DateTimeChangeAlertTitle"                      = "%@";
+"DateTimeChangeAlertMsg"                        = "系统时间或日期已更改。请登录以在 WorxHome 中应用此更改。";
+
+"AdditionalAuthAlertTitle"                      = "%@";
+"AdditionalAuthAlertMsg"                        = "需要执行附加身份验证才能使用此应用程序。";
+
+"LogonMaybeRequiredAlertTitle"                  = "向应用程序授权";
+"LogonMaybeRequiredAlertMsg"                    = "%@ 需要向此应用程序授权。";
+
+/* Product name */
+"LogonFailedAlertTitle"                         = "%@";
+"LogonFailedAlertMsg"                           = "请验证您的凭据并重试。";
+
+"AppRemovedAlertTitle"                          = "应用程序不可用";
+"AppRemovedAlertMsg"                            = "已将此应用程序从 %@ 中删除。可以将其从 %@ 中删除或者在 %@ 中重新安装。";
+
+"JailBrokenAlertTitle"                          = "越狱设备";
+"JailBrokenAlertMsg"                            = "贵组织不允许在越狱版 %@ 上运行此应用程序。";
+
+"PasscodeRequiredAlertTitle"                    = "需要通行码";
+"PasscodeRequiredAlertMsg"                      = "请在您的设备上设置一个通行码以使用此应用程序。";
+
+"RequireInternalNetworkAlertTitle"              = "需要使用内部网络";
+"RequireInternalNetworkAlertMsg"                = "请连接到内部网络以使用此应用程序。";
+
+"WifiRequiredAlertTitle"                        = "需要使用 WiFi";
+"WifiRequiredAlertMsg"                          = "请连接到 WiFi 网络以使用此应用程序。";
+
+"InternalWifiRequiredAlertTitle"                = "需要连接获授权的 WiFi";
+"InternalWifiRequiredAlertMsg"                  = "请连接以下获授权的无线网络以使用此应用程序: %@";
+
+/* Product name */
+"OfflineLeaseWarningAlertTitle"                 = "%@";
+"OfflineLeaseWarningAlertMsg"                   = "请在 %@ %@内登录以继续使用此工作应用程序。超过此时间后，将锁定此应用程序。";
+
+"AppUpdateDeferAlertTitle"                      = "更新可用";
+"AppUpdateDeferAlertMsg"                        = "必须在 %@ %@ 中更新此应用程序。";
+
+"AppUpdateGracePeriodExpiredAlertTitle"         = "需要更新";
+"AppUpdateGracePeriodExpiredAlertMsg"           = "应用更新后才能使用此应用程序。";
+
+"AppUpdateGracePeriodWarningAlertTitle"         = "需要更新";
+"AppUpdateGracePeriodWarningAlertMsg"           = "%@ %@ 后您将无法再使用此应用程序。请保存所做的工作并应用更新。";
+
+"DontShowThisMsgAgainOption"                    = "不再显示";
+
+"AGSessionExpiredAlertTitle"                    = "连接已过期";
+"AGSessionExpiredAlertMsg"                      = "登录以继续使用此应用程序。";
+
+/* Product name */
+"LogonRequiredForSTATicketExpiredAlertTitle"    = "%@";
+"LogonRequiredForSTATicketExpiredAlertMsg"      = "您的连接已超时，请重新连接到 %@ 以访问工作资源。";
+
+/* Product name */
+"LogonRequiredForNetworkAccessAlertTitle"       = "%@";
+"LogonRequiredForNetworkAccessAlertMsg"         = "您的连接已超时，请重新连接到 %@ 以访问工作资源。";
+
+"NetworkRequiredAlertTitle"                     = "Internet 不可用";
+"NetworkRequiredAlertMsg"                       = "使用此应用程序之前，请先连接到 Internet。";
+
+"AGNotReachableAlertTitle"                      = "公司网络不可用";
+"AGNotReachableAlertMsg"                        = "使用此应用程序之前，请先连接到公司网络。";
+
+"IPC_InvalidAppAlertTitle"                      = "不兼容的应用程序";
+"IPC_InvalidAppAlertMsg"                        = "请尝试删除此应用程序，然后重新安装。";
+
+"IPC_NoStoreFoundAlertTitle"                    = "找不到应用程序";
+"IPC_NoStoreFoundAlertMsg"                      = "请先添加您的帐户，然后再启动此应用程序。";
+
+"IPC_QuitRequestAlertTitle"                     = "无法打开应用程序";
+"IPC_QuitRequestAlertMsg"                       = "%@ 无法与此应用程序通信。";
+
+/* Product name */
+"IPC_WakeReceiverAlertTitle"                    = "%@";
+"IPC_WakeReceiverAlertMsg"                      = "您的应用程序将在 %@ 启动后重新激活。";
+
+"IPC_IncompatibleServerTitle"                    = "%@";
+"IPC_IncompatibleServerMsg"                      = "请更新 %@ 以使用此应用程序。";
+
+
+
+/* App Containment related text strings */
+"AppContainmentAlertTitle"                  = "受管理员策略限制";
+"AppContainment_DISABLECOPYAlertMsg"        = "对此应用程序阻止了“剪切和复制”";
+"AppContainment_DISABLEPASTEAlertMsg"       = "对此应用程序阻止了“粘贴”";
+"AppContainment_DISABLEOPENINAlertMsg"      = "对此应用程序阻止了“打开方式”";
+"AppContainment_DISABLECAMERAAlertMsg"      = "对此应用程序阻止了“相机”";
+"AppContainment_DISABLEMICAlertMsg"         = "对此应用程序阻止了“麦克风录音”";
+"AppContainment_DISABLELOCATIONAlertMsg"    = "对此应用程序阻止了“定位服务”";
+"AppContainment_DISABLESMSAlertMsg"         = "对此应用程序阻止了“短信编写”";
+"AppContainment_DISABLEEMAILAlertMsg"       = "对此应用程序阻止了“电子邮件编写”";
+"AppContainment_DISABLEICLOUDAlertMsg"      = "对此应用程序阻止了“iCloud”";
+"AppContainment_DISABLEPRINTINGAlertMsg"    = "对此应用程序阻止了“AirPrint”";
+"AppContainment_DISABLESOCIALMEDIAAlertMsg"  = "对此应用程序阻止了“社交媒体”";
+
+"AppContainment_OpenInZeroAppsToShow"       = "没有可用于打开此文件的应用程序。请尝试在 Worx Home 中添加一个应用程序。";
+
+"OfflineUseToastMessage"                    = "您的 Internet 连接不可用。";
+
+"DataProtection_KeyFailureAlertTitle"       = "无法访问应用程序数据";
+"DataProtection_KeyFailureAlertMsg"         = "请检查您的网络连接并尝试重新登录 %@。";
+
+"DataProtection_PolicyChangeAlertTitle"     = "加密策略已更改";
+"DataProtection_PolicyChangeAlertMsg"       = "您的数据在此应用程序中的加密方式已更改，请删除此应用程序并重新安装。";
+
+"AppDisabledTitle"                          = "应用程序不可用";
+"AppDisabledMsg"                            = "此应用程序暂时被禁用。";
+
+"CannotWorkOfflineTitle"                    = "%@";
+"CannotWorkOfflineMsg"                      = "您已超出允许脱机使用此应用程序的时间。您的 Internet 访问恢复后，请登录 Worx Home 以便继续使用此应用程序。";
+
+/* App name */
+"SDK_AppStoreAppSwitchToManagedModeTitle"   = "%@";
+"SDK_AppStoreAppSwitchToManagedModeMsg"     = "如果在工作时使用，可以对此应用程序应用公司的安全策略。";
+
+/* App name */
+"SDK_AutoSubscriptionFailedTitle"           = "%@";
+"SDK_AutoSubscriptionFailedMsg"             = "此应用程序当前无法由贵公司管理。";
+
+/* Client Cert */
+"ClientCertRenewalRequiredTitle"            = "%@";
+"ClientCertRenewalRequiredMsg"              = "现在将续订您的客户端证书。";
+
+/* Secure offline password */
+"SecureOfflinePasswordRequiredTitle"        ="%@";
+"SecureOfflinePasswordRequiredMsg"          ="请输入您的 AD 密码以继续使用此应用程序。";
+
+/* Secure offline password changed */
+"SecureOfflinePasswordChangedTitle"         ="%@";
+"SecureOfflinePasswordChangedMsg"           ="您的密码已更改。请对 WorxHome 进行身份验证以继续使用此应用程序。";
+
+/* Secure offline wrong password */
+"WrongPasswordTitle"                        ="密码不正确";
+"WrongPasswordMessage"                      ="凭据不正确。请重试!";
+
+/* "Generic error text" =""; */
+"GenericErrorTitle"                        ="无法获取应用程序数据";
+"GenericErrorMessage"                      ="请停止 Worx Home 并重新启动。";
+
+
+/* Secure offline password exceeds maximum */
+//PasswordExceedMaxLimitTitle                 =@"Password exceeds maximum"
+//PasswordExceedMaxLimitNessage               =@"Exceeds maximum password retrial. App will exit."
+
+"SDK_TransitionToManagedModeSuccessMsg"     = "此应用程序当前由贵公司提供安全保护。";
+
+/* Tunneler Error Messages */
+
+"HTTPGateWayTimeoutErrorMsg"                = "HTTP 错误 504 - 网关超时";
+"ServerNotFoundErrorMsg"                    = "找不到请求的服务器或者 DNS 错误。";
+"HTTPForbiddenErrorMsg"                     = "HTTP 错误 403 - 已禁止";
+"ServerAccessDeniedErrorMsg"                = "您在此服务器上没有访问权限。";
+
+
+/* /////////////////////////////////////////////////// */
+/* Localizable strings from WorxHome (me@work project) */
+"OkButtonText"="确定";
+"IncompleteFieldAlertErrorTitleKey" = "输入所需的信息";
+"RequiredFieldErrorButtonTitleKey" = "放弃";
+"showWaitAuthenticating"   = "正在进行身份验证";
+"WorxHome" = "Worx Home";
+"WorxHomeAppName" = "Worx Home";
+"AppListFailedGatewayAuthErrorKey" = "请检查您的凭据。您可能输错了这些凭据。";
+"ReportFTUIssue" = "报告";
+"TryAgainText" = "重试";
+"SignOn" = "登录";
+"Done" = "完成";
+"EnterWorxPIN" = "输入 Worx PIN";
+"EnterWorxPasscode" = "输入 Worx 通行码";
+"EnterADPassword" = "输入网络密码";
+"PromptCancelButtonTitleKey" = "取消";
+"StoreItemLogOnLabel" = "登录";
+"AccountLabelTitle" = "帐户:";
+"PasscodePromptUserNameKey" = "用户名";
+"PasswordAlertTitleKey" = "密码";
+"WorxPINValidationFailedFlipbackToMDXApp" = "您已超出登录尝试次数上限。";
+
+
+"AddProfileEmailNotAvailableMessageKey" = "请在您的 iPad 上设置一个电子邮件帐户以发送此邮件。";
+"AddProfileEmailNotAvailableiPhoneMessageKey" = "请在您的 iPhone 或 iPod Touch 上设置一个电子邮件帐户以发送此邮件。";
+"AddProfileEmailNotAvailableTitleKey" = "Worx Home";
+"DismissButtonText"="放弃";
+"ADPasswordLastAttemptMessage" = "密码不正确。您还能再尝试 1 次。";
+"ADPasswordAttemptsRemaining" = "密码不正确。您还能再尝试 %d 次。";
+"WorxPINLastAttemptMessage" = "PIN 不正确。您还能再尝试 1 次。";
+"WorxPIN_D_AttemptsRemaining" = "PIN 不正确。您还能再尝试 %d 次。";
+/* "EnterValidEmail" = "请检查您的凭据。您可能输错了这些凭据。"; */
+/* "EditStoreCellDomainTitleKey" = "域"; */
+/* Cannot find "WorxPin" key in me@work project */
+"WorxPin"="Worx 通行码";
+/* "TokenPlaceholderKey" = "令牌"; */
+/* "PinPlaceholderKey" = "PIN"; */
+/* "PinTokenPlaceholderKey" = "PIN + 令牌"; */
+"WorxPINValidationFailedLock" = "您已超出登录尝试次数上限，可以在几分钟后重试。";
+"WorxPINForgetPINReEnrollMessage" = "重置您的 PIN。";
+"RetryInWorxHomeMessage_AD" = "是否要更改您的密码? 请轻按此处以重试。";
+"RetryInWorxHomeMessage_PIN" = "忘记了 PIN? 请轻按此处。";
+"RetryInWorxHomeMessage_PASSCODE" = "忘记了通行码? 请轻按此处。";
+
+
+/* "ConnectionErrorText" =""; */
+"NoNetworkText" = "您的 Internet 访问当前不可用。";
+"ReEnrollText" = "";
+
+/* "WorxPINForgetUserCertAuthReEnrollMessage" = "";
+/* /////////////////////////////////////////////////// */

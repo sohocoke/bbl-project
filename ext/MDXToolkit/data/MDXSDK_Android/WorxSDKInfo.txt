@@ -1,0 +1,1 @@
+Latest Android WorxSDK Jar is based on Changelist - 261049#50861
