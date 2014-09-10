@@ -237,6 +237,7 @@ namespace :mdx do
     config = YAML.load(config_str)
     policy_delta = config['manifest_values']['policies']
 
+    puts "# applying policy delta to #{policy_xml}"
     policy_xml_str = File.read policy_xml
     modified_xml = policy_applied policy_xml_str, policy_delta
 
@@ -255,7 +256,9 @@ namespace :mdx do
         FileUtils.rm_rf final_staging_path
         FileUtils.cp_r target_staging_path, final_staging_path
 
-        xml_with_dereferenced_vars = dereferenced modified_xml, variables(env_name)
+        variables = variables(env_name)
+        puts "# target #{target} using variables: #{variables.map {|k, v| k + ": " + v}.join "\n"}"
+        xml_with_dereferenced_vars = dereferenced modified_xml, variables
         File.write "#{final_staging_path}/policy_metadata.xml", xml_with_dereferenced_vars
 
         call_task 'mdx:zip', "#{app}-#{env_name}"

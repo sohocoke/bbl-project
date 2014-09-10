@@ -14,7 +14,7 @@ def policy_applied policy_xml, policy_delta
     policy_delta.each do |k, v|
         predicate_val = /.+\[.+='(.*)'\]/.match(k)[1]
         
-        p "applying value '#{v}' to policy '#{predicate_val}'"
+        puts "setting policy '#{predicate_val}' = #{v}"
         
         # grabbing the node
         node = doc.find("/PolicyMetadata/Policies/Policy[PolicyName='#{predicate_val}']/PolicyDefault").first
