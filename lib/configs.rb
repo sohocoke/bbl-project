@@ -19,6 +19,7 @@ def policy_applied policy_xml, policy_delta
         # grabbing the node
         node = doc.find("/PolicyMetadata/Policies/Policy[PolicyName='#{predicate_val}']/PolicyDefault").first
 
+        raise "couldn't find node #{predicate_val}" if node.nil?
         # TODO assert only 1.
 
         # modifying the node
