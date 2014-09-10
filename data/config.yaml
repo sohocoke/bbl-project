@@ -10,6 +10,5 @@ manifest_values:
     policyValue[policyName='WipeDataOnAppLock']: true
     policyValue[policyName='DisableLocation']: true
     policyValue[policyName='DisableCamera']: true
-    policyValue[policyName='PreferredVpnMode']: FullTunnel
     policyValue[policyName='DefaultLoggerOutput']: file,console
     policyValue[policyName='OutboundURLFilter']: '^http:=ctxmobilebrowser:,^https:=ctxmobilebrowsers:,^mailto:=ctxmail:,+^citrixreceiver:,+^telprompt:,+^tel:,+^sms:,+^ctxnotes:'
