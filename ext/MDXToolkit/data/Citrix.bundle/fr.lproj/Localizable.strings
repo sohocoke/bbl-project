@@ -1,0 +1,256 @@
+
+/* Common Time related strings */
+"CTXDAY"        = "jour";
+"CTXDAYS"       = "jours";
+"CTXHOUR"       = "heure";
+"CTXHOURS"      = "heures";
+"CTXMINUTE"     = "minute";
+"CTXMINUTES"    = "minutes";
+"CTXSECOND"     = "seconde";
+"CTXSECONDS"    = "secondes";
+ 
+
+/* Product name related strings */
+"CTXMDXControllerAppProductName"        = "Worx Home";
+
+
+/* Common Alert Button Strings */
+"AlertButtonCONNECT"            = "Connecter";
+"AlertButtonCANCEL"             = "Annuler";
+"AlertButtonDISMISS"            = "Abandonner";
+"AlertButtonLATER"              = "Plus tard";
+"AlertButtonLOGON"              = "Se connecter";
+"AlertButtonEXIT"               = "Fermer";
+"AlertButtonQUIT"               = "Quitter";
+"AlertButtonOK"                 = "OK";
+"AlertButtonUPDATENOW"          = "Mettre à jour";
+"AlertButtonSETTINGS"           = "Paramètres";
+"AlertButtonINSTALL"            = "Installer";
+"AlertButtonOPENRECEIVER"       = "Autoriser";
+"AlertButtonSTARTRECEIVER"      = "Démarrer";
+"AlertButtonADDACCOUNT"         = "Ajouter un compte";
+"AlertButtonCONTINUE"           = "Continuer";
+"AlertButtonMANAGEME"           = "Application professionnelle";
+"AlertButtonDONOTMANAGEME"      = "Application personnelle";
+"AlertButtonTRYAGAIN"           = "Réessayez";
+
+
+/* Alerts related text strings */
+
+/* App name in title, product name in message */
+"ReceiverNotInstalledAlertTitle"                = "%@";
+"ReceiverNotInstalledAlertMsg"                  = "Veuillez installer %@ pour utiliser cette application.";
+
+/* Product name */
+"LogonRequiredAlertTitle"                       = "%@";
+"LogonRequiredAlertMsg"                         = "Connectez-vous pour utiliser cette application de manière sécurisée.";
+
+"LogonRequiredForUserEntropyAlertTitle"         = "%@";
+"LogonRequiredForUserEntropyAlertMsg"           = "Connectez-vous pour utiliser cette application de manière sécurisée.";
+
+"DateTimeChangeAlertTitle"                      = "%@";
+"DateTimeChangeAlertMsg"                        = "L'heure ou la date de votre système a été modifiée. Ouvrez une session pour appliquer ce changement dans Worx Home.";
+
+"AdditionalAuthAlertTitle"                      = "%@";
+"AdditionalAuthAlertMsg"                        = "Une authentification supplémentaire est requise pour utiliser cette application.";
+
+"LogonMaybeRequiredAlertTitle"                  = "Autoriser application";
+"LogonMaybeRequiredAlertMsg"                    = "%@ doit autoriser cette application.";
+
+/* Product name */
+"LogonFailedAlertTitle"                         = "%@";
+"LogonFailedAlertMsg"                           = "Vérifiez vos informations d'identification et réessayez.";
+
+"AppRemovedAlertTitle"                          = "Application non disponible";
+"AppRemovedAlertMsg"                            = "Cette application a été supprimée de %@. Vous pouvez la supprimer de votre %@ ou la réinstaller dans %@.";
+
+"JailBrokenAlertTitle"                          = "Appareil débloqué";
+"JailBrokenAlertMsg"                            = "Votre organisation n'autorise pas l'exécution de cette application sur un %@ débloqué.";
+
+"PasscodeRequiredAlertTitle"                    = "Code secret requis";
+"PasscodeRequiredAlertMsg"                      = "Définissez un code secret sur votre appareil pour utiliser cette application.";
+
+"RequireInternalNetworkAlertTitle"              = "Réseau interne requis";
+"RequireInternalNetworkAlertMsg"                = "Connectez-vous à votre réseau interne pour utiliser cette app.";
+
+"WifiRequiredAlertTitle"                        = "WiFi requis";
+"WifiRequiredAlertMsg"                          = "Connectez-vous à un réseau Wi-Fi pour utiliser cette application.";
+
+"InternalWifiRequiredAlertTitle"                = "Connexion WiFi autorisée requise";
+"InternalWifiRequiredAlertMsg"                  = "Connectez-vous à un réseau WiFi autorisé pour pouvoir utiliser cette application : %@";
+
+/* Product name */
+"OfflineLeaseWarningAlertTitle"                 = "%@";
+"OfflineLeaseWarningAlertMsg"                   = "Connectez-vous à %@ %@ pour continuer à utiliser cette application professionnelle. Après cette période, l'application sera verrouillée.";
+
+"AppUpdateDeferAlertTitle"                      = "Mise à jour disponible";
+"AppUpdateDeferAlertMsg"                        = "Vous devez mettre cette application à jour en moins de %@ %@.";
+
+"AppUpdateGracePeriodExpiredAlertTitle"         = "Mise à jour requise";
+"AppUpdateGracePeriodExpiredAlertMsg"           = "Vous ne pouvez pas utiliser cette application tant que vous n'avez pas appliqué la mise à jour.";
+
+"AppUpdateGracePeriodWarningAlertTitle"         = "Mise à jour requise";
+"AppUpdateGracePeriodWarningAlertMsg"           = "Vous avez %@ %@ de plus pour utiliser cette application. Veuillez enregistrer votre travail et appliquer la mise à jour.";
+
+"DontShowThisMsgAgainOption"                    = "Ne plus afficher";
+
+"AGSessionExpiredAlertTitle"                    = "Expiration de la connexion";
+"AGSessionExpiredAlertMsg"                      = "Connectez-vous pour continuer à utiliser cette application.";
+
+/* Product name */
+"LogonRequiredForSTATicketExpiredAlertTitle"    = "%@";
+"LogonRequiredForSTATicketExpiredAlertMsg"      = "Votre connexion a expiré. Reconnectez-vous à %@ pour accéder à vos ressources de travail.";
+
+/* Product name */
+"LogonRequiredForNetworkAccessAlertTitle"       = "%@";
+"LogonRequiredForNetworkAccessAlertMsg"         = "Votre connexion a expiré. Reconnectez-vous à %@ pour accéder à vos ressources de travail.";
+
+"NetworkRequiredAlertTitle"                     = "Internet non disponible";
+"NetworkRequiredAlertMsg"                       = "Connectez-vous à Internet avant d'utiliser cette application.";
+
+"AGNotReachableAlertTitle"                      = "Réseau d'entreprise non disponible";
+"AGNotReachableAlertMsg"                        = "Connectez-vous à votre réseau d'entreprise avant d'utiliser cette application.";
+
+"IPC_InvalidAppAlertTitle"                      = "Application incompatible";
+"IPC_InvalidAppAlertMsg"                        = "Essayez de supprimer cette application et de la réinstaller.";
+
+"IPC_NoStoreFoundAlertTitle"                    = "Application introuvable";
+"IPC_NoStoreFoundAlertMsg"                      = "Veuillez ajouter votre compte avant de démarrer cette application.";
+
+"IPC_QuitRequestAlertTitle"                     = "Impossible d'ouvrir l'application";
+"IPC_QuitRequestAlertMsg"                       = "%@ ne peut pas communiquer avec cette application.";
+
+/* Product name */
+"IPC_WakeReceiverAlertTitle"                    = "%@";
+"IPC_WakeReceiverAlertMsg"                      = "Votre application sera de nouveau active après redémarrage de %@.";
+
+"IPC_IncompatibleServerTitle"                    = "%@";
+"IPC_IncompatibleServerMsg"                      = "Veuillez mettre à jour %@ pour utiliser cette application.";
+
+
+
+/* App Containment related text strings */
+"AppContainmentAlertTitle"                  = "Limité par une stratégie d'administrateur";
+"AppContainment_DISABLECOPYAlertMsg"        = "La fonction \"Couper/copier\" est bloquée pour cette application";
+"AppContainment_DISABLEPASTEAlertMsg"       = "La fonction \"Coller\" est bloquée pour cette application.";
+"AppContainment_DISABLEOPENINAlertMsg"      = "La fonction \"Ouvrir dans\" est bloquée pour cette application";
+"AppContainment_DISABLECAMERAAlertMsg"      = "La \"caméra\" est bloquée pour cette application";
+"AppContainment_DISABLEMICAlertMsg"         = "\"L'enregistrement micro\" est bloqué pour cette application";
+"AppContainment_DISABLELOCATIONAlertMsg"    = "Les \"services de géolocalisation\" sont bloqués pour cette application";
+"AppContainment_DISABLESMSAlertMsg"         = "\"L'envoi de SMS\" est bloqué pour cette application";
+"AppContainment_DISABLEEMAILAlertMsg"       = "\"L'envoi de messages\" est bloqué pour cette application";
+"AppContainment_DISABLEICLOUDAlertMsg"      = "\"iCloud\" est bloqué pour cette application";
+"AppContainment_DISABLEPRINTINGAlertMsg"    = "\"AirPrint\" est bloqué pour cette application";
+"AppContainment_DISABLESOCIALMEDIAAlertMsg"  = "Les médias sociaux sont bloqués pour cette application";
+
+"AppContainment_OpenInZeroAppsToShow"       = "Aucune application permettant d'ouvrir ce fichier n'est disponible. Essayez d'ajouter une application dans Worx Home.";
+
+"OfflineUseToastMessage"                    = "Votre connexion Internet n'est pas disponible.";
+
+"DataProtection_KeyFailureAlertTitle"       = "Impossible d'accéder aux données d'application";
+"DataProtection_KeyFailureAlertMsg"         = "Vérifiez votre connexion réseau et essayez de vous reconnecter à %@.";
+
+"DataProtection_PolicyChangeAlertTitle"     = "Stratégie de cryptage modifiée";
+"DataProtection_PolicyChangeAlertMsg"       = "La manière dont vos données ont été cryptées dans cette application a été modifiée. Supprimez cette application et réinstallez-la.";
+
+"AppDisabledTitle"                          = "Application non disponible";
+"AppDisabledMsg"                            = "Cette application est temporairement désactivée.";
+
+"CannotWorkOfflineTitle"                    = "%@";
+"CannotWorkOfflineMsg"                      = "Vous avez dépassé le délai imparti à l'utilisation de cette application en mode déconnecté. Une fois votre connexion Internet rétablie, connectez-vous à Worx Home pour continuer à utiliser cette application.";
+
+/* App name */
+"SDK_AppStoreAppSwitchToManagedModeTitle"   = "%@";
+"SDK_AppStoreAppSwitchToManagedModeMsg"     = "Vous pouvez appliquer les stratégies de sécurité de votre entreprise à cette application si vous l'utilisez à des fins professionnelles.";
+
+/* App name */
+"SDK_AutoSubscriptionFailedTitle"           = "%@";
+"SDK_AutoSubscriptionFailedMsg"             = "Cette application ne peut pas être gérée par votre entreprise pour le moment.";
+
+/* Client Cert */
+"ClientCertRenewalRequiredTitle"            = "%@";
+"ClientCertRenewalRequiredMsg"              = "Votre certificat client ne sera pas renouvelé.";
+
+/* Secure offline password */
+"SecureOfflinePasswordRequiredTitle"        ="%@";
+"SecureOfflinePasswordRequiredMsg"          ="Entrez votre mot de passe AD pour continuer à utiliser cette application.";
+
+/* Secure offline password changed */
+"SecureOfflinePasswordChangedTitle"         ="%@";
+"SecureOfflinePasswordChangedMsg"           ="Votre mot de passe a été modifié. Authentifiez-vous auprès de Worx Home pour continuer à utiliser cette application.";
+
+/* Secure offline wrong password */
+"WrongPasswordTitle"                        ="Mot de passe incorrect";
+"WrongPasswordMessage"                      ="Informations d'identification incorrectes. Réessayez !";
+
+/* "Generic error text" =""; */
+"GenericErrorTitle"                        ="Impossible d'obtenir les données de l'application";
+"GenericErrorMessage"                      ="Arrêtez et redémarrez Worx Home.";
+
+
+/* Secure offline password exceeds maximum */
+//PasswordExceedMaxLimitTitle                 =@"Password exceeds maximum"
+//PasswordExceedMaxLimitNessage               =@"Exceeds maximum password retrial. App will exit."
+
+"SDK_TransitionToManagedModeSuccessMsg"     = "Cette application est maintenant sécurisée par votre entreprise.";
+
+/* Tunneler Error Messages */
+
+"HTTPGateWayTimeoutErrorMsg"                = "Erreur HTTP 504 - Expiration du délai de la passerelle";
+"ServerNotFoundErrorMsg"                    = "Impossible de trouver le serveur demandé ou erreur DNS.";
+"HTTPForbiddenErrorMsg"                     = "Erreur HTTP 403 - Interdit";
+"ServerAccessDeniedErrorMsg"                = "Vous n'êtes pas autorisé à accéder à ce serveur.";
+
+
+/* /////////////////////////////////////////////////// */
+/* Localizable strings from WorxHome (me@work project) */
+"OkButtonText"="OK";
+"IncompleteFieldAlertErrorTitleKey" = "Entrez les informations requises";
+"RequiredFieldErrorButtonTitleKey" = "Ignorer";
+"showWaitAuthenticating"   = "Authentification";
+"WorxHome" = "Worx Home";
+"WorxHomeAppName" = "Worx Home";
+"AppListFailedGatewayAuthErrorKey" = "Vérifiez vos informations d'identification. Vous avez peut-être fait une erreur dans la saisie.";
+"ReportFTUIssue" = "Signaler";
+"TryAgainText" = "Réessayez";
+"SignOn" = "Se connecter";
+"Done" = "Terminé";
+"EnterWorxPIN" = "Entrer le code PIN Worx";
+"EnterWorxPasscode" = "Entrer le code secret Worx";
+"EnterADPassword" = "Entrer le mot de passe réseau";
+"PromptCancelButtonTitleKey" = "Annuler";
+"StoreItemLogOnLabel" = "Se connecter";
+"AccountLabelTitle" = "Compte :";
+"PasscodePromptUserNameKey" = "Nom d'utilisateur";
+"PasswordAlertTitleKey" = "Mot de passe";
+"WorxPINValidationFailedFlipbackToMDXApp" = "Vous avez dépassé le nombre maximal de tentatives de connexions.";
+
+
+"AddProfileEmailNotAvailableMessageKey" = "Veuillez configurer un compte e-mail sur votre iPad pour envoyer ce message.";
+"AddProfileEmailNotAvailableiPhoneMessageKey" = "Veuillez configurer un compte e-mail sur votre iPhone ou iPod Touch pour envoyer ce message.";
+"AddProfileEmailNotAvailableTitleKey" = "Worx Home";
+"DismissButtonText"="Abandonner";
+"ADPasswordLastAttemptMessage" = "Mot de passe incorrect. Il vous reste 1 tentative.";
+"ADPasswordAttemptsRemaining" = "Mot de passe incorrect. Il vous reste %d tentatives.";
+"WorxPINLastAttemptMessage" = "Code PIN incorrect. Il vous reste 1 tentative.";
+"WorxPIN_D_AttemptsRemaining" = "Code PIN incorrect. Il vous reste %d tentatives.";
+/* "EnterValidEmail" = "Vérifiez vos informations d'identification. Vous avez peut-être fait une erreur dans la saisie."; */
+/* "EditStoreCellDomainTitleKey" = "Domaine"; */
+/* Cannot find "WorxPin" key in me@work project */
+"WorxPin"="Code secret Worx";
+/* "TokenPlaceholderKey" = "Jeton"; */
+/* "PinPlaceholderKey" = "PIN"; */
+/* "PinTokenPlaceholderKey" = "PIN + jeton"; */
+"WorxPINValidationFailedLock" = "Vous avez dépassé le nombre maximal de tentatives de connexions. Réessayez dans quelques minutes.";
+"WorxPINForgetPINReEnrollMessage" = "Réinitialisez votre code PIN.";
+"RetryInWorxHomeMessage_AD" = "Mot de passe modifié ? Tapez ici pour réessayer.";
+"RetryInWorxHomeMessage_PIN" = "Code PIN oublié ? Tapez ici.";
+"RetryInWorxHomeMessage_PASSCODE" = "Code secret oublié ? Tapez ici.";
+
+
+/* "ConnectionErrorText" =""; */
+"NoNetworkText" = "Votre connexion Internet n'est pas disponible pour le moment.";
+"ReEnrollText" = "";
+
+/* "WorxPINForgetUserCertAuthReEnrollMessage" = "";
+/* /////////////////////////////////////////////////// */

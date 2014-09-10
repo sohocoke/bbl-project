@@ -1,0 +1,1307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <PolicyMetadata xmlns="http://www.citrix.com/MobileAppPolicyMetadata" 
+
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+                xsi:schemaLocation="http://www.citrix.com/MobileAppPolicies MobileAppPolicyMetadata.xsd">
+   -->
+
+<PolicyMetadata>
+
+  <VersionNumber>1.1</VersionNumber>
+
+  <!-- Flattened category hierachy -->
+  <Categories>
+    <Category>
+      <CategoryId>Access_Auth</CategoryId>
+      <CategoryLabel res_id="ACCESS_AUTH_CATEGORY">Authentication</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Access_Security</CategoryId>
+      <CategoryLabel res_id="ACCESS_SECURTY_CATEGORY">Device Security</CategoryLabel>
+    </Category>       
+    <Category>
+      <CategoryId>Access_Network</CategoryId>
+      <CategoryLabel res_id="ACCESS_NETWORK_CATEGORY">Network Requirements</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Access_Misc</CategoryId>
+      <CategoryLabel res_id="ACCESS_MISC_CATEGORY">Miscellaneous Access</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Security_Encryption</CategoryId>
+      <CategoryLabel res_id="SECURITY_ENCRYPTION_CATEGORY">Encryption</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Security_AppInteraction</CategoryId>
+      <CategoryLabel res_id="SECURITY_APPINTERACTION_CATEGORY">App Interaction</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Security_AppRestrictions</CategoryId>
+      <CategoryLabel res_id="SECURITY_APPRESTRICTIONS_CATEGORY">App Restrictions</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>NetAccess</CategoryId>
+      <CategoryLabel res_id="NETACCESS_CATEGORY">Network Access</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Diagnostics</CategoryId>
+      <CategoryLabel res_id="DIAGNOSTICS_CATEGORY">Application Logs</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>AppSettings</CategoryId>
+      <CategoryLabel res_id="APPSETTINGS_CATEGORY">Application Settings</CategoryLabel>
+    </Category>
+    <Category>
+        <CategoryId>Deprecated</CategoryId>
+        <CategoryLabel res_id="DEPRECATED_CATEGORY">Deprecated</CategoryLabel>
+    </Category>
+  </Categories>
+
+  -->
+
+  <!-- Multi-level category hierarchy
+  <Categories>
+    <Category>
+      <CategoryId>Access</CategoryId>
+      <CategoryLabel res_id="ACCESS_CATEGORY">Application Access</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Access_Auth</CategoryId>
+      <CategoryParentId>Access</CategoryParentId>
+      <CategoryLabel res_id="ACCESS_LOGIN_CATEGORY">Authentication</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Access_Security</CategoryId>
+      <CategoryParentId>Access</CategoryParentId>
+      <CategoryLabel res_id="ACCESS_SECURTY_CATEGORY">Device Security</CategoryLabel>
+    </Category>       
+    <Category>
+      <CategoryId>Access_Network</CategoryId>
+      <CategoryParentId>Access</CategoryParentId>
+      <CategoryLabel res_id="ACCESS_NETWORK_CATEGORY">Network Requirements</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Access_Misc</CategoryId>
+      <CategoryParentId>Access</CategoryParentId>
+      <CategoryLabel res_id="ACCESS_MISC_CATEGORY">Miscellaneous</CategoryLabel>
+    </Category>
+    <Category> 
+      <CategoryId>Security</CategoryId>
+      <CategoryLabel res_id="SECURITY_CATEGORY">Information Security</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Security_Encryption</CategoryId>
+      <CategoryParentId>Security</CategoryParentId>
+      <CategoryLabel res_id="SECURITY_ENCRYPTION_CATEGORY">Data/File Encryption</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Security_AppInteraction</CategoryId>
+      <CategoryParentId>Security</CategoryParentId>
+      <CategoryLabel res_id="SECURITY_APPINTERACTION_CATEGORY">App Interaction</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Security_AppRestrictions</CategoryId>
+      <CategoryParentId>Security</CategoryParentId>
+      <CategoryLabel res_id="SECURITY_APPRESTRICTIONS_CATEGORY">Application Restrictions</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>NetAccess</CategoryId>
+      <CategoryLabel res_id="NETWORKACCESS_CATEGORY">Network Access</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>NetAccess_BackgroundServices</CategoryId>
+      <CategoryParentId>NetAccess</CategoryParentId>
+      <CategoryLabel res_id="NETACCESS_BGSVCS_CATEGORY">Background Services</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>Diagnostics</CategoryId>
+      <CategoryLabel res_id="DIAGNOSTICS_CATEGORY">Application Logs</CategoryLabel>
+    </Category>
+    <Category>
+      <CategoryId>AppSettings</CategoryId>
+      <CategoryLabel res_id="APPSETTINGS_CATEGORY">Application Settings</CategoryLabel>
+    </Category>
+  </Categories>
+  -->
+
+  <Policies>
+
+    <Policy>
+      <PolicyName>AppPasscode</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Access_Auth</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="APP_PASSCODE_TITLE">App passcode</Title>
+
+        <!-- <ShortDesc res_id="APP_PASSCODE_SHORTDESC">App Passcode</ShortDesc> -->
+
+        <BooleanTrueLabel res_id="ENABLE_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="DISABLE_LABEL">Off</BooleanFalseLabel>
+
+        <Description res_id="APP_PASSCODE_DESC">
+If On, a PIN or passcode is required to unlock the app when it starts or resumes after a period of inactivity. 
+If Off, a PIN or passcode is not required. 
+Default is On.
+
+You can configure the inactivity timer for all apps by setting the INACTIVITY_TIMER value in minutes on Support options panel of the Settings tab.  If not set, the default is 60 minutes. You can disable the inactivity timer by setting the value to zero. In that case, a PIN or passcode prompt appears only when the app starts. 
+
+Note: If you select Secure offline for the Encryption keys policy, this policy is automatically enabled even if you select Off.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>OnlineSessionRequired</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Access_Auth</PolicyCategory>
+      <PolicyDefault>false</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="ONLINE_SESSION_REQUIRED_TITLE">Online session required</Title>
+
+        <!-- <ShortDesc res_id="ONLINE_SESSION_REQUIRED_SHORTDESC">Online Session Required</ShortDesc> -->
+
+        <BooleanTrueLabel res_id="ENABLE_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="DISABLE_LABEL">Off</BooleanFalseLabel>
+
+        <Description res_id="ONLINE_SESSION_REQUIRED_DESC">
+If On, the user must have a connection to the enterprise network and an active session.
+
+If Off, an active session is not required.
+
+Default is Off.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>MaxOfflinePeriod</PolicyName>
+      <PolicyType>integer</PolicyType>
+      <PolicyCategory>Access_Auth</PolicyCategory>
+      <PolicyDefault>72</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="MAX_OFFLINE_PERIOD_TITLE">Maximum offline period (hours)</Title>
+
+        <!-- <ShortDesc res_id="MAX_OFFLINE_PERIOD_SHORTDESC">Maximum period an application can run offline (hours)</ShortDesc> -->
+
+        <Units res_id="MAX_OFFLINE_PERIOD_UNITS">hours</Units>
+
+        <Description res_id="MAX_OFFLINE_PERIOD_DESC">
+Defines the maximum period an app can run without reconfirming app entitlement and refreshing policies from the XenMobile server. At expiration, logon to the server may be triggered if needed. Default value is 72 hours (3 days). Minimum period is 1 hour. 
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>StepupAuthAddress</PolicyName>
+      <PolicyType>string</PolicyType>
+      <PolicyCategory>Access_Auth</PolicyCategory>
+      <PolicyDefault/>
+      <PolicyStrings>
+        <Title res_id="STEPUP_AUTH_TITLE">NetScaler Gateway address</Title>
+
+        <Description res_id="STEPUP_AUTH_DESC">
+Address of a specific alternate Netscaler Gateway that should be used for authentication and for micro VPN sessions with this application.  This is an optional policy that when used in conjunction with Online session required policy forces applications to (re)authenticate to the specific gateway. Such gateways would typically have different (higher assurance) authentication requirements and traffic management policies.  If left empty, the server's default gateway is always used.
+
+Default value is empty.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+       <PolicyName>BlockJailbrokenDevices</PolicyName>
+       <PolicyType>boolean</PolicyType>
+       <PolicyCategory>Access_Security</PolicyCategory>
+       <PolicyDefault>true</PolicyDefault>
+       <PolicyStrings>
+         <Title res_id="ALLOW_JAILBROKEN_TITLE">Block jailbroken or rooted</Title>
+
+         <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+
+         <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+
+         <!-- <ShortDesc res_id="ALLOW_JAILBROKEN_SHORTDESC">App requires a device that is not jailbroken or rooted</ShortDesc> -->
+
+         <Description res_id="ALLOW_JAILBROKEN_DESC">
+If On, the application is locked when the device is jailbroken or rooted. If Off, the application can run even if the device is jailbroken or rooted.
+
+Default value is On.
+</Description>
+       </PolicyStrings>
+    </Policy>
+
+    <Policy>
+       <PolicyName>WifiOnly</PolicyName>
+       <PolicyType>boolean</PolicyType>
+       <PolicyCategory>Access_Network</PolicyCategory>
+       <PolicyDefault>false</PolicyDefault>
+       <PolicyStrings>
+         <Title res_id="WIFI_ONLY_TITLE">Require WiFi</Title>
+
+         <!-- <ShortDesc res_id="WIFI_ONLY_SHORTDESC">App requires a connection to a WiFi network</ShortDesc> -->
+
+         <Description res_id="WIFI_ONLY_DESC">
+If On, the app is locked when the device is not connected to a WiFi network. If Off, the app can run even if the device does not have an active WiFi connection, such as 4G/3G or a LAN connection.
+
+Default value is Off.
+</Description>
+       </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>RequireInternalNetwork</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Access_Network</PolicyCategory>
+      <PolicyDefault>false</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="INTERNAL_NETWORK_TITLE">Require internal network</Title>
+
+        <!-- <ShortDesc res_id="INTERNAL_NETWORK_SHORTDESC">App requires a connection to an internal network</ShortDesc> -->
+
+        <Description res_id="INTERNAL_NETWORK_DESC">
+If On, the app is allowed to run only from inside the company network. If Off, the app can run from an external network.
+
+Default value is Off.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>InternalWifiNetworks</PolicyName>
+      <PolicyType>string</PolicyType>
+      <PolicyCategory>Access_Network</PolicyCategory>
+      <PolicyDefault/>
+      <PolicyStrings>
+        <Title res_id="WIFI_NETWORKS_TITLE">Internal WiFi networks</Title>
+
+        <!-- <ShortDesc res_id="WIFI_NETWORKS_SHORTDESC">Allowed (internal) WiFi networks</ShortDesc> -->
+
+        <Description res_id="WIFI_NETWORKS_DESC">
+Comma-separated list of allowed WiFi networks. From inside the company network, app access is blocked unless the device is associated with one of the listed network SSIDs. If empty, any internal WiFi network may be used. If users are logged on from an external network (or not logged on), this policy is not enforced. 
+
+Default value is empty.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>UpgradeGracePeriod</PolicyName>
+      <PolicyType>integer</PolicyType>
+      <PolicyCategory>Access_Misc</PolicyCategory>
+      <PolicyDefault>168</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="UPGRADE_GRACE_PERIOD_TITLE">App update grace period (hours)</Title>
+        
+        <!-- <ShortDesc res_id="UPGRADE_GRACE_PERIOD_SHORTDESC">Grace period (hours) before an available application update must be applied</ShortDesc> -->
+
+        <Units res_id="UPGRADE_GRACE_PERIOD_UNITS">hours</Units>
+
+        <Description res_id="UPGRADE_GRACE_PERIOD_DESC">
+Defines the grace period that an app can continue to be used after the system has discovered that an app update is available.
+
+Note: Using a value of zero is not recommended since it immediately prevents a running application from being used until the update is downloaded and installed (without any warning to the user). This could lead to a situation where the user running the app is forced to exit the app (potentially losing work) in order to comply with the required update.
+
+Default value is 168 hours (7 days).
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>WipeDataOnAppLock</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Access_Misc</PolicyCategory>
+      <PolicyDefault>false</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="WIPE_DATA_ON_APP_LOCK_TITLE">Erase app data on lock</Title>
+
+        <!-- <ShortDesc res_id="WIPE_DATA_ON_APP_LOCK_SHORTDESC">Erase application data when app becomes locked</ShortDesc> -->
+
+        <Description res_id="WIPE_DATA_ON_APP_LOCK_DESC">
+Erases app data and resets the app when the app is locked. If Off, application data is not erased when the app is locked.
+
+An application can be locked for any of the following reasons: loss of app entitlement for the user, app subscription removed, account removed, Worx Home uninstalled, too many app authentication failures, jailbroken or rooted device detected (per policy setting), device placed in lock state by administrative action.
+
+Default value is Off.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>ActivePollPeriod</PolicyName>
+      <PolicyType>integer</PolicyType>
+      <PolicyCategory>Access_Misc</PolicyCategory>
+      <PolicyDefault>60</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="ACTIVE_POLL_PERIOD_TITLE">Active poll period (minutes)</Title>
+
+        <!-- <ShortDesc res_id="ACTIVE_POLL_PERIOD_SHORTDESC">Period (minutes) between active polls of XenMobile</ShortDesc> -->
+
+        <Units res_id="ACTIVE_POLL_PERIOD_UNITS">minutes</Units>
+
+        <Description res_id="ACTIVE_POLL_PERIOD_DESC">
+When an app starts, the MDX framework polls App Controller to determine current app and device status. Assuming App Controller can be reached, the framework returns information about the lock/erase status of the device and the enable/disable status of the app. Whether App Controller can be reached or not, a subsequent poll is scheduled based on the active poll period interval. After the period expires, a new poll is again attempted.
+
+Default value is 60 minutes (1 hour).
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+        <PolicyName>DatabaseEncryptionEnum</PolicyName>
+        <PolicyType>enum</PolicyType>
+        <PolicyEnumValues>
+            <PolicyEnumValue>
+                <PolicyEnumValueId>Off</PolicyEnumValueId>
+                <PolicyEnumValueString res_id="DATABASE_ENCRYPTION_OFF">Off</PolicyEnumValueString>
+            </PolicyEnumValue>
+            <PolicyEnumValue>
+                <PolicyEnumValueId>On</PolicyEnumValueId>
+                <PolicyEnumValueString res_id="DATABASE_ENCRYPTION_ON">On</PolicyEnumValueString>
+            </PolicyEnumValue>
+        </PolicyEnumValues>
+        <PolicyCategory>Security_Encryption</PolicyCategory>
+        <PolicyDefault>On</PolicyDefault>
+        <PolicyStrings>
+            <Title res_id="DATABASE_ENCRYPTION_TITLE">Enable encryption</Title>
+            
+            <!-- <ShortDesc res_id="DATABASE_ENCRYPTION_SHORTDESC">Enable encryption</ShortDesc> -->
+            
+            <Description res_id="DATABASE_ENCRYPTION_DESC">
+If Off is selected, the data stored on the device is not encrypted.
+                
+If On is selected, the data stored on the device is encrypted.
+                
+Default value is On.
+</Description>
+        </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>DBEncryptionExcludeList</PolicyName>
+      <PolicyType>string</PolicyType>
+      <PolicyCategory>Security_Encryption</PolicyCategory>
+      <PolicyDefault/>
+      <PolicyStrings>
+        <Title res_id="DBENCRYPTION_EXCLUDE_LIST_TITLE">Database encryption exclusions</Title>
+
+        <!-- <ShortDesc res_id="DBENCRYPTION_EXCLUDE_LIST_SHORTDESC">List of database files to be excluded from encryption</ShortDesc> -->
+
+        <Description res_id="DBENCRYPTION_EXCLUDE_LIST_DESC">
+Exclusion list of databases that are not automatically encrypted. To prevent database encryption for a specific database, add an entry to this comma-separated list of regular expressions. If a database path name matches any of the regular expressions, the database is excluded from encryption. The exclusion patterns support Posix 1003.2 Extended Regular Expressions syntax. The pattern matching is case insensitive.
+
+Example:
+            
+\.db$,\.sqlite$ will exclude any database path name that ends with either ".db" or ".sqlite".
+*/Database/unencrypteddb.db will match database unencrypteddb.db in the Database folder.
+*/Database/* will match all databases that contain /Database/ in its path.
+            
+Default value is empty.
+</Description>
+      </PolicyStrings>
+    </Policy>
+      
+    <Policy>
+      <PolicyName>FileEncryptionExcludeList</PolicyName>
+      <PolicyType>string</PolicyType>
+      <PolicyCategory>Security_Encryption</PolicyCategory>
+      <PolicyDefault/>
+      <PolicyStrings>
+          <Title res_id="FILEENCRYPTION_EXCLUDE_LIST_TITLE">File encryption exclusions</Title>
+          
+          <!-- <ShortDesc res_id="FILEENCRYPTION_EXCLUDE_LIST_SHORTDESC">List of files to be excluded from encryption</ShortDesc> -->
+          
+          <Description res_id="FILEENCRYPTION_EXCLUDE_LIST_DESC">
+Exclusion list of files that are not automatically encrypted. To prevent encryption for a specific set of files, add an entry to this comma-separated list of regular expressions. If a file path name matches any of the regular expressions, then that file is excluded from encryption. The exclusion patterns support Posix 1003.2 Extended Regular Expressions syntax. The pattern matching is case insensitive.
+              
+Example:
+              
+\.log$,\.dat$ will exclude any file path name that ends with either ".log" or ".dat".
+*/Documents/unencrypteddoc.txt will match file unencrypteddoc.txt in the Documents folder.
+*/Documents/UnencryptedDocs/* will match all files that contain the path /Documents/UnencryptedDocs/.
+
+Default value is empty.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <!--
+    <Policy>
+      <PolicyName>SecurityGroup</PolicyName>
+      <PolicyType>string</PolicyType>
+      <PolicyCategory>Security_AppInteraction</PolicyCategory>
+      <PolicyDefault/>
+      <PolicyStrings>
+        <Title res_id="SECURITY_GROUP_TITLE">Security Group</Title>
+  
+        <ShortDesc res_id="SECURITY_GROUP_SHORTDESC">Name of security group this application belongs to</ShortDesc>
+
+        <Description res_id="SECURITY_GROUP_DESC">
+Leave this field blank if you want all XenMobile managed mobile apps to exchange information with one another. Define a security group name to manage security settings for specific sets of apps (for example, Finance or Human Resources). 
+</Description>
+      </PolicyStrings>
+    </Policy>
+     -->
+
+    <Policy>
+      <PolicyName>CutAndCopy</PolicyName>
+      <PolicyType>enum</PolicyType>
+  
+      <PolicyEnumValues>
+        <PolicyEnumValue>
+          <PolicyEnumValueId>Unrestricted</PolicyEnumValueId>
+          <PolicyEnumValueString res_id="COPYENUM_UNRESTRICTED">Unrestricted</PolicyEnumValueString>
+        </PolicyEnumValue>
+        <PolicyEnumValue>
+          <PolicyEnumValueId>Blocked</PolicyEnumValueId>
+          <PolicyEnumValueString res_id="COPYENUM_BLOCKED">Blocked</PolicyEnumValueString>
+        </PolicyEnumValue>
+        <PolicyEnumValue>
+          <PolicyEnumValueId>SecurityGroup</PolicyEnumValueId>
+          <PolicyEnumValueString res_id="COPYENUM_SECURITY_GROUP">Restricted</PolicyEnumValueString>
+        </PolicyEnumValue>
+      </PolicyEnumValues>
+    
+      <PolicyCategory>Security_AppInteraction</PolicyCategory>
+      <PolicyDefault>SecurityGroup</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="COPY_TITLE">Cut and copy</Title>
+    
+        <!-- <ShortDesc res_id="COPY_SHORTDESC">Restrict clipboard cut and copy operations</ShortDesc> -->
+    
+        <Description res_id="COPY_DESC">
+Blocks, permits, or restricts clipboard cut and copy operations for this app. When you choose Restricted, the copied Clipboard data is placed in a private Clipboard that is only available to MDX apps. 
+
+Default value is Restricted.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>Paste</PolicyName>
+      <PolicyType>enum</PolicyType>
+  
+      <PolicyEnumValues>
+        <PolicyEnumValue>
+          <PolicyEnumValueId>Unrestricted</PolicyEnumValueId>
+          <PolicyEnumValueString res_id="PASTEENUM_UNRESTRICTED">Unrestricted</PolicyEnumValueString>
+        </PolicyEnumValue>
+        <PolicyEnumValue>
+          <PolicyEnumValueId>Blocked</PolicyEnumValueId>
+          <PolicyEnumValueString res_id="PASTEENUM_BLOCKED">Blocked</PolicyEnumValueString>
+        </PolicyEnumValue>
+        <PolicyEnumValue>
+          <PolicyEnumValueId>SecurityGroup</PolicyEnumValueId>
+          <PolicyEnumValueString res_id="PASTEENUM_SECURITY_GROUP">Restricted</PolicyEnumValueString>
+        </PolicyEnumValue>
+      </PolicyEnumValues>
+
+      <PolicyCategory>Security_AppInteraction</PolicyCategory>
+      <PolicyDefault>Unrestricted</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="PASTE_TITLE">Paste</Title>
+  
+        <!-- <ShortDesc res_id="PASTE_SHORTDESC">Restrict clipboard paste operations</ShortDesc> -->
+  
+        <Description res_id="PASTE_DESC">
+Blocks, permits, or restricts Clipboard paste operations for this application. When Restricted is selected, the pasted Clipboard data is sourced from a private Clipboard that is only available to MDX applications. 
+
+Default value is Unrestricted. 
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>DocumentExchange</PolicyName>
+      <PolicyType>enum</PolicyType>
+  
+      <PolicyEnumValues>
+        <PolicyEnumValue>
+          <PolicyEnumValueId>Unrestricted</PolicyEnumValueId>
+          <PolicyEnumValueString res_id="DOCEX_ENUM_UNRESTRICTED">Unrestricted</PolicyEnumValueString>
+        </PolicyEnumValue>
+        <PolicyEnumValue>
+          <PolicyEnumValueId>Blocked</PolicyEnumValueId>
+          <PolicyEnumValueString res_id="DOCEX_ENUM_BLOCKED">Blocked</PolicyEnumValueString>
+        </PolicyEnumValue>
+        <PolicyEnumValue>
+          <PolicyEnumValueId>SecurityGroup</PolicyEnumValueId>
+          <PolicyEnumValueString res_id="DOCEX_ENUM_SECURITY_GROUP">Restricted</PolicyEnumValueString>
+        </PolicyEnumValue>
+      </PolicyEnumValues>
+
+      <PolicyCategory>Security_AppInteraction</PolicyCategory>
+      <PolicyDefault>SecurityGroup</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="DOCEX_TITLE">Document exchange (Open In)</Title>
+  
+        <!-- <ShortDesc res_id="DOCEX_SHORTDESC">Restrict document exchange with other applications</ShortDesc> -->
+  
+        <Description res_id="DOCEX_DESC">
+Blocks, permits, or restricts document exchange operations for this app. When you choose Restricted, documents can be exchanged only with other MDX apps. 
+
+Default value is Restricted.  
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>InboundURLFilter</PolicyName>
+      <PolicyType>string</PolicyType>
+      <PolicyCategory>Security_AppInteraction</PolicyCategory>
+      <PolicyDefault>ctxmobilebrowser:,ctxmobilebrowsers:</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="INBOUND_URLS_TITLE">App URL schemes</Title>
+  
+        <!-- <ShortDesc res_id="INBOUND_URLS_SHORTDESC">Allowed/blocked URL schemes handled by the app</ShortDesc> -->
+
+        <Description res_id="INBOUND_URLS_DESC">
+iOS apps can dispatch URL requests to other apps that have been registered to handle specific schemes (such as "http://"). This facility provides a mechanism for an app to pass requests for help to another application. 
+
+This policy serves to filter the schemes that are actually passed into this app for handling (that is, inbound URLs). 
+
+The policy should be formatted as a comma-separated list of patterns in which each pattern may be preceded by a plus "+" or minus "-".  Inbound URLs are compared against the patterns in the order listed until a match is found. Once matched, the action taken is dictated by the prefix.  A minus "-" prefix blocks the URL from being passed into this app.  A plus "+" prefix permits the URL to be passed into the app for handling.  If neither "+" or "-" is provided with the pattern, "+" (allow) is assumed. If an inbound URL does not match any pattern in the list, the URL is blocked.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>OutboundURLFilter</PolicyName>
+      <PolicyType>string</PolicyType>
+      <PolicyCategory>Security_AppInteraction</PolicyCategory>
+      <PolicyDefault>^http:,^https:,^mailto:=ctxmail:,+^citrixreceiver:,+^telprompt:,+^tel:,+^col-g2m-2:,+^maps:ios_addr</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="OUTBOUND_URLS_TITLE">Allowed URLs</Title>
+  
+        <!-- <ShortDesc res_id="OUTBOUND_URLS_SHORTDESC">URL patterns permitted for dispatch to other apps</ShortDesc> -->
+  
+        <Description res_id="OUTBOUND_URLS_DESC">
+iOS apps can dispatch URL requests to other applications that have been registered to handle specific schemes (such as "http://"). This facility provides a mechanism for an app to pass requests for help to another application. 
+
+This policy serves to filter the URLs that are passed from this app to other apps for handling (that is, outbound URLs). 
+
+The policy should be formatted as a comma-separated list of patterns in which each pattern may be preceded by a plus "+" or minus "-".  Outbound URLs are compared against the patterns in the order listed until a match is found. Once matched, the action taken is dictated by the prefix.  A minus "-" prefix blocks the URL from being passed out to another app.  A plus "+" prefix permits the URL to be passed out to another app for handling.  If neither "+" or "-" is provided with the pattern, "+" (allow) is assumed.  A pair of values separated by "=" indicates a substitution where occurrences of the first string are replaced with the second.  You can use the regular-expression "^" prefix to search string to anchor it to the beginning of the URL. If an outbound URL does not match any pattern in the list, it will be blocked.
+
+Default:
+  ^http:
+  ^https:
+  ^mailto:=ctxmail:
+  +^citrixreceiver:
+  +^telprompt:
+  +^tel:
+  +^col-g2m-2:
+  +^maps:ios_addr
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>DisableCamera</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="DISABLE_CAMERA_TITLE">Block camera</Title>
+  
+        <!-- <ShortDesc res_id="DISABLE_CAMERA_SHORTDESC">Block or allow application access to camera</ShortDesc> -->
+  
+        <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+  
+        <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+  
+        <Description res_id="DISABLE_CAMERA_DESC">
+If On, prevents an app from directly using the camera hardware.
+
+Default value is On.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>DisableMicrophone</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="DISABLE_MICROPHONE_TITLE">Block mic record</Title>
+
+        <!-- <ShortDesc res_id="DISABLE_MICROPHONE_SHORTDESC">Block or allow application access to microphone</ShortDesc> -->
+
+        <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+
+        <Description res_id="DISABLE_MICROPHONE_DESC">
+If On, prevents an app from directly using the microphone hardware.
+
+Default value is On.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>DisableDictation</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="DISABLE_DICTATION_TITLE">Block dictation</Title>
+              
+        <!-- <ShortDesc res_id="DISABLE_DICTATION_SHORTDESC">Block or allow application access to microphone</ShortDesc> -->
+              
+        <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+              
+        <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+              
+        <Description res_id="DISABLE_DICTATION_DESC">
+If On, prevents an app from directly using dictation services.
+                  
+Default is On.
+</Description>
+      </PolicyStrings>
+    </Policy>
+      
+    <Policy>
+      <PolicyName>DisableLocation</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="DISABLE_LOCATION_TITLE">Block location services</Title>
+  
+        <!-- <ShortDesc res_id="DISABLE_LOCATION_SHORTDESC">Block or allow application access to location services</ShortDesc> -->
+  
+        <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+  
+        <Description res_id="DISABLE_LOCATION_DESC">
+If On, prevents an app from using the location services components (GPS or network).
+
+Default value is On.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>DisableSms</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="DISABLE_SMS_TITLE">Block SMS compose</Title>
+
+        <!-- <ShortDesc res_id="DISABLE_SMS_SHORTDESC">Block or allow application access to the SMS composer feature</ShortDesc> -->
+
+        <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+  
+        <Description res_id="DISABLE_SMS_DESC">
+If On, prevents an app from using the SMS compose feature used to send SMS/text messages from the app.
+
+Default value is On.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>DisableEmail</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="DISABLE_EMAIL_TITLE">Block email compose</Title>
+
+        <!-- <ShortDesc res_id="DISABLE_EMAIL_SHORTDESC">Block or allow application access to the email composer feature</ShortDesc> -->
+
+        <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+
+        <Description res_id="DISABLE_EMAIL_DESC">
+If On, prevents an app from using the email compose feature used to send email messages from the app.
+
+Default is On.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>DisableiCloud</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="DISABLE_ICLOUD_TITLE">Block iCloud</Title>
+
+        <!-- <ShortDesc res_id="DISABLE_ICLOUD_SHORTDESC">Block or allow application access to iCloud</ShortDesc> -->
+
+        <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+
+        <Description res_id="DISABLE_ICLOUD_DESC">
+If On, prevents an app from using iCloud for the storing and sharing of settings and data. Note: iCloud data file backup is controlled by the Block file backup policy.
+
+Default is On.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>DisableBackup</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="DISABLE_BACKUP_TITLE">Block file backup</Title>
+
+        <!-- <ShortDesc res_id="DISABLE_BACKUP_SHORTDESC">Block or allow file backup via iCloud or iTunes</ShortDesc> -->
+
+        <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+
+        <Description res_id="DISABLE_BACKUP_DESC">
+If On, prevents data files from being backed up by iCloud or iTunes.
+
+Default is On.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>DisablePrinting</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+
+      <PolicyStrings>
+        <Title res_id="DISABLE_PRINTING_TITLE">Block AirPrint</Title>
+
+        <!-- <ShortDesc res_id="DISABLE_PRINTING_SHORTDESC">Block or allow application access to AirPrint</ShortDesc> -->
+
+        <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+
+        <Description res_id="DISABLE_PRINTING_DESC">
+If On, prevents an app from using AirPrint features for printing data to AirPrint-enabled printers.
+
+Default is On.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>DisableAirDrop</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="DISABLE_AIRDROP_TITLE">Block AirDrop</Title>
+
+        <!-- <ShortDesc res_id="DISABLE_AIRDROP_SHORTDESC">Block or allow application access to AirDrop</ShortDesc> -->
+
+        <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+
+        <Description res_id="DISABLE_AIRDROP_DESC">
+If On, prevents an app from using AirDrop.
+
+Default is On.
+        </Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>DisableSocialMedia</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="DISABLE_SOCIALMEDIA_TITLE">Block Facebook and Twitter APIs</Title>
+
+        <!-- <ShortDesc res_id="DISABLE_SOCIALMEDIA_SHORTDESC">Block or allow application access to Social Networking</ShortDesc> -->
+
+        <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+
+        <Description res_id="DISABLE_SOCIALMEDIA_DESC">
+If On, prevents an app from using the iOS Facebook and Twitter APIs.
+
+Default is On.
+        </Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>ObscureScreen</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>true</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="OBSCURESCREEN_TITLE">Obscure screen contents</Title>
+
+        <!-- <ShortDesc res_id="OBSCURESCREEN_SHORTDESC">Obscure screen when app is in the background.</ShortDesc> -->
+
+        <BooleanTrueLabel res_id="OBSCURE_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="CLEAR_LABEL">Off</BooleanFalseLabel>
+
+        <Description res_id="OBSCURESCREEN_DESC">
+If On, when users switch apps, the screen is obscured. This policy prevents iOS from recording screen contents and displaying thumbnails.
+
+Default is On.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>BlockLogs</PolicyName>
+      <PolicyType>boolean</PolicyType>
+      <PolicyCategory>Security_AppRestrictions</PolicyCategory>
+      <PolicyDefault>false</PolicyDefault>
+
+      <PolicyStrings>
+        <Title res_id="BLOCK_LOGS_TITLE">Block application logs</Title>
+
+        <!-- <ShortDesc res_id="BLOCK_LOGS_SHORTDESC">Block or allow application to use Worx App diagnostic logs</ShortDesc> -->
+
+        <BooleanTrueLabel res_id="BLOCK_LABEL">On</BooleanTrueLabel>
+
+        <BooleanFalseLabel res_id="ALLOW_LABEL">Off</BooleanFalseLabel>
+
+        <Description res_id="BLOCK_LOGS_DESC">
+If On, prohibits an app from using the Worx App diagnostic logging facility. If Off, application logs are recorded and may be collected using the Worx Home email support feature.
+
+Default is Off.
+</Description>
+      </PolicyStrings>
+    </Policy>
+
+    <Policy>
+      <PolicyName>NetworkAccess</PolicyName>
+      <PolicyType>enum</PolicyType>
+
+      <PolicyEnumValues>
+        <PolicyEnumValue>
+          <PolicyEnumValueId>NetworkAccessUnrestricted</PolicyEnumValueId>
+          <PolicyEnumValueString res_id="NETWORK_ACCESS_ALLOWED">Unrestricted</PolicyEnumValueString>
+        </PolicyEnumValue>
+        <PolicyEnumValue>
+          <PolicyEnumValueId>NetworkAccessBlocked</PolicyEnumValueId>
+          <PolicyEnumValueString res_id="NETWORK_ACCESS_BLOCKED">Blocked</PolicyEnumValueString>
+        </PolicyEnumValue>
+        <PolicyEnumValue>
+          <PolicyEnumValueId>NetworkAccessTunneled</PolicyEnumValueId>
+          <PolicyEnumValueString res_id="NETWORK_ACCESS_TUNNELED">Tunneled to the internal network</PolicyEnumValueString>
+        </PolicyEnumValue>
+      </PolicyEnumValues>
+    
+      <PolicyCategory>NetAccess</PolicyCategory>
+      <PolicyDefault>NetworkAccessTunneled</PolicyDefault>
+      <PolicyStrings>
+        <Title res_id="NETWORK_ACCESS_TITLE">Network access</Title>
+    
+        <!-- <ShortDesc res_id="NETWORK_ACCESS_SHORTDESC">Block, permit, or redirect application network access</ShortDesc> -->
+  
+        <Description res_id="NETWORK_ACCESS_DESC">
+Prevents, permits or redirects application network activity. If Unrestricted is selected, no restrictions are placed on the network access. If Blocked is selected, all network access is blocked. If Tunneled to the internal network is selected, a per-application VPN tunnel back to the internal network is used for all network access. 
+
+Default value for WorxWeb is Tunneled to the internal network.
+</Description>
+      </PolicyStrings>
+    </Policy>      
+
+      <Policy>
+          <PolicyName>CertificateLabel</PolicyName>
+          <PolicyType>string</PolicyType>
+          <PolicyCategory>NetAccess</PolicyCategory>
+          <PolicyDefault/>
+          <PolicyStrings>
+              <Title res_id="CERTIFICATE_LABEL_TITLE">Certificate label</Title>
+              
+              <!-- <ShortDesc res_id="CERTIFICATE_LABEL_SHORTDESC">Certificate Label</ShortDesc> -->
+              
+              <Description res_id="CERTIFICATE_LABEL_DESC">
+When used with the StoreFront certificate integration service, this label identifies the specific certificate required for this app. If no label is provided, a certificate is not made available for use with a public key infrastructure (PKI).
+
+Default value is empty (no certificate used).
+</Description>
+          </PolicyStrings>
+      </Policy>
+
+      <Policy>
+          <PolicyName>PreferredVpnMode</PolicyName>
+          <PolicyType>enum</PolicyType>
+          
+          <PolicyEnumValues>
+              <PolicyEnumValue>
+                  <PolicyEnumValueId>FullTunnel</PolicyEnumValueId>
+                  <PolicyEnumValueString res_id="VPN_MODE_FULL_TUNNEL">Full VPN tunnel</PolicyEnumValueString>
+              </PolicyEnumValue>
+              <PolicyEnumValue>
+                  <PolicyEnumValueId>SecureBrowse</PolicyEnumValueId>
+                  <PolicyEnumValueString res_id="VPN_MODE_SECURE_BROWSE">Secure browse</PolicyEnumValueString>
+              </PolicyEnumValue>
+          </PolicyEnumValues>
+          
+          <PolicyCategory>NetAccess</PolicyCategory>
+          <PolicyDefault>SecureBrowse</PolicyDefault>
+          <PolicyStrings>
+              <Title res_id="PREFERRED_VPN_MODE_TITLE">Initial VPN mode</Title>
+              
+              <!-- <ShortDesc res_id="PREFERRED_VPN_MODE_SHORTDESC">Preferred Micro VPN mode</ShortDesc> -->
+              
+              <Description res_id="PREFERRED_VPN_MODE_DESC">
+Sets the initial mode for connections that tunnel to the internal network. Full VPN tunnel is recommended for connections that employ client certificates or end-to-end SSL to a resource in the internal network. Secure browse is recommended for connections that require single sign-on (SSO).
+</Description>
+          </PolicyStrings>
+      </Policy>      
+
+      <Policy>
+          <PolicyName>DefaultLoggerOutput</PolicyName>
+          <PolicyType>string</PolicyType>
+          <PolicyCategory>Diagnostics</PolicyCategory>
+          <PolicyDefault>file</PolicyDefault>
+          <PolicyStrings>
+              <Title res_id="DEFAULT_LOGGER_OUTPUT_TITLE">Default log output</Title>
+
+              <!-- <ShortDesc res_id="DEFAULT_LOGGER_OUTPUT_SHORTDESC">Default target of the Worx App diagnostic logging facility</ShortDesc> -->
+
+              <Description res_id="DEFAULT_LOGGER_OUTPUT_DESC">
+Determines which output mediums are used by Worx App diagnostic logging facilities by default. Possibilities values are "file", "console", or "file,console".
+
+Default value is "file".
+</Description>
+          </PolicyStrings>
+      </Policy>
+
+      <Policy>
+        <PolicyName>DefaultLoggerLevel</PolicyName>
+        <PolicyType>integer</PolicyType>
+        <PolicyCategory>Diagnostics</PolicyCategory>
+        <PolicyDefault>4</PolicyDefault>
+        <PolicyStrings>
+          <Title res_id="DEFAULT_LOGGER_LEVEL_TITLE">Default log level</Title>
+
+          <!-- <ShortDesc res_id="DEFAULT_LOGGER_LEVEL_SHORTDESC">Default log verbosity level</ShortDesc> -->
+
+          <Units res_id="DEFAULT_LOGGER_LEVEL_UNITS">level</Units>
+
+          <Description res_id="DEFAULT_LOGGER_LEVEL_DESC">
+Controls default verbosity of Worx App diagnostic logging facility. Each level includes levels of lesser values. Range of possible levels includes:
+  0  - Nothing logged
+  1  - Critical errors
+  2  - Errors
+  3  - Warnings
+  4  - Informational messages
+  5  - Detailed informational messages
+  6 through 15  - Debug levels 1 through 10
+  
+
+Default is level 4 (Informational messages).
+</Description>
+        </PolicyStrings>
+      </Policy>
+
+      <Policy>
+        <PolicyName>MaxLogFiles</PolicyName>
+        <PolicyType>integer</PolicyType>
+        <PolicyCategory>Diagnostics</PolicyCategory>
+        <PolicyDefault>2</PolicyDefault>
+        <PolicyStrings>
+          <Title res_id="MAX_LOG_FILES_TITLE">Max log files</Title>
+
+          <!-- <ShortDesc res_id="MAX_LOG_FILES_SHORTDESC">Maximum number of log files retained</ShortDesc> -->
+
+          <Units res_id="MAX_LOG_FILES_UNITS">files</Units>
+
+          <Description res_id="MAX_LOG_FILES_DESC">
+Limits the number of log files retained by the Worx App diagnostic logging facility before rolling over. Minimum is 2. Maximum is 8.  
+
+Default value is 2.
+</Description>
+        </PolicyStrings>
+      </Policy>
+
+      <Policy>
+        <PolicyName>MaxLogFileSize</PolicyName>
+        <PolicyType>integer</PolicyType>
+        <PolicyCategory>Diagnostics</PolicyCategory>
+        <PolicyDefault>2</PolicyDefault>
+        <PolicyStrings>
+          <Title res_id="MAX_LOG_FILES_TITLE">Max log file size</Title>
+
+          <!-- <ShortDesc res_id="MAX_LOG_FILES_SHORTDESC">Maximum log file size before rolling over</ShortDesc> -->
+
+          <Units res_id="MAX_LOG_FILES_UNITS">Mbytes</Units>
+
+          <Description res_id="MAX_LOG_FILES_DESC">
+Limits the size in megabytes (MB) of the log files retained by the Worx App diagnostic logging facility before rolling over. Minimum is 1 MB. Maximum is 5 MB.
+
+Default value is 2 MB.
+</Description>
+        </PolicyStrings>
+      </Policy>
+
+<!-- Temporarily disable RedirectSystemLogs
+
+      <Policy>
+        <PolicyName>RedirectSystemLogs</PolicyName>
+        <PolicyType>boolean</PolicyType>
+        <PolicyCategory>Diagnostics</PolicyCategory>
+        <PolicyDefault>true</PolicyDefault>
+  
+        <PolicyStrings>
+          <Title res_id="REDIRECT_SYSTEM_LOGS_TITLE">Redirect system logs</Title>
+  
+          <ShortDesc res_id="REDIRECT_SYSTEM_LOGS_SHORTDESC">Redirect system logs to the Worx App diagnostic facility</ShortDesc> 
+
+          <BooleanTrueLabel res_id="ENABLE_LABEL">On</BooleanTrueLabel>
+
+          <BooleanFalseLabel res_id="DISABLE_LABEL">Off</BooleanFalseLabel>
+
+          <Description res_id="REDIRECT_SYSTEM_LOGS_DESC">
+If On, intercepts and redirects system or console logs from an application to the Worx App diagnostic facility. If Off, application use of system or console logs is not intercepted.
+
+Default is On.
+</Description>
+        </PolicyStrings>
+      </Policy>
+
+   end Temporarily disable RedirectSystemLogs -->
+
+    <!-- WorxWeb specific policies -->
+
+    <Policy>
+          <PolicyName>WorkWebURLRestrictions</PolicyName>
+          <PolicyType>string</PolicyType>
+          <PolicyCategory>AppSettings</PolicyCategory>
+          <PolicyDefault/>
+          <PolicyStrings>
+              <Title res_id="WORKWEB_URL_RESTRICTIONS">Allowed or blocked websites</Title>
+              
+              <Description res_id="WORKWEB_URL_RESTRICTIONS_DESC">
+WorxWeb normally does not filter web links. Use this policy to configure a specific list of allowed or blocked sites.
+                  
+The policy is a list of allowed and blocked URL patterns that can be configured by an administrator to restrict which websites the browser can open, formatted as a comma-separated list of patterns where each pattern can be preceded by a plus "+" or minus "-".  URLs evaluated by the browser are first compared against the patterns in the order listed until a match is found. Once matched, the action taken is dictated by the prefix.  A minus "-" prefix instructs the browser to block the URL.  In this case, it will be treated as if the web server address could not be resolved.  A plus "+" prefix allows the URL to be processed normally.  If neither "+" or "-" is provided with the pattern, "+" (allow) is assumed. If the URL does not match any pattern in the list, it is allowed. To block all other URLs, end the list with "-*".
+                  
+For example, the policy value
+                  
+  +http://*.mycorp.com/*,-http://*,+https://*,+ftp://*,-*
+                  
+permits http URLs within mycorp.com domain but blocks them elsewhere, permits https and ftp URLS anywhere, and blocks all other URLs.
+
+Default value is empty (all URLs allowed).
+</Description>
+          </PolicyStrings>
+      </Policy>
+      
+      <Policy>
+          <PolicyName>WorkWebPreloadBookmarks</PolicyName>
+          <PolicyType>string</PolicyType>
+          <PolicyCategory>AppSettings</PolicyCategory>
+          <PolicyDefault/>
+          <PolicyStrings>
+              <Title res_id="WORKWEB_PRELOAD_BOOKMARKS">Preloaded bookmarks</Title>
+              
+              <Description res_id="WORKWEB_PRELOAD_BOOKMARKS_DESC">
+Defines a preloaded set of bookmarks for the WorxWeb browser.
+                  
+The policy is a comma-separated list of tuples that include folder name, friendly name, and web address.  Each triplet should be of the form folder,name,url where folder and name may optionally be enclosed in double quotes (").
+                  
+For example, the policy values
+                  
+  ,"Mycorp, Inc. home page",http://www.mycorp.com,
+  "MyCorp Links",Account logon,https://www.mycorp.com/Accounts
+  "MyCorp Links/Investor Relations","Contact us",http://www.mycorp.com/IR/Contactus.aspx
+                  
+define three bookmarks.  The first is a primary link (no folder name) titled "Mycorp, Inc. home page".  The second link will be placed in a folder titled "MyCorp Links" and labeled "Account logon".  The third will be placed in the "Investor Relations' subfolder of the "MyCorp Links" folder and displayed as "Contact us"."
+                  
+Default value is empty.
+</Description>
+          </PolicyStrings>
+      </Policy>
+      
+      <Policy>
+          <PolicyName>WorkWebHomePageURL</PolicyName>
+          <PolicyType>string</PolicyType>
+          <PolicyCategory>AppSettings</PolicyCategory>
+          <PolicyDefault/>
+          <PolicyStrings>
+              <Title res_id="WORKWEB_HOMEPAGE_URL_TITLE">Home page URL</Title>
+              
+              <Description res_id="WORKWEB_HOMEPAGE_URL_DESC">
+Defines the URL that WorxWeb loads when started.
+                  
+Default value is empty (default start page).
+</Description>
+          </PolicyStrings>
+      </Policy>
+      
+      <Policy>
+          <PolicyName>WorkWebUICustomization</PolicyName>
+          <PolicyType>enum</PolicyType>
+          
+          <PolicyEnumValues>
+              <PolicyEnumValue>
+                  <PolicyEnumValueId>WWUX_AllControlsVisible</PolicyEnumValueId>
+                  <PolicyEnumValueString res_id="WWUX_ALL_VISIBLE">All controls visible</PolicyEnumValueString>
+              </PolicyEnumValue>
+              <PolicyEnumValue>
+                  <PolicyEnumValueId>WWUX_ReadOnlyAddressBar</PolicyEnumValueId>
+                  <PolicyEnumValueString res_id="WWUX_READONLY_ADDRESS">Read-only address bar</PolicyEnumValueString>
+              </PolicyEnumValue>
+              <PolicyEnumValue>
+                  <PolicyEnumValueId>WWUX_HideAddressBar</PolicyEnumValueId>
+                  <PolicyEnumValueString res_id="WWUX_HIDE_ADDRESS">Hide address bar</PolicyEnumValueString>
+              </PolicyEnumValue>
+              <PolicyEnumValue>
+                  <PolicyEnumValueId>WWUX_HideAllControls</PolicyEnumValueId>
+                  <PolicyEnumValueString res_id="WWUX_HIDE_ALL">Hide all controls</PolicyEnumValueString>
+              </PolicyEnumValue>
+          </PolicyEnumValues>
+          
+          <PolicyCategory>AppSettings</PolicyCategory>
+          <PolicyDefault>WWUX_AllControlsVisible</PolicyDefault>
+          <PolicyStrings>
+              <Title res_id="WWUX_CUSTOMIZATION_TITLE">Browser user interface</Title>
+              
+              <Description res_id="WWUX_CUSTOMIZATION_DESC">
+Dictates the behavior and visibility of browser user interface controls for WorxWeb.
+                  
+Normally all browsing controls are available.  These include forward, backward, address bar, and the refresh/stop controls. When "Read-only address bar" is selected, all controls are visible but the browser address field cannot be edited. Selecting "Hide address bar" hides the address bar but not other controls. Selecting "Hide all controls" suppresses the entire toolbar giving a frameless browsing experience with no browser chrome.
+                  
+Default value is All controls visible.
+</Description>
+          </PolicyStrings>
+      </Policy>
+
+
+
+<Policy>
+	<PolicyName>Authentication</PolicyName>
+	<PolicyType>enum</PolicyType>
+	
+	<PolicyEnumValues>
+        <PolicyEnumValue>
+			<PolicyEnumValueId>EnterpriseLogonRequired</PolicyEnumValueId>
+			<PolicyEnumValueString res_id="AUTHENUM_ENTLOGON_REQUIRED">Network logon</PolicyEnumValueString>
+        </PolicyEnumValue>
+        <PolicyEnumValue>
+			<PolicyEnumValueId>OfflineAccessPermitted</PolicyEnumValueId>
+			<PolicyEnumValueString res_id="AUTHENUM_OFFLINE_PERMITTED">Offline access permitted after challenge</PolicyEnumValueString>
+        </PolicyEnumValue>
+        <PolicyEnumValue>
+			<PolicyEnumValueId>OfflineAccessOnly</PolicyEnumValueId>
+			<PolicyEnumValueString res_id="AUTHENUM_OFFLINE_ONLY">Offline challenge only</PolicyEnumValueString>
+		</PolicyEnumValue>
+        <PolicyEnumValue>
+			<PolicyEnumValueId>NotRequired</PolicyEnumValueId>
+			<PolicyEnumValueString res_id="AUTHENUM_NOT_REQUIRED">Not required</PolicyEnumValueString>
+		</PolicyEnumValue>
+	</PolicyEnumValues>
+	
+	<PolicyCategory>Deprecated</PolicyCategory>
+	<PolicyHidden>true</PolicyHidden>
+	<PolicyDefault>OfflineAccessOnly</PolicyDefault>
+	<PolicyStrings>
+        <Title res_id="AUTHENTICATION_TITLE">Authentication</Title>
+		
+        <!-- <ShortDesc res_id="AUTHENTICATION_SHORTDESC">Authentication requirements for application access</ShortDesc> -->
+		
+        <Description res_id="AUTHENTICATION_DESC">
+			Determines if the app requires enterprise logon to run. The default is Offline challenge only. If set to Network logon, the app requires network logon to use the app and only online use is allowed. If you choose Offline challenge only, the app can run with an offline password challenge. If you choose Not required, the app does not require user authentication. The Offline access permitted after challenge option is deprecated.
+			
+			After expiration of the Maximum offline period, a network logon is required.
+		</Description>
+	</PolicyStrings>
+</Policy>
+
+<Policy>
+	<PolicyName>ReauthenticationPeriod</PolicyName>
+	<PolicyType>integer</PolicyType>
+	<PolicyCategory>Deprecated</PolicyCategory>
+	<PolicyHidden>true</PolicyHidden>
+	<PolicyDefault>480</PolicyDefault>
+	<PolicyStrings>
+        <Title res_id="REATUH_PERIOD_TITLE">Reauthentication period (minutes)</Title>
+		
+        <!-- <ShortDesc res_id="REATUH_PERIOD_SHORTDESC">Period after which reauthentication is required (minutes)</ShortDesc> -->
+		
+        <Units res_id="REATUH_PERIOD_UNITS">minutes</Units>
+		
+        <Description res_id="REATUH_PERIOD_DESC">
+			Defines the period before a user is challenged to authenticate again. If set to zero, the user is prompted for authentication each time app is started or activated.
+			
+			Default value is 480 minutes (8 hours).
+		</Description>
+	</PolicyStrings>
+</Policy>
+
+<Policy>
+	<PolicyName>EncryptionKeys</PolicyName>
+	<PolicyType>enum</PolicyType>
+	
+	<PolicyEnumValues>
+        <PolicyEnumValue>
+			<PolicyEnumValueId>Online</PolicyEnumValueId>
+			<PolicyEnumValueString res_id="ENC_KEYS_ENUM_ONLINE">Online access only</PolicyEnumValueString>
+        </PolicyEnumValue>
+        <PolicyEnumValue>
+			<PolicyEnumValueId>Offline</PolicyEnumValueId>
+			<PolicyEnumValueString res_id="ENC_KEYS_ENUM_OFFLIEN">Offline access</PolicyEnumValueString>
+        </PolicyEnumValue>
+        <PolicyEnumValue>
+            <PolicyEnumValueId>SecureOffline</PolicyEnumValueId>
+            <PolicyEnumValueString res_id="ENC_KEYS_ENUM_OFFLIEN">Secure offline access</PolicyEnumValueString>
+        </PolicyEnumValue>
+	</PolicyEnumValues>
+	
+	<PolicyCategory>Deprecated</PolicyCategory>
+	<PolicyHidden>true</PolicyHidden>
+	<PolicyDefault>Offline</PolicyDefault>
+	<PolicyStrings>
+        <Title res_id="ENC_KEYS_TITLE">Encryption keys</Title>
+		
+        <!-- <ShortDesc res_id="ENC_KEYS_SHORTDESC">Select how encryption keys are managed</ShortDesc> -->
+		
+        <Description res_id="ENC_KEYS_DESC">
+            If Online access only is selected, secrets used to derive encryption keys cannot be persisted on the device. Instead, they must be recovered each time they are needed from the key management service of App Controller. If Offline access is selected, secrets used to derive encryption keys can be persisted on the device. If Secure offline access is selected, secrets used to derive encryption keys can be persisted on the device and protected by a user-defined, offline password. In this case, the user must enter their password to access the secure container protected by the encryption keys.
+            
+            If Online access only is selected,the Authentication policy is assumed to be Network logon regardless of the Authentication policy setting that is actually configured for this app. If Offline access is selected, it is recommended (but not required) that the Authentication policy is set to enable an offline password challenge in order to protect access to the keys and the associated encrypted content. If Secure offline access is selected, the user may be challenged for their offline password when the app is initially started.
+            
+            Default is Offline access.
+        </Description>
+	</PolicyStrings>
+</Policy>
+<Policy>
+    <PolicyName>AuthFailuresBeforeLock</PolicyName>
+    <PolicyType>integer</PolicyType>
+    <PolicyCategory>Deprecated</PolicyCategory>
+    <PolicyHidden>true</PolicyHidden>
+    <PolicyDefault>15</PolicyDefault>
+    <PolicyStrings>
+        <Title res_id="AUTH_FAILURES_BEFORE_LOCK_TITLE">Auth failures before lock</Title>
+        
+        <!-- <ShortDesc res_id="AUTH_FAILURES_BEFORE_LOCK_SHORTDESC">Number of consecutive offline authentication failures before an app is locked</ShortDesc> -->
+        
+        <Units res_id="AUTH_FAILURES_BEFORE_LOCK_UNITS">failures</Units>
+        
+        <Description res_id="AUTH_FAILURES_BEFORE_LOCK_DESC">
+            Number of consecutive failed offline password challenges before the app is locked. Once locked, an app can only be unlocked through a successful network logon. If set to zero, authentication failures do not lock an app.
+            
+            Default value is 15 failures.
+        </Description>
+    </PolicyStrings>
+</Policy>
+
+    </Policies>
+</PolicyMetadata>

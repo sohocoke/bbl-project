@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MobileAppPolicies>
+  <PolicySchemaVersion>1.0</PolicySchemaVersion>
+  <Policies>
+    <ActivePollPeriod>60</ActivePollPeriod>
+    <AppPasscode>false</AppPasscode>
+    <AuthFailuresBeforeLock>-1</AuthFailuresBeforeLock>
+    <BlockLogs>false</BlockLogs>
+    <BlockJailbrokenDevices>false</BlockJailbrokenDevices>
+    <CertificateLabel/>
+    <CutAndCopy>Unrestricted</CutAndCopy>
+    <DBEncryptionExcludeList/>
+    <DatabaseEncryptionEnum>Off</DatabaseEncryptionEnum>
+    <DefaultLoggerLevel>4</DefaultLoggerLevel>
+    <DefaultLoggerOutput>file</DefaultLoggerOutput>
+    <DisableBackup>Off</DisableBackup>
+    <DisableCamera>false</DisableCamera>
+    <DisableEmail>false</DisableEmail>
+    <DisableLocation>false</DisableLocation>
+    <DisableMicrophone>false</DisableMicrophone>
+    <DisableDictation>false</DisableDictation>
+    <DisablePrinting>false</DisablePrinting>
+    <DisableSms>false</DisableSms>
+    <DisableiCloud>false</DisableiCloud>
+    <DisableAirDrop>false</DisableAirDrop>
+    <DisableSocialMedia>false</DisableSocialMedia>
+    <DocumentExchange>Unrestricted</DocumentExchange>
+    <FileEncryptionExcludeList/>
+    <InboundURLFilter>*</InboundURLFilter>
+    <InternalWifiNetworks/>
+    <MaxLogFiles>2</MaxLogFiles>
+    <MaxLogFileSize>2</MaxLogFileSize>
+    <MaxOfflinePeriod>-1</MaxOfflinePeriod>
+    <NetworkAccess>NetworkAccessUnrestricted</NetworkAccess>
+    <ObscureScreen>false</ObscureScreen>
+    <OnlineSessionRequired>false</OnlineSessionRequired>
+    <OutboundURLFilter>*</OutboundURLFilter>
+    <Paste>Unrestricted</Paste>
+    <PreferredVpnMode>SecureBrowse</PreferredVpnMode>
+    <RequireInternalNetwork>false</RequireInternalNetwork>
+    <StepupAuthAddress/>
+    <UpgradeGracePeriod>-1</UpgradeGracePeriod>
+    <WifiOnly>false</WifiOnly>
+    <WipeDataOnAppLock>false</WipeDataOnAppLock>
+  </Policies>
+</MobileAppPolicies>
