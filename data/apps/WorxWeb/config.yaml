@@ -6,6 +6,10 @@ targets: .*  # all environments where PROD cert label should be used.
 # optional properties
 
 manifest_values:
+
+  ncgapplication:
+    description: WorxWeb with PROD certificate lael.
+
   policies:
     policyValue[policyName='CertificateLabel']: PROD
 
