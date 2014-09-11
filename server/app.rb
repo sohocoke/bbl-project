@@ -53,8 +53,10 @@ class Server < Sinatra::Base
 
     # add a run.
     cmds = apps.map do |app|
-      "rake app:{package,clone,deploy}[#{app},'(#{targets.join('|')})']"
+      "rake app:deploy[#{app},'(#{targets.join('|')})']"
     end
+
+    
 
     # TODO execute.
     puts "running commands #{cmds}"
