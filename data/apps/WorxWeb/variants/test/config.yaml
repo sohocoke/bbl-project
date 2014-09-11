@@ -1,4 +1,4 @@
-targets: .*-(etit|adit)  # all environments where test cert label should be used.
+targets: .*-(etit.*|adit)  # all environments where test cert label should be used.
 
 
 manifest_values:
