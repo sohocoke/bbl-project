@@ -576,8 +576,15 @@ namespace :app_controller do
   ## util
 
   def id_for_app(app, entries_json)
-    apps_by_id = Hash[ entries_json['ncgapplication'].map{|e| [ e['name'], e['applicationlabel'] ]} ]
-    puts apps_by_id
+    apps = entries_json['ncgapplication']
+
+    # EDGE when only one app, the sexy AppC 'API' returns a hash.
+    if ! apps.is_a? Array
+      apps = [ apps ]
+    end
+
+    apps_by_id = Hash[ apps.map{|e| [ e['name'], e['applicationlabel'] ]} ]
+    debug apps_by_id 
 
     matching_entries = apps_by_id.select{|k,v| v == app}
     if matching_entries.size != 1
