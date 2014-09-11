@@ -19,25 +19,25 @@ def deployables
     .flatten
 end
 
-
 def apps
     Dir.glob("#{Base_dir}/apps/*").map {|e| File.basename e}
 end
 
+def platforms( app = nil)
+    return [ :ios, :android ] if app.nil?
 
-def variants(app)
-    variant_configs(app).flatten.map do |e|
-        id = "#{e['id']}"
-        if platforms(app).size > 1
-            platform = e['package_id'] ? :android : :ios
-
-            id += "-#{platform}"
+    {
+        ios: :ipa,
+        android: :apk
+    }.map do |platform, package_type|
+        if Dir.glob("#{Base_dir}/apps/#{app}/*.#{package_type}").size != 0
+            platform
+        else
+            nil
         end
-
-        id
     end
+    .compact
 end
-
 
 def cascaded_config( app )
     # order of the config files
@@ -56,18 +56,17 @@ def cascaded_config( app )
 end
 
 
-def platforms( app )
-    {
-        ios: :ipa,
-        android: :apk
-    }.map do |platform, package_type|
-        if Dir.glob("#{Base_dir}/apps/#{app}/*.#{package_type}").size != 0
-            platform
-        else
-            nil
+def variants(app)
+    variant_configs(app).flatten.map do |e|
+        id = "#{e['id']}"
+        if platforms(app).size > 1
+            platform = e['package_id'] ? :android : :ios
+
+            id += "-#{platform}"
         end
+
+        id
     end
-    .compact
 end
 
 def variant_configs(app)
@@ -94,6 +93,23 @@ def variant_configs(app)
     end
 end
 
+def original(variant)
+    apps.map {|e| [e, variants(e)] } .find {|e| ! e[1].select {|e| e =~ /^#{variant}/}.empty? } .first
+end
+
+
+def cascaded_variant_config( app, variant_config )
+    app_config = cascaded_config(app)
+    app_config = app_config.cascaded( variant_config )
+
+    # no nested variants allowed
+    app_config.delete 'variants'
+
+    app_config
+end
+
+
+
 
 def variables(env_name)
     variables_files = Dir.glob("#{Base_dir}/destinations/**/variables.yaml")
@@ -112,17 +128,6 @@ def variables(env_name)
     hashes.cascaded
 end
 
-
-
-def cascaded_variant_config( app, variant_config )
-    app_config = cascaded_config(app)
-    app_config = app_config.cascaded( variant_config )
-
-    # no nested variants allowed
-    app_config.delete 'variants'
-
-    app_config
-end
 
 
 #= general config handling
