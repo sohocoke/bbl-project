@@ -125,7 +125,7 @@ namespace :app do
       target_name = target['id']
 
       package_names = Dir.glob("#{build_dir}/#{app}*.mdx").map {|e| File.basename(e).sub(/\.mdx$/, '')}
-      raise "no .mdx files found in #{build_dir}" if package_names.length == 0
+      raise "no .mdx files for #{app} found in #{build_dir}" if package_names.length == 0
 
       # first check if env-specific packages have been made.
       if (env_specific_packages = package_names.grep(/#{target_name}/)).size > 1
