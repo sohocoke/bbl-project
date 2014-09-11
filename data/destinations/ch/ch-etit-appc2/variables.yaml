@@ -1,0 +1,5 @@
+# overrides for ch-etit
+
+background_services_gateway_address: mm-ch-etit.credit-suisse.com:443
+background_services_gateway_address_ch: mm-ch-etit.credit-suisse.com:443
+background_services_gateway_address_eu: mm-ch-etit.credit-suisse.com:443
