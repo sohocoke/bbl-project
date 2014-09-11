@@ -1,3 +1,3 @@
 # we made this hub version in order to define the id for the packages containing CU2 (fix for crash on iphone4)
 
-targets: (ch-etit|.*)
+targets: (ch-etit.*|.*)
