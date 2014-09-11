@@ -23,7 +23,11 @@ class Server < Sinatra::Base
   # a simple GET API for list data.
 
   get '/apps' do
-    deployables.map do |e|
+    platform_folded = deployables.map do |deployable|
+      deployable.gsub( /-(#{platforms.join('|')}$)/, '')
+    end .uniq
+
+    platform_folded.map do |e|
         {
           id: e
         }
@@ -31,7 +35,7 @@ class Server < Sinatra::Base
     .to_json
   end
 
-  get '/destinations' do
+  get '/targets' do
     targets(/.*/).to_json
   end
 
@@ -45,11 +49,11 @@ class Server < Sinatra::Base
     data = JSON.parse request.body.read
 
     apps = data['apps']
-    destinations = data['destinations']
+    targets = data['targets']
 
     # add a run.
     cmds = apps.map do |app|
-      "rake app:{package,clone,deploy}[#{app},'(#{destinations.join('|')})']"
+      "rake app:{package,clone,deploy}[#{app},'(#{targets.join('|')})']"
     end
 
     # TODO execute.
@@ -59,7 +63,7 @@ class Server < Sinatra::Base
     # pass back data for easy troubleshooting.
     {
       apps: apps,
-      destinations: destinations,
+      targets: targets,
       cmds: cmds,
       pid: pid
     }.to_json
