@@ -39,10 +39,17 @@ class Server < Sinatra::Base
     targets(/.*/).to_json
   end
 
-  # get '/runs' do
-  #   # open up on a need-to-know basis.
-  #   [].to_json
-  # end
+  get '/runs/:id' do
+    # [ params[:id] ].to_json
+
+    # serve up the details for the run.
+    {
+      log: 'stub log',
+      options: [
+        :cancel,
+      ]
+    }.to_json
+  end
 
   post '/runs' do
     request.body.rewind  # in case someone already read it
@@ -51,14 +58,12 @@ class Server < Sinatra::Base
     apps = data['apps']
     targets = data['targets']
 
-    # add a run.
+    # create the commands for the run.
     cmds = apps.map do |app|
       "rake app:deploy[#{app},'(#{targets.join('|')})']"
     end
 
-    
-
-    # TODO execute.
+    # execute.
     puts "running commands #{cmds}"
     pid = spawn cmds.join ';' 
 
