@@ -39,12 +39,13 @@ class Server < Sinatra::Base
     targets(/.*/).to_json
   end
 
-  get '/runs/:id' do
-    # [ params[:id] ].to_json
+  get '/runs/:run_id' do
+    run_id = params[:run_id]
 
     # serve up the details for the run.
     {
-      log: 'stub log',
+      run_id: run_id,
+      log: log(run_id),
       options: [
         :cancel,
       ]
@@ -64,19 +65,37 @@ class Server < Sinatra::Base
     end
 
     # execute.
-    puts "running commands #{cmds}"
-    pid = spawn cmds.join ';' 
+    exec_cmds cmds
 
     # pass back data for easy troubleshooting.
     {
       apps: apps,
       targets: targets,
       cmds: cmds,
-      pid: pid
+      pid: pid,
+      run_id: run_id(pid)
     }.to_json
   end
 
-  # TODO set up a POST endpoint for command exec.
+
+  #= util
+
+  def run_id( pid )
+    "#{Time.new.to_i}_#{pid}"
+  end
+
+  def log(run_id)
+  end
+
+
+  #= util - mutating
+
+  def exec_cmds( cmds )
+    puts "running commands #{cmds}"
+    pid = spawn cmds.join ';' 
+
+    # TODO capture output
+  end
 
 
   # start the server if ruby file executed directly
