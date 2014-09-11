@@ -128,7 +128,7 @@ namespace :app do
       raise "no .mdx files for #{app} found in #{build_dir}" if package_names.length == 0
 
       # first check if env-specific packages have been made.
-      if (env_specific_packages = package_names.grep(/#{target_name}/)).size > 1
+      if (env_specific_packages = package_names.grep(/#{target_name}/)).size > 0
         package_names = env_specific_packages
       end
       
