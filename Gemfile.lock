@@ -59,5 +59,6 @@ DEPENDENCIES
   guard
   guard-bundler
   guard-rack
-  listen (~> 2.0)
+  listen
+  rb-fsevent
   sinatra
