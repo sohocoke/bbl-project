@@ -20,7 +20,9 @@ manifest_values:
     policyValue[policyName='NetworkAccess']: NetworkAccessTunneled
     policyValue[policyName='CertificateLabel']: PROD
 
-    policyValue[policyName='OutboundURLFilter']: '^http:=ctxmobilebrowser:,^https:=ctxmobilebrowsers:,^mailto:=ctxmail:,+^citrixreceiver:,+^telprompt:,+^tel:,+^sms:,+^ctxnotes:'
+    policyValue[policyName='OutboundURLFilter']: '^http:=ctxmobilebrowser:,^https:=ctxmobilebrowsers:,^mailto:=ctxmail:,+^citrixreceiver:,+^telprompt:,+^tel:'
+
+    policyValue[policyName='LockScreenNotifications']: NameOrTitle
 
 
   role: WorxMail
