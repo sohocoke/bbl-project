@@ -8,5 +8,6 @@ group :development do
   gem "guard"
   gem "guard-bundler"
   gem "guard-rack"
-  gem 'listen', '~> 2.0'
+  gem 'listen'
+  gem 'rb-fsevent' 
 end
