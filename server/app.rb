@@ -1,7 +1,9 @@
 require 'sinatra'
 require 'sinatra/base'
 
+require 'securerandom'
 require 'json'
+
 
 require_relative '../lib/configs'
 
@@ -47,7 +49,8 @@ class Server < Sinatra::Base
       run_id: run_id,
       log: log(run_id),
       options: [
-        :cancel,
+        :cancel,  # TODO wrap in availability condition
+        :requeue  # TODO wrap in availability condition
       ]
     }.to_json
   end
@@ -72,29 +75,30 @@ class Server < Sinatra::Base
       apps: apps,
       targets: targets,
       cmds: cmds,
-      pid: pid,
-      run_id: run_id(pid)
+      run_id: run_id
     }.to_json
   end
 
 
   #= util
 
-  def run_id( pid )
-    "#{Time.new.to_i}_#{pid}"
+  def run_id
+    SecureRandom.uuid
   end
 
   def log(run_id)
+    File.read "log/#{run_id}.log"
   end
 
 
   #= util - mutating
 
   def exec_cmds( cmds )
-    puts "running commands #{cmds}"
-    pid = spawn cmds.join ';' 
+    run_id = run_id
 
-    # TODO capture output
+    puts "running commands #{cmds} with run_id #{run_id}"
+
+    pid = spawn "#{cmds.join ';'} > log/#{run_id}.log"
   end
 
 
