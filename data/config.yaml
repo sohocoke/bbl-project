@@ -11,3 +11,6 @@ manifest_values:
     policyValue[policyName='DisableLocation']: true
     policyValue[policyName='DisableCamera']: true
     policyValue[policyName='DefaultLoggerOutput']: file,console
+    policyValue[policyName='Paste']: SecurityGroup
+    policyValue[policyName='UpgradeGracePeriod']: 72
+    policyValue[policyName='InboundURLFilter']: 'ctxmobilebrowser:,ctxmobilebrowsers:'
