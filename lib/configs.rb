@@ -47,7 +47,7 @@ end
 
 
 def apps(pattern = /.*/, opts = { variants: true })
-    Dir.glob("#{Base_dir}/apps/**/config.yaml")
+    Dir.glob("#{Base_dir}/apps/*/config.yaml")
         .map {|e| File.read e}
         .map {|e| YAML.load(e)}
         .map {|e| e ? e['id'] : nil}
