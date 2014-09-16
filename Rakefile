@@ -195,8 +195,6 @@ namespace :config do
 
     call_task 'config:merge', args[:app_name]
 
-    config = cascaded_config app
-
     variant_configs(app).each do |variant_config|
       variant_name = variant_config['id']
       platform = 
@@ -205,6 +203,9 @@ namespace :config do
         else
           :android
         end
+
+      config = YAML.load File.read("#{build_dir}/#{app}-#{platform}-config.yaml")
+
 
       variant_config_path = "#{variant_path}/#{variant_name}-#{platform}-config.yaml"
 
