@@ -41,20 +41,6 @@ class Server < Sinatra::Base
     targets(/.*/).to_json
   end
 
-  get '/runs/:run_id' do
-    run_id = params[:run_id]
-
-    # serve up the details for the run.
-    {
-      run_id: run_id,
-      log: log(run_id),
-      options: [
-        :cancel,  # TODO wrap in availability condition
-        :requeue  # TODO wrap in availability condition
-      ]
-    }.to_json
-  end
-
   post '/runs' do
     request.body.rewind  # in case someone already read it
     data = JSON.parse request.body.read
@@ -68,14 +54,28 @@ class Server < Sinatra::Base
     end
 
     # execute.
-    exec_cmds cmds
+    this_run_id = exec_cmds cmds
 
     # pass back data for easy troubleshooting.
     {
       apps: apps,
       targets: targets,
       cmds: cmds,
-      run_id: run_id
+      run_id: this_run_id
+    }.to_json
+  end
+
+  get '/runs/:run_id' do
+    run_id = params[:run_id]
+
+    # serve up the details for the run.
+    {
+      run_id: run_id,
+      log: fetch_log(run_id),
+      options: [
+        :cancel,  # TODO wrap in availability condition
+        :requeue  # TODO wrap in availability condition
+      ]
     }.to_json
   end
 
@@ -86,7 +86,7 @@ class Server < Sinatra::Base
     SecureRandom.uuid
   end
 
-  def log(run_id)
+  def fetch_log(run_id)
     File.read "log/#{run_id}.log"
   end
 
@@ -94,11 +94,13 @@ class Server < Sinatra::Base
   #= util - mutating
 
   def exec_cmds( cmds )
-    run_id = run_id
+    this_run_id = run_id
 
-    puts "running commands #{cmds} with run_id #{run_id}"
+    puts "running commands #{cmds} with run_id #{this_run_id}"
 
-    pid = spawn "#{cmds.join ';'} > log/#{run_id}.log"
+    spawn cmds.join(';'), :err => :out, :out => ["log/#{this_run_id}.log", 'w']
+
+    this_run_id
   end
 
 
