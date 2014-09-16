@@ -438,7 +438,7 @@ namespace :apk do
     sh %(
       export PATH="#{android_utils_paths}:$PATH"
 
-      java -jar #{prep_tool_jar} wrap -in #{apk} -out #{mdx} -app "#{app_name}-android" -desc "#{description}" -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android > "#{log_dir}/#{app_name}-android-mdx.log"
+      java -jar #{prep_tool_jar} wrap -in #{apk} -out #{mdx} -appName "#{app_name}-android" -appDesc "#{description}" -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android > "#{log_dir}/#{app_name}-android-mdx.log"
     )
 
     puts "# packaged #{mdx}"
