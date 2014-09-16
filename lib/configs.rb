@@ -235,6 +235,8 @@ def policy_applied policy_xml, policy_delta
         node = doc.find("/PolicyMetadata/Policies/Policy[PolicyName='#{predicate_val}']/PolicyDefault").first
 
         # TODO assert only 1.
+        
+        raise "no element for policy '#{predicate_val}'" if node.nil?
 
         # modifying the node
         node.content = v.to_s
