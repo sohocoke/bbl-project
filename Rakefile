@@ -262,7 +262,12 @@ namespace :mdx do
         xml_with_dereferenced_vars = dereferenced modified_xml, variables
         File.write "#{final_staging_path}/policy_metadata.xml", xml_with_dereferenced_vars
 
-        call_task 'mdx:zip', "#{app}-#{env_name}"
+        target_variant = "#{app}-#{env_name}"
+        call_task 'mdx:zip', target_variant
+
+        # move to target subfolder.
+        FileUtils.mkdir_p "#{build_dir}/#{env_name}"
+        FileUtils.mv "#{build_dir}/#{target_variant}.mdx", "#{build_dir}/#{env_name}/"
       end
     else
       call_task 'mdx:zip', app
