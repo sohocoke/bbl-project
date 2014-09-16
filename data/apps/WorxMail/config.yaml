@@ -30,6 +30,7 @@ manifest_values[ios]:
 
   policies:
     policyValue[policyName='PreferredVpnMode']: FullTunnel
+    policyValue[policyName='InboundURLFilter']: 'ctxmail:,ctxinternalmail:'
     policyValue[policyName='OutboundURLFilter']: '^http:=ctxmobilebrowser:,^https:=ctxmobilebrowsers:,^mailto:=ctxmail:,+^citrixreceiver:,+^telprompt:,+^tel:'
 
 
