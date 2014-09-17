@@ -15,6 +15,7 @@ manifest_values:
 
 manifest_values[ios]:
   policies:
+    policyValue[policyName='PreferredVpnMode']: FullTunnel
     policyValue[policyName='WorkWebHomePageURL']: >
         https://one.csintra.net/eWorkplacePortalWeb/startup
     policyValue[policyName='WorkWebPreloadBookmarks']: >
