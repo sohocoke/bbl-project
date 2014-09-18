@@ -42,7 +42,7 @@ end
 def targets(pattern)
     Dir.glob("#{Base_dir}/destinations/**/servers.yaml")
         .map {|e| Hash[ 'id', File.basename(File.dirname(e)), 'servers', YAML.load(File.read(e)) ] }
-        .select {|e| e['id'] =~ /#{pattern}/}
+        .select {|e| e['id'] =~ /^#{pattern}$/}
 end
 
 

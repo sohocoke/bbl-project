@@ -1,4 +1,3 @@
 # required properties
 id: MMEDemoApp
-targets: ch-etit.*  # all environments where PROD cert label should be used.
-
+targets: ch-etit.*
