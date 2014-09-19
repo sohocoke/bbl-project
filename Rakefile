@@ -116,6 +116,8 @@ namespace :app do
     app = args[:app_name]
     targets_regexp = args[:targets_regexp]   # FIXME arg validation
 
+    call_task 'config:merge', app
+
     targets = targets(targets_regexp)
 
     # for each target, call the app_controller:create task.
