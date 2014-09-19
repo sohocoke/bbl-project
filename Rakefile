@@ -148,6 +148,7 @@ namespace :app do
             appc_base_url = server['base_url']
             login_json = server['credentials_path']
             
+            call_task 'app_controller:login', appc_base_url, login_json
             call_task 'app_controller:crupdate', package, appc_base_url, login_json, target_name
           end
 
