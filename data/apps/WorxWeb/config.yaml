@@ -11,11 +11,9 @@ manifest_values:
     description: WorxWeb with PROD certificate label.
 
   policies:
-    policyValue[policyName='CertificateLabel']: PROD
 
 manifest_values[ios]:
   policies:
-    policyValue[policyName='PreferredVpnMode']: FullTunnel
     policyValue[policyName='WorkWebHomePageURL']: >
         https://one.csintra.net/eWorkplacePortalWeb/startup
     policyValue[policyName='WorkWebPreloadBookmarks']: >
