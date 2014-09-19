@@ -46,7 +46,7 @@ def targets(pattern)
 end
 
 
-def apps(pattern, opts = { variants: true })
+def apps(pattern = /.*/, opts = { variants: true })
     Dir.glob("#{Base_dir}/apps/**/config.yaml")
         .map {|e| File.read e}
         .map {|e| YAML.load(e)}
@@ -222,7 +222,12 @@ def policy_applied policy_xml, policy_delta
     doc = XML::Document.string policy_xml    
 
     policy_delta.each do |k, v|
-        predicate_val = /.+\[.+='(.*)'\]/.match(k)[1]
+        predicate_val = 
+            if (matches = /.+\[.+='(.*)'\]/.match(k))
+                matches[1]
+            else
+                raise "no predicate in #{k}"
+            end
         
         p "applying value '#{v}' to policy '#{predicate_val}'"
         
@@ -230,6 +235,8 @@ def policy_applied policy_xml, policy_delta
         node = doc.find("/PolicyMetadata/Policies/Policy[PolicyName='#{predicate_val}']/PolicyDefault").first
 
         # TODO assert only 1.
+        
+        raise "no element for policy '#{predicate_val}'" if node.nil?
 
         # modifying the node
         node.content = v.to_s

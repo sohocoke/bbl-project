@@ -195,8 +195,6 @@ namespace :config do
 
     call_task 'config:merge', args[:app_name]
 
-    config = cascaded_config app
-
     variant_configs(app).each do |variant_config|
       variant_name = variant_config['id']
       platform = 
@@ -205,6 +203,9 @@ namespace :config do
         else
           :android
         end
+
+      config = YAML.load File.read("#{build_dir}/#{app}-#{platform}-config.yaml")
+
 
       variant_config_path = "#{variant_path}/#{variant_name}-#{platform}-config.yaml"
 
@@ -261,7 +262,12 @@ namespace :mdx do
         xml_with_dereferenced_vars = dereferenced modified_xml, variables
         File.write "#{final_staging_path}/policy_metadata.xml", xml_with_dereferenced_vars
 
-        call_task 'mdx:zip', "#{app}-#{env_name}"
+        target_variant = "#{app}-#{env_name}"
+        call_task 'mdx:zip', target_variant
+
+        # move to target subfolder.
+        FileUtils.mkdir_p "#{build_dir}/#{env_name}"
+        FileUtils.mv "#{build_dir}/#{target_variant}.mdx", "#{build_dir}/#{env_name}/"
       end
     else
       call_task 'mdx:zip', app
@@ -437,7 +443,7 @@ namespace :apk do
     sh %(
       export PATH="#{android_utils_paths}:$PATH"
 
-      java -jar #{prep_tool_jar} wrap -in #{apk} -out #{mdx} -app "#{app_name}-android" -desc "#{description}" -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android > "#{log_dir}/#{app_name}-android-mdx.log"
+      java -jar #{prep_tool_jar} wrap -in #{apk} -out #{mdx} -appName "#{app_name}-android" -appDesc "#{description}" -keystore #{data_dir}/my.keystore -storepass android -keyalias wrapkey -keypass android > "#{log_dir}/#{app_name}-android-mdx.log"
     )
 
     puts "# packaged #{mdx}"
