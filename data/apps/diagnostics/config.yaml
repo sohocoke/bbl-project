@@ -1,3 +1,11 @@
 # required properties
 id: MM2 Diagnostics
 targets: ch-etit.*
+
+manifest_values:
+  policies:
+    policyValue[policyName='NetworkAccess']: NetworkAccessTunneled
+
+  ncgapplication:
+    applicationlabel: MM2 Diagnostics
+

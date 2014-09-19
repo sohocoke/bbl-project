@@ -13,7 +13,10 @@ manifest_values:
     policyValue[policyName='DefaultLoggerOutput']: file,console
     policyValue[policyName='UpgradeGracePeriod']: 72
 
+    policyValue[policyName='CertificateLabel']: PROD
+
 manifest_values[ios]:
   policies:
     policyValue[policyName='Paste']: SecurityGroup
     policyValue[policyName='InboundURLFilter']: 'ctxmobilebrowser:,ctxmobilebrowsers:'
+    policyValue[policyName='PreferredVpnMode']: FullTunnel

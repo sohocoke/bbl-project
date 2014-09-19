@@ -18,7 +18,6 @@ manifest_values:
     policyValue[policyName='BackgroundServicesGateway']: '{var:background_services_gateway_address}'
 
     policyValue[policyName='NetworkAccess']: NetworkAccessTunneled
-    policyValue[policyName='CertificateLabel']: PROD
 
     policyValue[policyName='LockScreenNotifications']: NameOrTitle
 
@@ -29,7 +28,6 @@ manifest_values:
 manifest_values[ios]:
 
   policies:
-    policyValue[policyName='PreferredVpnMode']: FullTunnel
     policyValue[policyName='InboundURLFilter']: 'ctxmail:,ctxinternalmail:'
     policyValue[policyName='OutboundURLFilter']: '^http:=ctxmobilebrowser:,^https:=ctxmobilebrowsers:,^mailto:=ctxmail:,+^citrixreceiver:,+^telprompt:,+^tel:'
 
