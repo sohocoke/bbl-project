@@ -158,6 +158,8 @@ namespace :app do
       end  
 
     end
+
+    puts "### deployed #{app} to #{targets}."
   end
 
 end
@@ -456,8 +458,9 @@ end
 namespace :app_controller do
   desc "create or update app entry in app controller"
   task :crupdate, [:app_name, :appc_base_url, :login_json, :env_name] => [:login] do |t, args|
-    # a primitive implementation.
     call_task 'app_controller:create', args[:app_name], args[:appc_base_url], args[:login_json], args[:env_name]
+    # FIXME make conditional.
+
     call_task 'app_controller:update', args[:app_name], args[:appc_base_url], args[:login_json], args[:env_name]
   end
 
