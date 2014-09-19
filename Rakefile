@@ -461,6 +461,8 @@ namespace :app_controller do
     call_task 'app_controller:update', args[:app_name], args[:appc_base_url], args[:login_json], args[:env_name]
   end
 
+  # NOTE: Policies embedded in mdx are ignored when its posted.
+  # So we issue more requests involving the submission of the policies.
   desc "update app entry in app controller"
   task :update, [:app_name, :appc_base_url, :login_json, :env_name] => [:login] do |t, args|
     appc_base_url = args[:appc_base_url]
@@ -495,19 +497,16 @@ namespace :app_controller do
 
 
     # # apply delta to the manifest, save.
-    # config_delta_path = "#{build_dir}/#{app}-config.yaml"
-    # config_delta = YAML.load File.read(config_delta_path)
-    # delta_applied = JSON.parse(File.read(manifest_json))
-    # if config_delta['manifest_values']
-    #   puts "# applying config delta '#{config_delta['id']}' for #{app} from #{config_delta_path}"
-    #   delta_applied = delta_applied delta_applied, config_delta['manifest_values']
-    # end
+    config_delta_path = "#{build_dir}/#{app}-config.yaml"
+    config_delta = YAML.load File.read(config_delta_path)
+    delta_applied = JSON.parse(File.read(manifest_json))
+    if config_delta['manifest_values']
+      puts "# applying config delta '#{config_delta['id']}' for #{app} from #{config_delta_path}"
+      delta_applied = delta_applied delta_applied, config_delta['manifest_values']
+    end
 
-    # modified_json_str = dereferenced JSON.pretty_generate(delta_applied), variables(env_name)
-    # File.write modified_manifest_json, modified_json_str
-
-    # SUPERCEDED by policy delta application in mdx. we may need this back in the future when users self-service the full deployment process.
-    modified_manifest_json = manifest_json
+    modified_json_str = dereferenced JSON.pretty_generate(delta_applied), variables(env_name)
+    File.write modified_manifest_json, modified_json_str
 
     sh %(
       # upload manifest
@@ -515,6 +514,9 @@ namespace :app_controller do
     )
 
     puts "## updated app controller entry for #{app}"
+
+    puts "policy changes:"
+    `diff #{manifest_json} #{modified_manifest_json}`
   end
 
 
