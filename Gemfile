@@ -8,6 +8,6 @@ group :development do
   gem "guard"
   gem "guard-bundler"
   gem "guard-rack"
-  gem 'listen'
   gem 'rb-fsevent' 
+  gem 'terminal-notifier-guard'
 end
