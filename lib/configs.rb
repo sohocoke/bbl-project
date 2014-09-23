@@ -46,17 +46,6 @@ def targets(pattern)
 end
 
 
-def apps(pattern = /.*/, opts = { variants: true })
-    Dir.glob("#{Base_dir}/apps/*/config.yaml")
-        .map {|e| File.read e}
-        .map {|e| YAML.load(e)}
-        .map {|e| e ? e['id'] : nil}
-        .compact
-        .grep(pattern)
-        .uniq
-end
-
-
 def variants(app)
     variant_configs(app).flatten.map do |e|
         id = "#{e['id']}"
