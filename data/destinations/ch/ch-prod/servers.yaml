@@ -1,6 +1,0 @@
--
-  base_url: https://fictional-host:4443
-  credentials_path: data/login.json
-# -
-#   base_url: https://161.202.193.124:4443
-#   credentials_path: data/login.json

@@ -1,6 +1,0 @@
-exchange_server_address: USEXCAS0001.gbl.ad.hedani.net
-background_services_address: USEXCAS0001.gbl.ad.hedani.net:443
-mail_domain: gbl.ad.hedani.net
-background_services_gateway_address: mm-am.credit-suisse.com:443
-
-background_services_gateway_address_ch: mm-am.credit-suisse.com:443

@@ -1,6 +1,0 @@
-id: WorxWeb-test-cert
-package_id: com.citrix.browserTEST
-
-manifest_values:
-  policies:
-    policyValue[policyName='WorxWebPreloadBookmarks']: "TestPages,Krb Test,http://dev-uaa3.csintra.net:8520/dl.aspx,TestPages,PKI Prod,https://pkicsiws5.csintra.net:31323/lisocockpit/check.jsp,TestPages,PKI Test, https://pkicsiws5i.csintra.net:31323/lisocockpit/check.jsp,HomePages,Prod eWP,https://one.csintra.net/eWorkplacePortalWeb/startup,KerbTests,MM2 Sharepoint,http://ny-sharepoint.csintra.net/it/EMP,KerbTests,Reporter,http://reporter.csintra.net,KerbTests,HelpExchange,http://help.csintra.net,KerbTests,MattTestSite,https://chw20003208.ch.etit.hedani.net/WindowsTokenExample.aspx"
