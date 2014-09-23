@@ -75,7 +75,8 @@ class Server < Sinatra::Base
       options: [
         :cancel,  # TODO wrap in availability condition
         :requeue  # TODO wrap in availability condition
-      ]
+      ],
+      state: (finished?(run_id) ? "finished" : "")
     }.to_json
   end
 
@@ -86,19 +87,33 @@ class Server < Sinatra::Base
     SecureRandom.uuid
   end
 
+  #= querying filesystem
+
+  # use pid to check process state, return
+  def finished?(run_id)
+    pid = (@pids_hash ||= {})[run_id]
+
+    return true if pid.nil?
+
+    ! `ps aux | grep #{run_id} | grep -v 'grep'`.include? pid
+  end
+
   def fetch_log(run_id)
     File.read "log/#{run_id}.log"
   end
 
 
-  #= util - mutating
+  #= execution
 
   def exec_cmds( cmds )
     this_run_id = run_id
-
     puts "running commands #{cmds} with run_id #{this_run_id}"
 
-    spawn cmds.join(';'), :err => :out, :out => ["log/#{this_run_id}.log", 'w']
+    # add a comment with the run id
+    cmds.unshift "echo run: #{this_run_id}"
+
+    pid = spawn "bash -c \"#{cmds.join(";")}\"", :err => :out, :out => ["log/#{this_run_id}.log", 'w']
+    (@pids_hash ||= {})[run_id] = pid
 
     this_run_id
   end
